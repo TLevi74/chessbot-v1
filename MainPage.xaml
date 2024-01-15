@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             BackgroundColor="#292929"
+             NavigationPage.HasNavigationBar="False"
+             Title=""
+             x:Class="chessbot.MainPage">
+
+    <ScrollView>
+        <Grid Padding="0" ColumnSpacing="0" RowSpacing="0">
+            <Grid.RowDefinitions>
+                
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="4"></RowDefinition>
+                <!--Next Row is the First Row Of The Chessboard-->
+                
+                <RowDefinition Height="35"></RowDefinition>
+                <RowDefinition Height="35"></RowDefinition>
+                <RowDefinition Height="35"></RowDefinition>
+                <RowDefinition Height="35"></RowDefinition>
+                <RowDefinition Height="35"></RowDefinition>
+                <RowDefinition Height="35"></RowDefinition>
+                <RowDefinition Height="35"></RowDefinition>
+                <RowDefinition Height="35"></RowDefinition>
+                
+                <!--End of Chessboard-->
+                <RowDefinition Height="4"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="4"></ColumnDefinition>
+                <!--Next Column is the First Column Of The Chessboard-->
+
+                <ColumnDefinition Width="35"></ColumnDefinition>
+                <ColumnDefinition Width="35"></ColumnDefinition>
+                <ColumnDefinition Width="35"></ColumnDefinition>
+                <ColumnDefinition Width="35"></ColumnDefinition>
+                <ColumnDefinition Width="35"></ColumnDefinition>
+                <ColumnDefinition Width="35"></ColumnDefinition>
+                <ColumnDefinition Width="35"></ColumnDefinition>
+                <ColumnDefinition Width="35"></ColumnDefinition>
+
+                <!--End of Chessboard-->
+                <ColumnDefinition Width="4"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                
+            </Grid.ColumnDefinitions>
+
+            <!--Setting The border Around The Table-->
+            <BoxView BackgroundColor="#242424" Grid.Row="1" Grid.Column="1" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Grid.RowSpan="10" Grid.ColumnSpan="10"></BoxView>
+
+            <!--Setting The Background For BoardRow8-->
+            <ImageButton x:Name="SquareA8" BackgroundColor="#EEEED2" Grid.Row="2" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareB8" BackgroundColor="#769656" Grid.Row="2" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareC8" BackgroundColor="#EEEED2" Grid.Row="2" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareD8" BackgroundColor="#769656" Grid.Row="2" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareE8" BackgroundColor="#EEEED2" Grid.Row="2" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareF8" BackgroundColor="#769656" Grid.Row="2" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareG8" BackgroundColor="#EEEED2" Grid.Row="2" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareH8" BackgroundColor="#769656" Grid.Row="2" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+
+            <!--Setting The Background For BoardRow7-->
+            <ImageButton x:Name="SquareA7" BackgroundColor="#769656" Grid.Row="3" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareB7" BackgroundColor="#EEEED2" Grid.Row="3" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareC7" BackgroundColor="#769656" Grid.Row="3" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareD7" BackgroundColor="#EEEED2" Grid.Row="3" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareE7" BackgroundColor="#769656" Grid.Row="3" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareF7" BackgroundColor="#EEEED2" Grid.Row="3" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareG7" BackgroundColor="#769656" Grid.Row="3" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareH7" BackgroundColor="#EEEED2" Grid.Row="3" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+
+            <!--Setting The Background For BoardRow6-->
+            <ImageButton x:Name="SquareA6" BackgroundColor="#EEEED2" Grid.Row="4" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareB6" BackgroundColor="#769656" Grid.Row="4" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareC6" BackgroundColor="#EEEED2" Grid.Row="4" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareD6" BackgroundColor="#769656" Grid.Row="4" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareE6" BackgroundColor="#EEEED2" Grid.Row="4" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareF6" BackgroundColor="#769656" Grid.Row="4" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareG6" BackgroundColor="#EEEED2" Grid.Row="4" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareH6" BackgroundColor="#769656" Grid.Row="4" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+
+            <!--Setting The Background For BoardRow5-->
+            <ImageButton x:Name="SquareA5" BackgroundColor="#769656" Grid.Row="5" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareB5" BackgroundColor="#EEEED2" Grid.Row="5" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareC5" BackgroundColor="#769656" Grid.Row="5" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareD5" BackgroundColor="#EEEED2" Grid.Row="5" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareE5" BackgroundColor="#769656" Grid.Row="5" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareF5" BackgroundColor="#EEEED2" Grid.Row="5" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareG5" BackgroundColor="#769656" Grid.Row="5" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareH5" BackgroundColor="#EEEED2" Grid.Row="5" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+
+            <!--Setting The Background For BoardRow4-->
+            <ImageButton x:Name="SquareA4" BackgroundColor="#EEEED2" Grid.Row="6" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareB4" BackgroundColor="#769656" Grid.Row="6" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareC4" BackgroundColor="#EEEED2" Grid.Row="6" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareD4" BackgroundColor="#769656" Grid.Row="6" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareE4" BackgroundColor="#EEEED2" Grid.Row="6" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareF4" BackgroundColor="#769656" Grid.Row="6" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareG4" BackgroundColor="#EEEED2" Grid.Row="6" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareH4" BackgroundColor="#769656" Grid.Row="6" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+
+            <!--Setting The Background For BoardRow3-->
+            <ImageButton x:Name="SquareA3" BackgroundColor="#769656" Grid.Row="7" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareB3" BackgroundColor="#EEEED2" Grid.Row="7" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareC3" BackgroundColor="#769656" Grid.Row="7" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareD3" BackgroundColor="#EEEED2" Grid.Row="7" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareE3" BackgroundColor="#769656" Grid.Row="7" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareF3" BackgroundColor="#EEEED2" Grid.Row="7" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareG3" BackgroundColor="#769656" Grid.Row="7" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareH3" BackgroundColor="#EEEED2" Grid.Row="7" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+
+            <!--Setting The Background For BoardRow2-->
+            <ImageButton x:Name="SquareA2" BackgroundColor="#EEEED2" Grid.Row="8" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareB2" BackgroundColor="#769656" Grid.Row="8" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareC2" BackgroundColor="#EEEED2" Grid.Row="8" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareD2" BackgroundColor="#769656" Grid.Row="8" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareE2" BackgroundColor="#EEEED2" Grid.Row="8" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareF2" BackgroundColor="#769656" Grid.Row="8" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareG2" BackgroundColor="#EEEED2" Grid.Row="8" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareH2" BackgroundColor="#769656" Grid.Row="8" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+
+            <!--Setting The Background For BoardRow1-->
+            <ImageButton x:Name="SquareA1" BackgroundColor="#769656" Grid.Row="9" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareB1" BackgroundColor="#EEEED2" Grid.Row="9" Grid.Column="3" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareC1" BackgroundColor="#769656" Grid.Row="9" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareD1" BackgroundColor="#EEEED2" Grid.Row="9" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareE1" BackgroundColor="#769656" Grid.Row="9" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareF1" BackgroundColor="#EEEED2" Grid.Row="9" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareG1" BackgroundColor="#769656" Grid.Row="9" Grid.Column="8" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+            <ImageButton x:Name="SquareH1" BackgroundColor="#EEEED2" Grid.Row="9" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
+
+            <StackLayout Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="12" VerticalOptions="Center" HorizontalOptions="Center">
+                <Button Margin="10" BackgroundColor="#242424" TextColor="White" Text="Reset"></Button>
+                <Button Margin="10" BackgroundColor="#242424" TextColor="White" Text="Flip Board"></Button>
+            </StackLayout>
+            
+        </Grid>
+    </ScrollView>
+
+</ContentPage>
