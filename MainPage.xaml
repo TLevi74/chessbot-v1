@@ -11,40 +11,40 @@
             <Grid.RowDefinitions>
                 
                 <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="4"></RowDefinition>
+                <RowDefinition Height="6"></RowDefinition>
                 <!--Next Row is the First Row Of The Chessboard-->
                 
-                <RowDefinition Height="35"></RowDefinition>
-                <RowDefinition Height="35"></RowDefinition>
-                <RowDefinition Height="35"></RowDefinition>
-                <RowDefinition Height="35"></RowDefinition>
-                <RowDefinition Height="35"></RowDefinition>
-                <RowDefinition Height="35"></RowDefinition>
-                <RowDefinition Height="35"></RowDefinition>
-                <RowDefinition Height="35"></RowDefinition>
+                <RowDefinition Height="45"></RowDefinition>
+                <RowDefinition Height="45"></RowDefinition>
+                <RowDefinition Height="45"></RowDefinition>
+                <RowDefinition Height="45"></RowDefinition>
+                <RowDefinition Height="45"></RowDefinition>
+                <RowDefinition Height="45"></RowDefinition>
+                <RowDefinition Height="45"></RowDefinition>
+                <RowDefinition Height="45"></RowDefinition>
                 
                 <!--End of Chessboard-->
-                <RowDefinition Height="4"></RowDefinition>
+                <RowDefinition Height="6"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
                 
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 
                 <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="4"></ColumnDefinition>
+                <ColumnDefinition Width="6"></ColumnDefinition>
                 <!--Next Column is the First Column Of The Chessboard-->
 
-                <ColumnDefinition Width="35"></ColumnDefinition>
-                <ColumnDefinition Width="35"></ColumnDefinition>
-                <ColumnDefinition Width="35"></ColumnDefinition>
-                <ColumnDefinition Width="35"></ColumnDefinition>
-                <ColumnDefinition Width="35"></ColumnDefinition>
-                <ColumnDefinition Width="35"></ColumnDefinition>
-                <ColumnDefinition Width="35"></ColumnDefinition>
-                <ColumnDefinition Width="35"></ColumnDefinition>
+                <ColumnDefinition Width="45"></ColumnDefinition>
+                <ColumnDefinition Width="45"></ColumnDefinition>
+                <ColumnDefinition Width="45"></ColumnDefinition>
+                <ColumnDefinition Width="45"></ColumnDefinition>
+                <ColumnDefinition Width="45"></ColumnDefinition>
+                <ColumnDefinition Width="45"></ColumnDefinition>
+                <ColumnDefinition Width="45"></ColumnDefinition>
+                <ColumnDefinition Width="45"></ColumnDefinition>
 
                 <!--End of Chessboard-->
-                <ColumnDefinition Width="4"></ColumnDefinition>
+                <ColumnDefinition Width="6"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 
             </Grid.ColumnDefinitions>
@@ -133,8 +133,8 @@
             <ImageButton x:Name="SquareH1" BackgroundColor="#EEEED2" Grid.Row="9" Grid.Column="9" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
 
             <StackLayout Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="12" VerticalOptions="Center" HorizontalOptions="Center">
-                <Button Margin="10" BackgroundColor="#242424" TextColor="White" Text="Reset"></Button>
-                <Button Margin="10" BackgroundColor="#242424" TextColor="White" Text="Flip Board"></Button>
+                <Button x:Name="btnReset" Margin="10" BackgroundColor="#242424" TextColor="White" Text="Reset" Clicked="ButtonResetClicked"></Button>
+                <Button x:Name="btnFlipBoard" Margin="10" BackgroundColor="#242424" TextColor="White" Text="Flip Board" Clicked="FlipBoard"></Button>
             </StackLayout>
             
         </Grid>
