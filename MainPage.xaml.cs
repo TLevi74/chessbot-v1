@@ -115,11 +115,11 @@
 
                     if (WhiteSquares.Contains(SelectedSquare))
                     {
-                        SelectedSquare.BackgroundColor = Color.FromArgb("#F4F680");
+                        SelectedSquare.Background = Color.FromArgb("#F4F680");
                     }
                     else
                     {
-                        SelectedSquare.BackgroundColor = Color.FromArgb("#BBCC44");
+                        SelectedSquare.Background = Color.FromArgb("#BBCC44");
                     }
                     
                 }
