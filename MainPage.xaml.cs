@@ -8,6 +8,7 @@
         ImageSource[] WhitePieces = {"white_rook.png", "white_knight.png", "white_bishop.png", "white_queen.png", "white_king.png", "white_bishop.png", "white_knight.png", "white_rook.png", "white_pawn.png" };
         ImageSource[] BlackPieces = {"black_rook.png", "black_knight.png", "black_bishop.png", "black_queen.png", "black_king.png", "black_bishop.png", "black_knight.png", "black_rook.png", "black_pawn.png" };
         Boolean IsPlayerWhite = true;
+        Boolean HasAIMoved = true;
         public MainPage()
         {
             InitializeComponent();
@@ -39,6 +40,22 @@
 
         private void ResetBoard()
         {
+            HasPlayerSelectedFromSquare = false;
+            SelectedPiece = null;
+            SelectedSquare = null;
+            SelectedBefore = null;
+
+            for (int i = 0; i < 64; i++)
+            {
+                if (WhiteSquares.Contains(AllSquares[i]))
+                {
+                    AllSquares[i].BackgroundColor = Color.FromArgb("EEEED2");
+                }
+                else
+                {
+                    AllSquares[i].BackgroundColor = Color.FromArgb("#769656");
+                }
+            }
             if (IsPlayerWhite == true)
             {
                 for (int i = 0; i < 8; i++)
@@ -52,6 +69,7 @@
                     AllSquares[i + 48].Source = WhitePieces[8];
                     AllSquares[i + 56].Source = WhitePieces[i];
                 }
+                HasAIMoved = true;
             }
             else
             {
@@ -66,6 +84,7 @@
                     AllSquares[i + 48].Source = BlackPieces[8];
                     AllSquares[i + 56].Source = BlackPieces[7-i];
                 }
+                HasAIMoved = false;
             }
             
         }
@@ -91,71 +110,94 @@
         Boolean HasPlayerSelectedFromSquare = false;
         ImageSource SelectedPiece = null;
         ImageButton SelectedSquare = null;
+        ImageButton SelectedBefore = null;
 
         private void SquareSelected(object sender, System.EventArgs e)
         {
-            ImageButton currentButton = (ImageButton)sender; 
-            if (IsPlayerWhite == true)
+            if (HasAIMoved == true)
             {
-                if (WhitePieces.Contains(currentButton.Source))
+                ImageButton currentButton = (ImageButton)sender;
+                if (IsPlayerWhite == true)
                 {
+                    if (WhitePieces.Contains(currentButton.Source))
+                    {
+                        if (WhiteSquares.Contains(SelectedBefore))
+                        {
+                            SelectedBefore.BackgroundColor = Color.FromArgb("EEEED2");
+                        }
+                        else if (BlackSquares.Contains(SelectedBefore))
+                        {
+                            SelectedBefore.BackgroundColor = Color.FromArgb("#769656");
+                        }
+                        if (WhiteSquares.Contains(SelectedSquare))
+                        {
+                            SelectedSquare.BackgroundColor = Color.FromArgb("EEEED2");
+                        }
+                        else if (BlackSquares.Contains(SelectedSquare))
+                        {
+                            SelectedSquare.BackgroundColor = Color.FromArgb("#769656");
+                        }
 
-                    if (WhiteSquares.Contains(SelectedSquare))
-                    {
-                        SelectedSquare.Background = Color.FromArgb("EEEED2");
-                    }
-                    if (BlackSquares.Contains(SelectedSquare))
-                    {
-                        SelectedSquare.Background = Color.FromArgb("#769656");
-                    }
-
-                    SelectedSquare = currentButton;
-                    SelectedPiece = currentButton.Source;
-                    HasPlayerSelectedFromSquare = true;
-
-                    if (WhiteSquares.Contains(SelectedSquare))
-                    {
-                        SelectedSquare.Background = Color.FromArgb("#F4F680");
-                    }
-                    else
-                    {
-                        SelectedSquare.Background = Color.FromArgb("#BBCC44");
-                    }
-                    
-                }
-                else
-                {
-                    if (HasPlayerSelectedFromSquare == true)
-                    {
+                        SelectedSquare = currentButton;
+                        SelectedPiece = currentButton.Source;
+                        HasPlayerSelectedFromSquare = true;
 
                         if (WhiteSquares.Contains(SelectedSquare))
                         {
-                            SelectedSquare.Background = Color.FromArgb("EEEED2");
+                            SelectedSquare.BackgroundColor = Color.FromArgb("#F4F680");
                         }
-                        if (BlackSquares.Contains(SelectedSquare))
+                        else
                         {
-                            SelectedSquare.Background = Color.FromArgb("#769656");
+                            SelectedSquare.BackgroundColor = Color.FromArgb("#BBCC44");
                         }
+
                     }
-                    else
+                    else if (HasPlayerSelectedFromSquare == true)
                     {
-                        
-                        SelectedPiece = null;
-                        SelectedSquare = null;
+                        SelectedBefore = SelectedSquare;
+                        SelectedSquare = currentButton;
+                        SelectedBefore.Source = "transparent.png";
+                        SelectedSquare.Source = SelectedPiece;
+                        if (WhiteSquares.Contains(SelectedSquare))
+                        {
+                            SelectedSquare.BackgroundColor = Color.FromArgb("#F4F680");
+                        }
+                        else
+                        {
+                            SelectedSquare.BackgroundColor = Color.FromArgb("#BBCC44");
+                        }
+                        HasPlayerSelectedFromSquare = false;
+                        HasAIMoved = false;
+                        //only has to happen if move is not possible
+                        //if (WhiteSquares.Contains(SelectedSquare))
+                        //{
+                        //    SelectedSquare.BackgroundColor = Color.FromArgb("EEEED2");
+                        //}
+                        //else if (BlackSquares.Contains(SelectedSquare))
+                        //{
+                        //    SelectedSquare.BackgroundColor = Color.FromArgb("#769656");
+                        //}
                     }
-                }
-            }
-            else
-            {
-                if (BlackPieces.Contains(currentButton.Source))
-                {
-                    //need to copy paste it for the black moves too
                 }
                 else
                 {
-                    SelectedPiece = null;
-                    SelectedSquare = null;
+                    if (BlackPieces.Contains(currentButton.Source))
+                    {
+                        //need to copy paste it for the black moves too
+                    }
+                    else
+                    {
+                        //need to copy paste it for the black moves too
+                    }
                 }
+            }
+        }
+
+        private void PossibleMoves(ImageButton Pos, ImageSource Piece)
+        {
+            if (Piece.Equals("black_rook.png") || Piece.Equals("white_rook.png"))
+            {
+                //rook moves goes here...
             }
         }
     }
