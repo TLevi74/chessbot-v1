@@ -1,5 +1,4 @@
-﻿using Java.Nio.Channels;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace chessbot
 {
@@ -232,13 +231,27 @@ namespace chessbot
 
 
         //-----CALCULATE POSSIBLE MOVES-----
-        private void PossibleMoves()
+
+        int[] DirectionOffsets = {8, 1, -8, -1, 9, -7, -9, 7};
+
+        public struct Move
+        {
+            ImageButton StartingSquare;
+            ImageButton TargetSquare;
+            public Move(ImageButton startingSquare, ImageButton targetSquare)
+            {
+                StartingSquare = startingSquare;
+                TargetSquare = targetSquare;
+            }
+        }
+        List<Move> Moves = new List<Move>();
+        public List<Move> PossibleMoves()
         {
             if (PlayerToMoveWhite == true)
             {
                 for (int i = 0; i < 64; i++)
                 {
-                    if (!AllSquares[i].Source.Equals("transparent.png"))
+                    if (WhitePieces.Contains(AllSquares[i].Source))
                     {
                         if (AllSquares[i].Source.Equals("white_pawn.png"))
                         {
@@ -246,15 +259,63 @@ namespace chessbot
                         }
                         else if (AllSquares[i].Source.Equals("white_rook.png"))
                         {
+                            for (int j = 0; j < 4; j++)
+                            {
+                                for (int k = 0; k < SquaresToEdge[i][j]; k++)
+                                {
+                                    if (WhitePieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    {
+                                        break;
+                                    }
 
+                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + ((k+1) * DirectionOffsets[j])]));
+
+                                    if (BlackPieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
                         }
                         else if (AllSquares[i].Source.Equals("white_bishop.png"))
                         {
+                            for (int j = 4; j < 8; j++)
+                            {
+                                for (int k = 0; k < SquaresToEdge[i][j]; k++)
+                                {
+                                    if (WhitePieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    {
+                                        break;
+                                    }
 
+                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + ((k + 1) * DirectionOffsets[j])]));
+
+                                    if (BlackPieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
                         }
                         else if (AllSquares[i].Source.Equals("white_queen.png"))
                         {
+                            for (int j = 0; j < 8; j++)
+                            {
+                                for (int k = 0; k < SquaresToEdge[i][j]; k++)
+                                {
+                                    if (WhitePieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    {
+                                        break;
+                                    }
 
+                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + ((k + 1) * DirectionOffsets[j])]));
+
+                                    if (BlackPieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
                         }
                         else if (AllSquares[i].Source.Equals("white_knight.png"))
                         {
@@ -266,6 +327,7 @@ namespace chessbot
                         }
                     }
                 }
+                return Moves;
             }
             else
             {
@@ -273,7 +335,7 @@ namespace chessbot
                 {
 
                 }
-                //rook moves goes here...
+                return Moves;
             }   
         }
     }
