@@ -9,6 +9,7 @@ namespace chessbot
         ImageButton[] BlackSquares = new ImageButton[32];
         ImageSource[] WhitePieces = {"white_rook.png", "white_knight.png", "white_bishop.png", "white_queen.png", "white_king.png", "white_bishop.png", "white_knight.png", "white_rook.png", "white_pawn.png" };
         ImageSource[] BlackPieces = {"black_rook.png", "black_knight.png", "black_bishop.png", "black_queen.png", "black_king.png", "black_bishop.png", "black_knight.png", "black_rook.png", "black_pawn.png" };
+        ImageSource NoPiece = "transparent.png";
         Boolean IsPlayerWhite = true;
         Boolean PlayerToMoveWhite = true;
         public MainPage()
@@ -39,6 +40,14 @@ namespace chessbot
             //sets up the pieces:
             ResetBoard();
             CalculateSquaresToEdge();
+            //---FOR TESTING---
+            PossibleMoves();
+            //---FOR TESTING---
+            Trace.WriteLine("helloo");
+            for (int i = 0; i < Moves.Count; i++)
+            {
+                Trace.WriteLine($"{i}: |" + string.Join(", ", Moves[i]) + "|");
+            }
         }
 
         private void ResetBoard()
@@ -65,10 +74,10 @@ namespace chessbot
                 {
                     AllSquares[i].Source = BlackPieces[i];
                     AllSquares[i + 8].Source = BlackPieces[8];
-                    AllSquares[i + 16].Source = "transparent.png";
-                    AllSquares[i + 24].Source = "transparent.png";
-                    AllSquares[i + 32].Source = "transparent.png";
-                    AllSquares[i + 40].Source = "transparent.png";
+                    AllSquares[i + 16].Source = NoPiece;
+                    AllSquares[i + 24].Source = NoPiece;
+                    AllSquares[i + 32].Source = NoPiece;
+                    AllSquares[i + 40].Source = NoPiece;
                     AllSquares[i + 48].Source = WhitePieces[8];
                     AllSquares[i + 56].Source = WhitePieces[i];
                 }
@@ -79,10 +88,10 @@ namespace chessbot
                 {
                     AllSquares[i].Source = WhitePieces[7-i];
                     AllSquares[i + 8].Source = WhitePieces[8];
-                    AllSquares[i + 16].Source = "transparent.png";
-                    AllSquares[i + 24].Source = "transparent.png";
-                    AllSquares[i + 32].Source = "transparent.png";
-                    AllSquares[i + 40].Source = "transparent.png";
+                    AllSquares[i + 16].Source = NoPiece;
+                    AllSquares[i + 24].Source = NoPiece;
+                    AllSquares[i + 32].Source = NoPiece;
+                    AllSquares[i + 40].Source = NoPiece;
                     AllSquares[i + 48].Source = BlackPieces[8];
                     AllSquares[i + 56].Source = BlackPieces[7-i];
                 }
@@ -233,7 +242,10 @@ namespace chessbot
         //-----CALCULATE POSSIBLE MOVES-----
 
         int[] DirectionOffsets = {8, 1, -8, -1, 9, -7, -9, 7};
-
+        Boolean IsKingNextTo = false;
+        //for castling:
+        Boolean HasWhiteKingMoved = false;
+        Boolean HasBlackKingMoved = false;
         public struct Move
         {
             ImageButton StartingSquare;
@@ -245,7 +257,7 @@ namespace chessbot
             }
         }
         List<Move> Moves = new List<Move>();
-        public List<Move> PossibleMoves()
+        private void PossibleMoves()
         {
             if (PlayerToMoveWhite == true)
             {
@@ -253,11 +265,22 @@ namespace chessbot
                 {
                     if (WhitePieces.Contains(AllSquares[i].Source))
                     {
-                        if (AllSquares[i].Source.Equals("white_pawn.png"))
+                        //WHITE PAWN
+                        if (AllSquares[i].Source == WhitePieces[8])
                         {
-
+                            if (IsPlayerWhite == true)
+                            {
+                                if ((SquaresToEdge[i][2] == 1))
+                                {
+                                    if ((AllSquares[i - 8].Source == NoPiece) && (AllSquares[i - 16].Source == NoPiece))
+                                    {
+                                        Moves.Add(new Move(AllSquares[i], AllSquares[i-16])); 
+                                    }
+                                }
+                            }
                         }
-                        else if (AllSquares[i].Source.Equals("white_rook.png"))
+                        //WHITE ROOK
+                        else if (AllSquares[i].Source == WhitePieces[0])
                         {
                             for (int j = 0; j < 4; j++)
                             {
@@ -277,7 +300,8 @@ namespace chessbot
                                 }
                             }
                         }
-                        else if (AllSquares[i].Source.Equals("white_bishop.png"))
+                        //WHITE BISHOP
+                        else if (AllSquares[i].Source == WhitePieces[2])
                         {
                             for (int j = 4; j < 8; j++)
                             {
@@ -297,7 +321,8 @@ namespace chessbot
                                 }
                             }
                         }
-                        else if (AllSquares[i].Source.Equals("white_queen.png"))
+                        //WHITE QUEEN
+                        else if (AllSquares[i].Source == WhitePieces[3])
                         {
                             for (int j = 0; j < 8; j++)
                             {
@@ -317,17 +342,43 @@ namespace chessbot
                                 }
                             }
                         }
-                        else if (AllSquares[i].Source.Equals("white_knight.png"))
+                        //WHITE KNIGHT
+                        else if (AllSquares[i].Source == WhitePieces[1])
                         {
 
                         }
-                        else if (AllSquares[i].Source.Equals("white_king.png"))
+                        //WHITE KING
+                        else if (AllSquares[i].Source == WhitePieces[4])
                         {
-
+                            //TODO: castleing (maybe haswhitekingmoved variable)
+                            for (int j = 0; j < 8; j++)
+                            {
+                                if ((SquaresToEdge[i][j] > 0))
+                                {
+                                    if (!(WhitePieces.Contains(AllSquares[i + DirectionOffsets[j]].Source)))
+                                    {
+                                        for (int k = 0; k < 8; k++)
+                                        {
+                                            if ((SquaresToEdge[i + DirectionOffsets[j]][k] > 0))
+                                            {
+                                                //check if the kings are next to each other:
+                                                if (AllSquares[i + DirectionOffsets[j] + DirectionOffsets[k]].Source == BlackPieces[4])
+                                                {
+                                                    IsKingNextTo = true; break;
+                                                }
+                                            }
+                                        }
+                                        if (IsKingNextTo == false)
+                                        {
+                                            Moves.Add(new Move(AllSquares[i], AllSquares[i + DirectionOffsets[j]]));
+                                        }
+                                        IsKingNextTo = false;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-                return Moves;
             }
             else
             {
@@ -335,8 +386,7 @@ namespace chessbot
                 {
 
                 }
-                return Moves;
-            }   
+            }
         }
     }
 
