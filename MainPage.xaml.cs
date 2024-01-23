@@ -6,6 +6,7 @@ namespace chessbot
     public partial class MainPage : ContentPage
     {
         ImageButton[] AllSquares = new ImageButton[64];
+        ImageSource[] Position = new ImageSource[64];
         ImageButton[] WhiteSquares = new ImageButton[32];
         ImageButton[] BlackSquares = new ImageButton[32];
         ImageSource[] WhitePieces = {"white_rook.png", "white_knight.png", "white_bishop.png", "white_queen.png", "white_king.png", "white_bishop.png", "white_knight.png", "white_rook.png", "white_pawn.png" };
@@ -49,7 +50,7 @@ namespace chessbot
             SelectedPiece = null;
             SelectedSquare = null;
             SelectedBefore = null;
-
+            PlayerToMoveWhite = true;
             for (int i = 0; i < 64; i++)
             {
                 if (WhiteSquares.Contains(AllSquares[i]))
@@ -66,37 +67,47 @@ namespace chessbot
                 for (int i = 0; i < 8; i++)
                 {
                     AllSquares[i].Source = BlackPieces[i];
+                    Position[i] = BlackPieces[i];
                     AllSquares[i + 8].Source = BlackPieces[8];
+                    Position[i + 8] = BlackPieces[8];
                     AllSquares[i + 16].Source = NoPiece;
+                    Position[i + 16] = NoPiece;
                     AllSquares[i + 24].Source = NoPiece;
+                    Position[i + 24] = NoPiece;
                     AllSquares[i + 32].Source = NoPiece;
+                    Position[i + 32] = NoPiece;
                     AllSquares[i + 40].Source = NoPiece;
+                    Position[i + 40] = NoPiece;
                     AllSquares[i + 48].Source = WhitePieces[8];
+                    Position[i + 48] = WhitePieces[8];
                     AllSquares[i + 56].Source = WhitePieces[i];
+                    Position[i + 56] = WhitePieces[i];
                 }
+                PossibleMoves();
             }
             else
             {
                 for (int i = 7; i >= 0; i--)
                 {
                     AllSquares[i].Source = WhitePieces[7-i];
+                    Position[i] = WhitePieces[7 - i];
                     AllSquares[i + 8].Source = WhitePieces[8];
+                    Position[i + 8] = WhitePieces[8];
                     AllSquares[i + 16].Source = NoPiece;
+                    Position[i + 16] = NoPiece;
                     AllSquares[i + 24].Source = NoPiece;
+                    Position[i + 24] = NoPiece;
                     AllSquares[i + 32].Source = NoPiece;
+                    Position[i + 32] = NoPiece;
                     AllSquares[i + 40].Source = NoPiece;
+                    Position[i + 40] = NoPiece;
                     AllSquares[i + 48].Source = BlackPieces[8];
+                    Position[i + 48] = BlackPieces[8];
                     AllSquares[i + 56].Source = BlackPieces[7-i];
+                    Position[i + 56] = BlackPieces[7 - i];
                 }
+                AIToMove();
             }
-            PlayerToMoveWhite = true;
-            PossibleMoves();
-            //---FOR TESTING---
-            //Trace.WriteLine("helloo");
-            //for (int i = 0; i < Moves.Count; i++)
-            //{
-            //    Trace.WriteLine($"{i}: |{Moves[i].StartingSquare.Id}, {Moves[i].TargetSquare.Id}|");
-            //}
         }
         private void ButtonResetClicked(object sender, EventArgs e)
         {
@@ -222,12 +233,71 @@ namespace chessbot
             SelectedBefore = SelectedSquare;
             SelectedSquare = currentButton;
             //checks if the selected move is in the Moves list:
-            bool pairExists = Moves.Any(move => move.StartingSquare == SelectedBefore && move.TargetSquare == SelectedSquare);
+            int selectedIndexBefore = -1;
+            int selectedIndexSquare = -1;
+
+            // Find the index of SelectedBefore
+            for (int i = 0; i < AllSquares.Count(); i++)
+            {
+                if (AllSquares[i] == SelectedBefore)
+                {
+                    selectedIndexBefore = i;
+                    break;
+                }
+            }
+            // Find the index of SelectedSquare
+            for (int i = 0; i < AllSquares.Count(); i++)
+            {
+                if (AllSquares[i] == SelectedSquare)
+                {
+                    selectedIndexSquare = i;
+                    break;
+                }
+            }
+            bool pairExists = Moves.Any(move => move.StartingSquare == selectedIndexBefore && move.TargetSquare == selectedIndexSquare);
 
             if (pairExists)
             {
+                //resets AI move color
+                if (WhiteSquares.Contains(AISelectedBefore))
+                {
+                    AISelectedBefore.BackgroundColor = Color.FromArgb("EEEED2");
+                }
+                else if (BlackSquares.Contains(AISelectedBefore))
+                {
+                    AISelectedBefore.BackgroundColor = Color.FromArgb("#769656");
+                }
+                if (WhiteSquares.Contains(AISelectedSquare))
+                {
+                    AISelectedSquare.BackgroundColor = Color.FromArgb("EEEED2");
+                }
+                else if (BlackSquares.Contains(AISelectedSquare))
+                {
+                    AISelectedSquare.BackgroundColor = Color.FromArgb("#769656");
+                }
+                //make move
+                for (int i = 0; i < AllSquares.Count(); i++)
+                {
+                    if (AllSquares[i] == SelectedBefore)
+                    {
+                        selectedIndexBefore = i;
+                        break;
+                    }
+                }
+                for (int i = 0; i < AllSquares.Count(); i++)
+                {
+                    if (AllSquares[i] == SelectedSquare)
+                    {
+                        selectedIndexSquare = i;
+                        break;
+                    }
+                }
+
+                Position[selectedIndexBefore] = NoPiece;
+                Position[selectedIndexSquare] = SelectedPiece;
                 SelectedBefore.Source = NoPiece;
                 SelectedSquare.Source = SelectedPiece;
+
                 if (WhiteSquares.Contains(SelectedSquare))
                 {
                     SelectedSquare.BackgroundColor = Color.FromArgb("#F4F680");
@@ -245,6 +315,7 @@ namespace chessbot
                 {
                     PlayerToMoveWhite = true;
                 }
+                AIToMove();
             }
             else
             {
@@ -271,9 +342,9 @@ namespace chessbot
         Boolean HasBlackKingMoved = false;
         public struct Move
         {
-            public ImageButton StartingSquare;
-            public ImageButton TargetSquare;
-            public Move(ImageButton startingSquare, ImageButton targetSquare)
+            public int StartingSquare;
+            public int TargetSquare;
+            public Move(int startingSquare, int targetSquare)
             {
                 StartingSquare = startingSquare;
                 TargetSquare = targetSquare;
@@ -287,39 +358,39 @@ namespace chessbot
             {
                 for (int i = 0; i < 64; i++)
                 {
-                    if (WhitePieces.Contains(AllSquares[i].Source))
+                    if (WhitePieces.Contains(Position[i]))
                     {
                         //WHITE PAWN
-                        if (AllSquares[i].Source == WhitePieces[8])
+                        if (Position[i] == WhitePieces[8])
                         {
                             if (IsPlayerWhite == true)
                             {
                                 //double pawn push:
                                 if ((SquaresToEdge[i][2] == 1))
                                 {
-                                    if ((AllSquares[i - 8].Source == NoPiece) && (AllSquares[i - 16].Source == NoPiece))
+                                    if ((Position[i - 8] == NoPiece) && (Position[i - 16] == NoPiece))
                                     {
-                                        Moves.Add(new Move(AllSquares[i], AllSquares[i-16])); 
+                                        Moves.Add(new Move(i, i-16)); 
                                     }
                                 }
                                 //!!!!!after someone moved with a pawn, we need to check if it's not in the first line, because it has to promote!!!!!!
-                                if (AllSquares[i-8].Source == NoPiece)
+                                if (Position[i-8] == NoPiece)
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i - 8]));
+                                    Moves.Add(new Move(i, i - 8));
                                 }
                                 //pawn takes:
                                 if (SquaresToEdge[i][3] > 0)
                                 {
-                                    if (BlackPieces.Contains(AllSquares[i-9].Source))
+                                    if (BlackPieces.Contains(Position[i - 9]))
                                     {
-                                        Moves.Add(new Move(AllSquares[i], AllSquares[i - 9]));
+                                        Moves.Add(new Move(i, i - 9));
                                     }
                                 }
                                 if (SquaresToEdge[i][1] > 0)
                                 {
-                                    if (BlackPieces.Contains(AllSquares[i - 7].Source))
+                                    if (BlackPieces.Contains(Position[i - 7]))
                                     {
-                                        Moves.Add(new Move(AllSquares[i], AllSquares[i - 7]));
+                                        Moves.Add(new Move(i, i - 7));
                                     }
                                 }
                             }
@@ -328,48 +399,48 @@ namespace chessbot
                                 //double pawn push:
                                 if ((SquaresToEdge[i][0] == 1))
                                 {
-                                    if ((AllSquares[i + 8].Source == NoPiece) && (AllSquares[i + 16].Source == NoPiece))
+                                    if ((Position[i + 8] == NoPiece) && (Position[i + 16] == NoPiece))
                                     {
-                                        Moves.Add(new Move(AllSquares[i], AllSquares[i + 16]));
+                                        Moves.Add(new Move(i, i + 16));
                                     }
                                 }
                                 //!!!!!after someone moved with a pawn, we need to check if it's not in the first line, because it has to promote!!!!!!
-                                if (AllSquares[i + 8].Source == NoPiece)
+                                if (Position[i + 8] == NoPiece)
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + 8]));
+                                    Moves.Add(new Move(i, i + 8));
                                 }
                                 //pawn takes:
                                 if (SquaresToEdge[i][3] > 0)
                                 {
-                                    if (BlackPieces.Contains(AllSquares[i +7].Source))
+                                    if (BlackPieces.Contains(Position[i + 7]))
                                     {
-                                        Moves.Add(new Move(AllSquares[i], AllSquares[i + 7]));
+                                        Moves.Add(new Move(i, i + 7));
                                     }
                                 }
                                 if (SquaresToEdge[i][1] > 0)
                                 {
-                                    if (BlackPieces.Contains(AllSquares[i + 9].Source))
+                                    if (BlackPieces.Contains(Position[i + 9]))
                                     {
-                                        Moves.Add(new Move(AllSquares[i], AllSquares[i + 9]));
+                                        Moves.Add(new Move(i, i + 9));
                                     }
                                 }
                             }
                         }
                         //WHITE ROOK
-                        else if (AllSquares[i].Source == WhitePieces[0] || AllSquares[i].Source == WhitePieces[7])
+                        else if (Position[i] == WhitePieces[0] || Position[i] == WhitePieces[7])
                         {
                             for (int j = 0; j < 4; j++)
                             {
                                 for (int k = 0; k < SquaresToEdge[i][j]; k++)
                                 {
-                                    if (WhitePieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    if (WhitePieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
                                         break;
                                     }
 
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + ((k+1) * DirectionOffsets[j])]));
+                                    Moves.Add(new Move(i, i + ((k + 1) * DirectionOffsets[j])));
 
-                                    if (BlackPieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    if (BlackPieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
                                         break;
                                     }
@@ -377,20 +448,20 @@ namespace chessbot
                             }
                         }
                         //WHITE BISHOP
-                        else if (AllSquares[i].Source == WhitePieces[2] || AllSquares[i].Source == WhitePieces[5])
+                        else if (Position[i] == WhitePieces[2] || Position[i] == WhitePieces[5])
                         {
                             for (int j = 4; j < 8; j++)
                             {
                                 for (int k = 0; k < SquaresToEdge[i][j]; k++)
                                 {
-                                    if (WhitePieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    if (WhitePieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
                                         break;
                                     }
 
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + ((k + 1) * DirectionOffsets[j])]));
+                                    Moves.Add(new Move(i, i + ((k + 1) * DirectionOffsets[j])));
 
-                                    if (BlackPieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    if (BlackPieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
                                         break;
                                     }
@@ -398,20 +469,20 @@ namespace chessbot
                             }
                         }
                         //WHITE QUEEN
-                        else if (AllSquares[i].Source == WhitePieces[3])
+                        else if (Position[i] == WhitePieces[3])
                         {
                             for (int j = 0; j < 8; j++)
                             {
                                 for (int k = 0; k < SquaresToEdge[i][j]; k++)
                                 {
-                                    if (WhitePieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    if (WhitePieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
                                         break;
                                     }
 
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + ((k + 1) * DirectionOffsets[j])]));
+                                    Moves.Add(new Move(i, i + ((k + 1) * DirectionOffsets[j])));
 
-                                    if (BlackPieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    if (BlackPieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
                                         break;
                                     }
@@ -419,82 +490,82 @@ namespace chessbot
                             }
                         }
                         //WHITE KNIGHT
-                        else if (AllSquares[i].Source == WhitePieces[1] || AllSquares[i].Source == WhitePieces[6])
+                        else if (Position[i] == WhitePieces[1] || Position[i] == WhitePieces[6])
                         {
                             //8 if, 8 possible move
                             if (SquaresToEdge[i][0] >= 2 && SquaresToEdge[i][1] >= 1)
                             {
-                                if (!(WhitePieces.Contains(AllSquares[i-15].Source)))
+                                if (!(WhitePieces.Contains(Position[i - 15])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i-15]));
+                                    Moves.Add(new Move(i, i - 15));
                                 }
                             }
                             if (SquaresToEdge[i][0] >= 1 && SquaresToEdge[i][1] >= 2)
                             {
-                                if (!(WhitePieces.Contains(AllSquares[i - 6].Source)))
+                                if (!(WhitePieces.Contains(Position[i - 6])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i - 6]));
+                                    Moves.Add(new Move(i, i - 6));
                                 }
                             }
                             if (SquaresToEdge[i][1] >= 2 && SquaresToEdge[i][2] >= 1)
                             {
-                                if (!(WhitePieces.Contains(AllSquares[i + 10].Source)))
+                                if (!(WhitePieces.Contains(Position[i + 10])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + 10]));
+                                    Moves.Add(new Move(i, i + 10));
                                 }
                             }
                             if (SquaresToEdge[i][1] >= 1 && SquaresToEdge[i][2] >= 2)
                             {
-                                if (!(WhitePieces.Contains(AllSquares[i + 17].Source)))
+                                if (!(WhitePieces.Contains(Position[i + 17])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + 17]));
+                                    Moves.Add(new Move(i, i + 17));
                                 }
                             }
                             if (SquaresToEdge[i][3] >= 1 && SquaresToEdge[i][2] >= 2)
                             {
-                                if (!(WhitePieces.Contains(AllSquares[i + 15].Source)))
+                                if (!(WhitePieces.Contains(Position[i + 15])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + 15]));
+                                    Moves.Add(new Move(i, i + 15));
                                 }
                             }
                             if (SquaresToEdge[i][3] >= 2 && SquaresToEdge[i][2] >= 1)
                             {
-                                if (!(WhitePieces.Contains(AllSquares[i + 6].Source)))
+                                if (!(WhitePieces.Contains(Position[i + 6])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + 6]));
+                                    Moves.Add(new Move(i, i + 6));
                                 }
                             }
                             if (SquaresToEdge[i][3] >= 2 && SquaresToEdge[i][0] >= 1)
                             {
-                                if (!(WhitePieces.Contains(AllSquares[i - 10].Source)))
+                                if (!(WhitePieces.Contains(Position[i - 10])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i - 10]));
+                                    Moves.Add(new Move(i, i - 10));
                                 }
                             }
                             if (SquaresToEdge[i][3] >= 1 && SquaresToEdge[i][0] >= 2)
                             {
-                                if (!(WhitePieces.Contains(AllSquares[i - 17].Source)))
+                                if (!(WhitePieces.Contains(Position[i - 17])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i - 17]));
+                                    Moves.Add(new Move(i, i - 17));
                                 }
                             }
                         }
                         //WHITE KING
-                        else if (AllSquares[i].Source == WhitePieces[4])
+                        else if (Position[i] == WhitePieces[4])
                         {
                             //TODO: castleing (maybe haswhitekingmoved variable)
                             for (int j = 0; j < 8; j++)
                             {
                                 if ((SquaresToEdge[i][j] > 0))
                                 {
-                                    if (!(WhitePieces.Contains(AllSquares[i + DirectionOffsets[j]].Source)))
+                                    if (!(WhitePieces.Contains(Position[i + DirectionOffsets[j]])))
                                     {
                                         for (int k = 0; k < 8; k++)
                                         {
                                             if ((SquaresToEdge[i + DirectionOffsets[j]][k] > 0))
                                             {
                                                 //check if the kings are next to each other:
-                                                if (AllSquares[i + DirectionOffsets[j] + DirectionOffsets[k]].Source == BlackPieces[4])
+                                                if (Position[i + DirectionOffsets[j] + DirectionOffsets[k]] == BlackPieces[4])
                                                 {
                                                     IsKingNextTo = true; break;
                                                 }
@@ -502,7 +573,7 @@ namespace chessbot
                                         }
                                         if (IsKingNextTo == false)
                                         {
-                                            Moves.Add(new Move(AllSquares[i], AllSquares[i + DirectionOffsets[j]]));
+                                            Moves.Add(new Move(i, i + DirectionOffsets[j]));
                                         }
                                         IsKingNextTo = false;
                                     }
@@ -516,39 +587,39 @@ namespace chessbot
             {
                 for (int i = 0; i < 64; i++)
                 {
-                    if (BlackPieces.Contains(AllSquares[i].Source))
+                    if (BlackPieces.Contains(Position[i]))
                     {
                         //BLACK PAWN
-                        if (AllSquares[i].Source == BlackPieces[8])
+                        if (Position[i] == BlackPieces[8])
                         {
                             if (IsPlayerWhite == false)
                             {
                                 //double pawn push:
                                 if ((SquaresToEdge[i][2] == 1))
                                 {
-                                    if ((AllSquares[i - 8].Source == NoPiece) && (AllSquares[i - 16].Source == NoPiece))
+                                    if ((Position[i - 8] == NoPiece) && (Position[i - 16] == NoPiece))
                                     {
-                                        Moves.Add(new Move(AllSquares[i], AllSquares[i - 16]));
+                                        Moves.Add(new Move(i, i - 16));
                                     }
                                 }
                                 //!!!!!after someone moved with a pawn, we need to check if it's not in the first line, because it has to promote!!!!!!
-                                if (AllSquares[i - 8].Source == NoPiece)
+                                if (Position[i - 8] == NoPiece)
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i - 8]));
+                                    Moves.Add(new Move(i, i - 8));
                                 }
                                 //pawn takes:
                                 if (SquaresToEdge[i][3] > 0)
                                 {
-                                    if (WhitePieces.Contains(AllSquares[i - 9].Source))
+                                    if (WhitePieces.Contains(Position[i - 9]))
                                     {
-                                        Moves.Add(new Move(AllSquares[i], AllSquares[i - 9]));
+                                        Moves.Add(new Move(i, i - 9));
                                     }
                                 }
                                 if (SquaresToEdge[i][1] > 0)
                                 {
-                                    if (WhitePieces.Contains(AllSquares[i - 7].Source))
+                                    if (WhitePieces.Contains(Position[i - 7]))
                                     {
-                                        Moves.Add(new Move(AllSquares[i], AllSquares[i - 7]));
+                                        Moves.Add(new Move(i, i - 7));
                                     }
                                 }
                             }
@@ -557,48 +628,48 @@ namespace chessbot
                                 //double pawn push:
                                 if ((SquaresToEdge[i][0] == 1))
                                 {
-                                    if ((AllSquares[i + 8].Source == NoPiece) && (AllSquares[i + 16].Source == NoPiece))
+                                    if ((Position[i + 8] == NoPiece) && (Position[i + 16] == NoPiece))
                                     {
-                                        Moves.Add(new Move(AllSquares[i], AllSquares[i + 16]));
+                                        Moves.Add(new Move(i, i + 16));
                                     }
                                 }
                                 //!!!!!after someone moved with a pawn, we need to check if it's not in the first line, because it has to promote!!!!!!
-                                if (AllSquares[i + 8].Source == NoPiece)
+                                if (Position[i + 8] == NoPiece)
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + 8]));
+                                    Moves.Add(new Move(i, i + 8));
                                 }
                                 //pawn takes:
                                 if (SquaresToEdge[i][3] > 0)
                                 {
-                                    if (WhitePieces.Contains(AllSquares[i + 7].Source))
+                                    if (WhitePieces.Contains(Position[i + 7]))
                                     {
-                                        Moves.Add(new Move(AllSquares[i], AllSquares[i + 7]));
+                                        Moves.Add(new Move(i, i + 7));
                                     }
                                 }
                                 if (SquaresToEdge[i][1] > 0)
                                 {
-                                    if (WhitePieces.Contains(AllSquares[i + 9].Source))
+                                    if (WhitePieces.Contains(Position[i + 9]))
                                     {
-                                        Moves.Add(new Move(AllSquares[i], AllSquares[i + 9]));
+                                        Moves.Add(new Move(i, i + 9));
                                     }
                                 }
                             }
                         }
                         //BLACK ROOK
-                        else if (AllSquares[i].Source == BlackPieces[0] || AllSquares[i].Source == BlackPieces[7])
+                        else if (Position[i] == BlackPieces[0] || Position[i] == BlackPieces[7])
                         {
                             for (int j = 0; j < 4; j++)
                             {
                                 for (int k = 0; k < SquaresToEdge[i][j]; k++)
                                 {
-                                    if (BlackPieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    if (BlackPieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
                                         break;
                                     }
 
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + ((k + 1) * DirectionOffsets[j])]));
+                                    Moves.Add(new Move(i, i + ((k + 1) * DirectionOffsets[j])));
 
-                                    if (WhitePieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    if (WhitePieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
                                         break;
                                     }
@@ -606,20 +677,20 @@ namespace chessbot
                             }
                         }
                         //BLACK BISHOP
-                        else if (AllSquares[i].Source == BlackPieces[2] || AllSquares[i].Source == BlackPieces[5])
+                        else if (Position[i] == BlackPieces[2] || Position[i] == BlackPieces[5])
                         {
                             for (int j = 4; j < 8; j++)
                             {
                                 for (int k = 0; k < SquaresToEdge[i][j]; k++)
                                 {
-                                    if (BlackPieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    if (BlackPieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
                                         break;
                                     }
 
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + ((k + 1) * DirectionOffsets[j])]));
+                                    Moves.Add(new Move(i, i + ((k + 1) * DirectionOffsets[j])));
 
-                                    if (WhitePieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    if (WhitePieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
                                         break;
                                     }
@@ -627,20 +698,20 @@ namespace chessbot
                             }
                         }
                         //BLACK QUEEN
-                        else if (AllSquares[i].Source == BlackPieces[3])
+                        else if (Position[i] == BlackPieces[3])
                         {
                             for (int j = 0; j < 8; j++)
                             {
                                 for (int k = 0; k < SquaresToEdge[i][j]; k++)
                                 {
-                                    if (BlackPieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    if (BlackPieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
                                         break;
                                     }
 
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + ((k + 1) * DirectionOffsets[j])]));
+                                    Moves.Add(new Move(i, i + ((k + 1) * DirectionOffsets[j])));
 
-                                    if (WhitePieces.Contains(AllSquares[i + ((k + 1) * DirectionOffsets[j])].Source))
+                                    if (WhitePieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
                                         break;
                                     }
@@ -648,82 +719,82 @@ namespace chessbot
                             }
                         }
                         //BLACK KNIGHT
-                        else if (AllSquares[i].Source == BlackPieces[1] || AllSquares[i].Source == BlackPieces[6])
+                        else if (Position[i] == BlackPieces[1] || Position[i] == BlackPieces[6])
                         {
                             //8 if, 8 possible move
                             if (SquaresToEdge[i][0] >= 2 && SquaresToEdge[i][1] >= 1)
                             {
-                                if (!(BlackPieces.Contains(AllSquares[i - 15].Source)))
+                                if (!(BlackPieces.Contains(Position[i - 15])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i - 15]));
+                                    Moves.Add(new Move(i, i - 15));
                                 }
                             }
                             if (SquaresToEdge[i][0] >= 1 && SquaresToEdge[i][1] >= 2)
                             {
-                                if (!(BlackPieces.Contains(AllSquares[i - 6].Source)))
+                                if (!(BlackPieces.Contains(Position[i - 6])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i - 6]));
+                                    Moves.Add(new Move(i, i - 6));
                                 }
                             }
                             if (SquaresToEdge[i][1] >= 2 && SquaresToEdge[i][2] >= 1)
                             {
-                                if (!(BlackPieces.Contains(AllSquares[i + 10].Source)))
+                                if (!(BlackPieces.Contains(Position[i + 10])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + 10]));
+                                    Moves.Add(new Move(i, i + 10));
                                 }
                             }
                             if (SquaresToEdge[i][1] >= 1 && SquaresToEdge[i][2] >= 2)
                             {
-                                if (!(BlackPieces.Contains(AllSquares[i + 17].Source)))
+                                if (!(BlackPieces.Contains(Position[i + 17])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + 17]));
+                                    Moves.Add(new Move(i, i + 17));
                                 }
                             }
                             if (SquaresToEdge[i][3] >= 1 && SquaresToEdge[i][2] >= 2)
                             {
-                                if (!(BlackPieces.Contains(AllSquares[i + 15].Source)))
+                                if (!(BlackPieces.Contains(Position[i + 15])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + 15]));
+                                    Moves.Add(new Move(i, i + 15));
                                 }
                             }
                             if (SquaresToEdge[i][3] >= 2 && SquaresToEdge[i][2] >= 1)
                             {
-                                if (!(BlackPieces.Contains(AllSquares[i + 6].Source)))
+                                if (!(BlackPieces.Contains(Position[i + 6])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i + 6]));
+                                    Moves.Add(new Move(i, i + 6));
                                 }
                             }
                             if (SquaresToEdge[i][3] >= 2 && SquaresToEdge[i][0] >= 1)
                             {
-                                if (!(BlackPieces.Contains(AllSquares[i - 10].Source)))
+                                if (!(BlackPieces.Contains(Position[i - 10])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i - 10]));
+                                    Moves.Add(new Move(i, i - 10));
                                 }
                             }
                             if (SquaresToEdge[i][3] >= 1 && SquaresToEdge[i][0] >= 2)
                             {
-                                if (!(BlackPieces.Contains(AllSquares[i - 17].Source)))
+                                if (!(BlackPieces.Contains(Position[i - 17])))
                                 {
-                                    Moves.Add(new Move(AllSquares[i], AllSquares[i - 17]));
+                                    Moves.Add(new Move(i, i - 17));
                                 }
                             }
                         }
                         //BLACK KING
-                        else if (AllSquares[i].Source == BlackPieces[4])
+                        else if (Position[i] == BlackPieces[4])
                         {
                             //TODO: castleing (maybe haswhitekingmoved variable)
                             for (int j = 0; j < 8; j++)
                             {
                                 if ((SquaresToEdge[i][j] > 0))
                                 {
-                                    if (!(BlackPieces.Contains(AllSquares[i + DirectionOffsets[j]].Source)))
+                                    if (!(BlackPieces.Contains(Position[i + DirectionOffsets[j]])))
                                     {
                                         for (int k = 0; k < 8; k++)
                                         {
                                             if ((SquaresToEdge[i + DirectionOffsets[j]][k] > 0))
                                             {
                                                 //check if the kings are next to each other:
-                                                if (AllSquares[i + DirectionOffsets[j] + DirectionOffsets[k]].Source == WhitePieces[4])
+                                                if (Position[i + DirectionOffsets[j] + DirectionOffsets[k]] == WhitePieces[4])
                                                 {
                                                     IsKingNextTo = true; break;
                                                 }
@@ -731,7 +802,7 @@ namespace chessbot
                                         }
                                         if (IsKingNextTo == false)
                                         {
-                                            Moves.Add(new Move(AllSquares[i], AllSquares[i + DirectionOffsets[j]]));
+                                            Moves.Add(new Move(i, i + DirectionOffsets[j]));
                                         }
                                         IsKingNextTo = false;
                                     }
@@ -741,6 +812,95 @@ namespace chessbot
                     }
                 }
             }
+            //---FOR TESTING---
+            for (int i = 0; i < Moves.Count; i++)
+            {
+                Trace.WriteLine($"{i}: |{Moves[i].StartingSquare}, {Moves[i].TargetSquare}|");
+            }
+        }
+        ImageButton AISelectedBefore = null;
+        ImageButton AISelectedSquare = null;
+        ImageSource AISelectedPiece = null;
+        int AIselectedIndexBefore = -1;
+        int AIselectedIndexSquare = -1;
+        private void AIToMove()
+        {
+            PossibleMoves();
+            //Select a random move:
+            Random random = new Random();
+            int CurrentRan = random.Next(0, Moves.Count);
+            
+            AISelectedBefore = AllSquares[Moves[CurrentRan].StartingSquare];
+            AISelectedPiece = AllSquares[Moves[CurrentRan].StartingSquare].Source;
+            AISelectedSquare = AllSquares[Moves[CurrentRan].TargetSquare];
+            //reset player move:
+            if (WhiteSquares.Contains(SelectedBefore))
+            {
+                SelectedBefore.BackgroundColor = Color.FromArgb("EEEED2");
+            }
+            else if (BlackSquares.Contains(SelectedBefore))
+            {
+                SelectedBefore.BackgroundColor = Color.FromArgb("#769656");
+            }
+            if (WhiteSquares.Contains(SelectedSquare))
+            {
+                SelectedSquare.BackgroundColor = Color.FromArgb("EEEED2");
+            }
+            else if (BlackSquares.Contains(SelectedSquare))
+            {
+                SelectedSquare.BackgroundColor = Color.FromArgb("#769656");
+            }
+            //make AI move:
+            if (WhiteSquares.Contains(AISelectedBefore))
+            {
+                AISelectedBefore.BackgroundColor = Color.FromArgb("#F4F680");
+            }
+            else
+            {
+                AISelectedBefore.BackgroundColor = Color.FromArgb("#BBCC44");
+            }
+            if (WhiteSquares.Contains(AISelectedSquare))
+            {
+                AISelectedSquare.BackgroundColor = Color.FromArgb("#F4F680");
+            }
+            else
+            {
+                AISelectedSquare.BackgroundColor = Color.FromArgb("#BBCC44");
+            }
+
+            for (int i = 0; i < AllSquares.Count(); i++)
+            {
+                if (AllSquares[i] == AISelectedBefore)
+                {
+                    AIselectedIndexBefore = i;
+                    break;
+                }
+            }
+            for (int i = 0; i < AllSquares.Count(); i++)
+            {
+                if (AllSquares[i] == AISelectedSquare)
+                {
+                    AIselectedIndexSquare = i;
+                    break;
+                }
+            }
+
+            Position[AIselectedIndexBefore] = NoPiece;
+            Position[AIselectedIndexSquare] = AISelectedPiece;
+            AISelectedBefore.Source = NoPiece;
+            AISelectedSquare.Source = AISelectedPiece;
+
+            if (IsPlayerWhite == true)
+            {
+                PlayerToMoveWhite = true;
+            }
+            else
+            {
+                PlayerToMoveWhite = false;
+            }
+
+            //At the end after everything is set so that it's the player's turn, we need to run possiblemoves again for the other color:
+            PossibleMoves();
         }
     }
 
