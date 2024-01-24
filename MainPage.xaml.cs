@@ -50,6 +50,9 @@ namespace chessbot
             SelectedPiece = null;
             SelectedSquare = null;
             SelectedBefore = null;
+            AISelectedPiece = null;
+            AISelectedBefore = null;
+            AISelectedSquare = null;
             PlayerToMoveWhite = true;
             for (int i = 0; i < 64; i++)
             {
@@ -196,11 +199,12 @@ namespace chessbot
             }
         }
 
+        //visual:  ---DONE---
         private void PlayerMovesStartingSquare()
         {
             if (WhiteSquares.Contains(SelectedBefore))
             {
-                SelectedBefore.BackgroundColor = Color.FromArgb("EEEED2");
+                SelectedBefore.BackgroundColor = Color.FromArgb("#EEEED2");
             }
             else if (BlackSquares.Contains(SelectedBefore))
             {
@@ -208,12 +212,46 @@ namespace chessbot
             }
             if (WhiteSquares.Contains(SelectedSquare))
             {
-                SelectedSquare.BackgroundColor = Color.FromArgb("EEEED2");
+                SelectedSquare.BackgroundColor = Color.FromArgb("#EEEED2");
             }
             else if (BlackSquares.Contains(SelectedSquare))
             {
                 SelectedSquare.BackgroundColor = Color.FromArgb("#769656");
             }
+            for (int i = 0; i < Moves.Count; i++)
+            {
+                if (AllSquares[Moves[i].StartingSquare] == SelectedSquare)
+                {
+                    if (WhiteSquares.Contains(AllSquares[Moves[i].TargetSquare]))
+                    {
+                        AllSquares[Moves[i].TargetSquare].BackgroundColor = Color.FromArgb("#EEEED2");
+                    }
+                    else
+                    {
+                        AllSquares[Moves[i].TargetSquare].BackgroundColor = Color.FromArgb("#769656");
+                    }
+                }
+            }
+            if (AISelectedBefore != null)
+            {
+                if (WhiteSquares.Contains(AISelectedBefore))
+                {
+                    AISelectedBefore.BackgroundColor = Color.FromArgb("#F4F680");
+                }
+                else
+                {
+                    AISelectedBefore.BackgroundColor = Color.FromArgb("#BBCC44");
+                }
+                if (WhiteSquares.Contains(AISelectedSquare))
+                {
+                    AISelectedSquare.BackgroundColor = Color.FromArgb("#F4F680");
+                }
+                else
+                {
+                    AISelectedSquare.BackgroundColor = Color.FromArgb("#BBCC44");
+                }
+            }
+            
 
             SelectedSquare = currentButton;
             SelectedPiece = currentButton.Source;
@@ -227,15 +265,28 @@ namespace chessbot
             {
                 SelectedSquare.BackgroundColor = Color.FromArgb("#BBCC44");
             }
+            for (int i = 0; i < Moves.Count; i++)
+            {
+                if (AllSquares[Moves[i].StartingSquare] == SelectedSquare)
+                {
+                    if (WhiteSquares.Contains(AllSquares[Moves[i].TargetSquare]))
+                    {
+                        AllSquares[Moves[i].TargetSquare].BackgroundColor = Color.FromArgb("#EB7D69");
+                    }
+                    else
+                    {
+                        AllSquares[Moves[i].TargetSquare].BackgroundColor = Color.FromArgb("#D46D51");
+                    }
+                }
+            }
         }
+        public int selectedIndexBefore = -1;
+        public int selectedIndexSquare = -1;
         private void PlayerMovesTargetSquare(Boolean TempPlayerWhiteMoves)
         {
             SelectedBefore = SelectedSquare;
             SelectedSquare = currentButton;
             //checks if the selected move is in the Moves list:
-            int selectedIndexBefore = -1;
-            int selectedIndexSquare = -1;
-
             // Find the index of SelectedBefore
             for (int i = 0; i < AllSquares.Count(); i++)
             {
@@ -297,7 +348,20 @@ namespace chessbot
                 Position[selectedIndexSquare] = SelectedPiece;
                 SelectedBefore.Source = NoPiece;
                 SelectedSquare.Source = SelectedPiece;
-
+                for (int i = 0; i < Moves.Count; i++)
+                {
+                    if (AllSquares[Moves[i].StartingSquare] == SelectedBefore)
+                    {
+                        if (WhiteSquares.Contains(AllSquares[Moves[i].TargetSquare]))
+                        {
+                            AllSquares[Moves[i].TargetSquare].BackgroundColor = Color.FromArgb("#EEEED2");
+                        }
+                        else
+                        {
+                            AllSquares[Moves[i].TargetSquare].BackgroundColor = Color.FromArgb("#769656");
+                        }
+                    }
+                }
                 if (WhiteSquares.Contains(SelectedSquare))
                 {
                     SelectedSquare.BackgroundColor = Color.FromArgb("#F4F680");
@@ -326,6 +390,39 @@ namespace chessbot
                 else if (BlackSquares.Contains(SelectedBefore))
                 {
                     SelectedBefore.BackgroundColor = Color.FromArgb("#769656");
+                }
+                for (int i = 0; i < Moves.Count; i++)
+                {
+                    if (AllSquares[Moves[i].StartingSquare] == SelectedBefore)
+                    {
+                        if (WhiteSquares.Contains(AllSquares[Moves[i].TargetSquare]))
+                        {
+                            AllSquares[Moves[i].TargetSquare].BackgroundColor = Color.FromArgb("#EEEED2");
+                        }
+                        else
+                        {
+                            AllSquares[Moves[i].TargetSquare].BackgroundColor = Color.FromArgb("#769656");
+                        }
+                    }
+                }
+                if (AISelectedBefore != null)
+                {
+                    if (WhiteSquares.Contains(AISelectedBefore))
+                    {
+                        AISelectedBefore.BackgroundColor = Color.FromArgb("#F4F680");
+                    }
+                    else
+                    {
+                        AISelectedBefore.BackgroundColor = Color.FromArgb("#BBCC44");
+                    }
+                    if (WhiteSquares.Contains(AISelectedSquare))
+                    {
+                        AISelectedSquare.BackgroundColor = Color.FromArgb("#F4F680");
+                    }
+                    else
+                    {
+                        AISelectedSquare.BackgroundColor = Color.FromArgb("#BBCC44");
+                    }
                 }
             }
         }
