@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              BackgroundColor="#292929"
              NavigationPage.HasNavigationBar="False"
              Title=""
@@ -9,11 +10,11 @@
     <ScrollView>
         <Grid Padding="0" ColumnSpacing="0" RowSpacing="0">
             <Grid.RowDefinitions>
-                
+
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="6"></RowDefinition>
                 <!--Next Row is the First Row Of The Chessboard-->
-                
+
                 <RowDefinition Height="45"></RowDefinition>
                 <RowDefinition Height="45"></RowDefinition>
                 <RowDefinition Height="45"></RowDefinition>
@@ -22,14 +23,14 @@
                 <RowDefinition Height="45"></RowDefinition>
                 <RowDefinition Height="45"></RowDefinition>
                 <RowDefinition Height="45"></RowDefinition>
-                
+
                 <!--End of Chessboard-->
                 <RowDefinition Height="6"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
-                
+
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                
+
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="6"></ColumnDefinition>
                 <!--Next Column is the First Column Of The Chessboard-->
@@ -46,7 +47,7 @@
                 <!--End of Chessboard-->
                 <ColumnDefinition Width="6"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
-                
+
             </Grid.ColumnDefinitions>
 
             <!--Setting The border Around The Table-->
@@ -136,8 +137,9 @@
                 <Button x:Name="btnReset" Margin="10" BackgroundColor="#242424" TextColor="White" Text="Reset" Clicked="ButtonResetClicked"></Button>
                 <Button x:Name="btnFlipBoard" Margin="10" BackgroundColor="#242424" TextColor="White" Text="Flip Board" Clicked="FlipBoard"></Button>
             </StackLayout>
-            
+            <toolkit:MediaElement x:Name="MoveSound" IsVisible="false" Source="embed://move-self.mp3" />
+            <toolkit:MediaElement x:Name="CaptureSound" IsVisible="false" Source="embed://capture.mp3" />
+            <toolkit:MediaElement x:Name="MateSound" IsVisible="false" Source="embed://game-end.mp3" />
         </Grid>
     </ScrollView>
-
 </ContentPage>

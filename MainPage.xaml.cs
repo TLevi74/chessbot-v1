@@ -344,6 +344,14 @@ namespace chessbot
                     }
                 }
 
+                if (Position[selectedIndexSquare] == NoPiece)
+                {
+                    MoveSound.Play();
+                }
+                else
+                {
+                    CaptureSound.Play();
+                }
                 Position[selectedIndexBefore] = NoPiece;
                 Position[selectedIndexSquare] = SelectedPiece;
                 SelectedBefore.Source = NoPiece;
@@ -1029,6 +1037,14 @@ namespace chessbot
                 }
             }
 
+            if (Position[AIselectedIndexSquare] == NoPiece)
+            {
+                MoveSound.Play();
+            }
+            else
+            {
+                CaptureSound.Play();
+            }
             Position[AIselectedIndexBefore] = NoPiece;
             Position[AIselectedIndexSquare] = AISelectedPiece;
             AISelectedBefore.Source = NoPiece;
