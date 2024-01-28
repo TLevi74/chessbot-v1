@@ -46,6 +46,7 @@ namespace chessbot
 
         private void ResetBoard()
         {
+            btnReset.Text = "Reset";
             HasPlayerSelectedFromSquare = false;
             SelectedPiece = null;
             SelectedSquare = null;
@@ -928,7 +929,7 @@ namespace chessbot
             return TempMoves;
         }
 
-        private void GenerateMoves()
+        private bool GenerateMoves()
         {
             Moves.Clear();
             CurrentColorMoves = new List<Move>(PossibleMoves());
@@ -951,6 +952,51 @@ namespace chessbot
                     }
                 }
                 UnmakeMove(i);
+            }
+            //end of match:
+            if (Moves.Count == 0)
+            {
+                PlayerToMoveWhite = !PlayerToMoveWhite;
+                OpponentMoves = new List<Move>(PossibleMoves());
+                PlayerToMoveWhite = !PlayerToMoveWhite;
+                if (PlayerToMoveWhite == true)
+                {
+                    if (OpponentMoves.Any(move => Position[move.TargetSquare] == WhitePieces[4]))
+                    {
+                        //checkmate:
+                        MateSound.Play();
+                        btnReset.Text = "CHECKMATE!";
+                        return false;
+                    }
+                    else
+                    {
+                        //stalemate:
+                        MateSound.Play();
+                        btnReset.Text = "STALEMATE!";
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (OpponentMoves.Any(move => Position[move.TargetSquare] == BlackPieces[4]))
+                    {
+                        //checkmate:
+                        MateSound.Play();
+                        btnReset.Text = "CHECKMATE!";
+                        return false;
+                    }
+                    else
+                    {
+                        //stalemate:
+                        MateSound.Play();
+                        btnReset.Text = "STALEMATE!";
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                return true;
             }
         }
         ImageSource TempTargetSquareSource = null;
@@ -977,7 +1023,11 @@ namespace chessbot
         int AIselectedIndexSquare = -1;
         private void AIToMove()
         {
-            GenerateMoves();
+            if (GenerateMoves() == false)
+            {
+                // The condition was met, so exit the function
+                return;
+            }
             //Select a random move:
             Random random = new Random();
             int CurrentRan = random.Next(0, Moves.Count);
