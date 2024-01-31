@@ -9,7 +9,7 @@ namespace chessbot
         int[] PieceValues = {100, 320, 330, 500, 900};
         int[] P2M_PawnExtraValues = {0, 0, 0, 0, 0, 0, 0, 0, 50, 50, 50, 50, 50, 50, 50, 50, 10, 10, 20, 30, 30, 20, 10, 10, 5, 5, 10, 25, 25, 10, 5, 5, 0, 0, 0, 20, 20, 0, 0, 0, 5, -5, -10, 0, 0, -10, -5, 5, 5, 10, 10, -20, -20, 10, 10, 5, 0, 0, 0, 0, 0, 0, 0, 0};
         int[] AI2M_PawnExtraValues = {0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 10, -20, -20, 10, 10, 5, 5, -5, -10, 0, 0, -10, -5, 5, 0, 0, 0, 20, 20, 0, 0, 0, 5, 5, 10, 25, 25, 10, 5, 5, 10, 10, 20, 30, 30, 20, 10, 10, 50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 0, 0, 0, 0, 0, 0};
-        int[] KnightExtraValues = {-50,-40,-30,-30,-30,-30,-40,-50, -40,-20,  0,  0,  0,  0,-20,-40, -30,  0, 10, 15, 15, 10,  0,-30, -30,  5, 15, 20, 20, 15,  5,-30, -30,  0, 15, 20, 20, 15,  0,-30, -30,  5, 10, 15, 15, 10,  5,-30, -40,-20,  0,  5,  5,  0,-20,-40, -50,-40,-30,-30,-30,-30,-40,-50};
+        int[] KnightExtraValues = {-50,-20,-30,-30,-30,-30,-20,-50, -40,-20,  0,  0,  0,  0,-20,-40, -30,  0, 10, 15, 15, 10,  0,-30, -30,  5, 15, 20, 20, 15,  5,-30, -30,  0, 15, 20, 20, 15,  0,-30, -30,  5, 10, 15, 15, 10,  5,-30, -40,-20,  0,  5,  5,  0,-20,-40, -50,-20,-30,-30,-30,-30,-20,-50};
         int[] BishopExtraValues = { -20, -10, -10, -10, -10, -10, -10, -20, -10, 5, 0, 0, 0, 0, 5, -10, -10, 10, 10, 10, 10, 10, 10, -10, -10, 0, 10, 10, 10, 10, 0, -10, -10,  0, 10, 10, 10, 10,  0,-10,-10, 10, 10, 10, 10, 10, 10,-10,-10,  5,  0,  0,  0,  0,  5,-10,-20,-10,-10,-10,-10,-10,-10,-20};
         int[] P2M_RookExtraValues = {0,  0,  0,  0,  0,  0,  0,  0, 5, 10, 10, 10, 10, 10, 10,  5, -5,  0,  0,  0,  0,  0,  0, -5, -5,  0,  0,  0,  0,  0,  0, -5, -5,  0,  0,  0,  0,  0,  0, -5, -5,  0,  0,  0,  0,  0,  0, -5, -5,  0,  0,  0,  0,  0,  0, -5, 0,  0,  0,  5,  5,  0,  0,  0};
         int[] AI2M_RookExtraValues = { 0, 0, 0, 5, 5, 0, 0, 0, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, 5, 10, 10, 10, 10, 10, 10, 5, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -970,13 +970,44 @@ namespace chessbot
             //---FOR TESTING---
             //for (int i = 0; i < TempMoves.Count; i++)
             //{
-            //    Trace.WriteLine($"{i}: |{TempMoves[i].StartingSquare}, {TempMoves[i].TargetSquare}|");
+            //    Trace.WriteLine($"{i+1}: |{TempMoves[i].StartingSquare}, {TempMoves[i].TargetSquare}|");
             //}
             return TempMoves;
         }
         private void ValueTempMoves(int _StartingSquare, int _TargetSquare, int _Value)
         {
-            //TempMoves.Add(new Move(i, i + DirectionOffsets[j], _Value_));
+            //P-N-B-R-Q
+            if (Position[_TargetSquare]!=NoPiece)
+            {
+                if (Position[_TargetSquare] == BlackPieces[8] || Position[_TargetSquare] == WhitePieces[8])
+                {
+                    TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[0]));
+                }
+
+                else if (Position[_TargetSquare] == BlackPieces[1] || Position[_TargetSquare] == BlackPieces[6] || Position[_TargetSquare] == WhitePieces[1] || Position[_TargetSquare] == WhitePieces[6])
+                {
+                    TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1]));
+                }
+
+                else if (Position[_TargetSquare] == BlackPieces[2] || Position[_TargetSquare] == BlackPieces[5] || Position[_TargetSquare] == WhitePieces[2] || Position[_TargetSquare] == WhitePieces[5])
+                {
+                    TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[2]));
+                }
+
+                else if (Position[_TargetSquare] == BlackPieces[0] || Position[_TargetSquare] == BlackPieces[7] || Position[_TargetSquare] == WhitePieces[0] || Position[_TargetSquare] == WhitePieces[7])
+                {
+                    TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[3]));
+                }
+
+                else
+                {
+                    TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[4]));
+                }
+            }
+            else
+            {
+                TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value));
+            }
         }
 
 
@@ -1005,6 +1036,12 @@ namespace chessbot
                 }
                 UnmakeMove(i);
             }
+            //---FOR TESTING---
+            //for (int i = 0; i < Moves.Count; i++)
+            //{
+            //    Trace.WriteLine($"{i+1}: |{Moves[i].StartingSquare}, {Moves[i].TargetSquare}, {Moves[i].Value}|");
+            //}
+
             //end of match:
             if (Moves.Count == 0)
             {
@@ -1073,6 +1110,7 @@ namespace chessbot
         ImageSource AISelectedPiece = null;
         int AIselectedIndexBefore = -1;
         int AIselectedIndexSquare = -1;
+        int SelectedMoveIndexInList = 0;
         private void AIToMove()
         {
             if (GenerateMoves() == false)
@@ -1080,13 +1118,14 @@ namespace chessbot
                 // The condition was met, so exit the function
                 return;
             }
-            //Select a random move:
-            Random random = new Random();
-            int CurrentRan = random.Next(0, Moves.Count);
-            
-            AISelectedBefore = AllSquares[Moves[CurrentRan].StartingSquare];
-            AISelectedPiece = AllSquares[Moves[CurrentRan].StartingSquare].Source;
-            AISelectedSquare = AllSquares[Moves[CurrentRan].TargetSquare];
+            SelectedMoveIndexInList = Moves
+            .Select((move, index) => new { Index = index, move.Value })
+            .Aggregate((max, current) => (current.Value > max.Value) ? current : max)
+            .Index;
+
+            AISelectedBefore = AllSquares[Moves[SelectedMoveIndexInList].StartingSquare];
+            AISelectedPiece = AllSquares[Moves[SelectedMoveIndexInList].StartingSquare].Source;
+            AISelectedSquare = AllSquares[Moves[SelectedMoveIndexInList].TargetSquare];
             //reset player move:
             if (WhiteSquares.Contains(SelectedBefore))
             {
