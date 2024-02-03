@@ -475,6 +475,7 @@ namespace chessbot
         List<Move> TempMoves = new List<Move>();
         List<Move> CurrentColorMoves = new List<Move>();
         List<Move> OpponentMoves = new List<Move>();
+        List<Move> CurrentColorMovesOverOpponents = new List<Move>();
         List<Move> Moves = new List<Move>();
         private List<Move> PossibleMoves()
         {
@@ -1010,37 +1011,106 @@ namespace chessbot
             }
         }
 
-
+        int OpponentMovesCount = 0;
         private bool GenerateMoves()
         {
             Moves.Clear();
             CurrentColorMoves = new List<Move>(PossibleMoves());
-            //checking for checkmates:
+            //checking for checks:
             for (int i = 0; i < CurrentColorMoves.Count; i++)
             {
-                MakeMove(i);
+                MakeCurrentMove(i);
                 
                 if (PlayerToMoveWhite == true)
                 {
                     if (!OpponentMoves.Any(move => Position[move.TargetSquare] == WhitePieces[4]))
                     {
-                        Moves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, CurrentColorMoves[i].Value));
+                        OpponentMovesCount = 0;
+                        for (int j = 0; j < OpponentMoves.Count; j++)
+                        {
+                            MakeMoveNext(j);
+
+                            if (!CurrentColorMovesOverOpponents.Any(move => Position[move.TargetSquare] == BlackPieces[4]))
+                            {
+                                OpponentMovesCount++;
+                            }
+
+                            UnmakeMoveNext(j);
+                        }
+                        if (OpponentMovesCount == 0)
+                        {
+                            //making this move will result in checkmate/stalemate
+                            if (CurrentColorMovesOverOpponents.Any(move => Position[move.TargetSquare] == BlackPieces[4]))
+                            {
+                                //making this move will result in checkmate:
+                                Moves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, 20000));
+                            }
+                            else
+                            {
+                                //making this move will result in stalemate:
+                                //TODO:
+                                //if the bot is losing, then making a draw is necessary, but if not, value should be -
+                                //here I wrote only the minus, but should be changed
+                                Moves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, -20000));
+                            }
+                        }
+                        else
+                        {
+                            //regular move
+                            Moves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, CurrentColorMoves[i].Value));
+                        } 
                     }
                 }
                 else
                 {
                     if (!OpponentMoves.Any(move => Position[move.TargetSquare] == BlackPieces[4]))
                     {
-                        Moves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, CurrentColorMoves[i].Value));
+                        OpponentMovesCount = 0;
+                        for (int j = 0; j < OpponentMoves.Count; j++)
+                        {
+                            MakeMoveNext(j);
+
+                            if (!CurrentColorMovesOverOpponents.Any(move => Position[move.TargetSquare] == WhitePieces[4]))
+                            {
+                                OpponentMovesCount++;
+                            }
+
+                            UnmakeMoveNext(j);
+                        }
+                        if (OpponentMovesCount == 0)
+                        {
+                            //making this move will result in checkmate/stalemate
+                            if (CurrentColorMovesOverOpponents.Any(move => Position[move.TargetSquare] == WhitePieces[4]))
+                            {
+                                //making this move will result in checkmate:
+                                Moves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, 20000));
+                            }
+                            else
+                            {
+                                //making this move will result in stalemate:
+                                //TODO:
+                                //if the bot is losing, then making a draw is necessary, but if not, value should be -
+                                //here I wrote only the minus, but should be changed
+                                Moves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, -20000));
+                            }
+                        }
+                        else
+                        {
+                            //regular move
+                            Moves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, CurrentColorMoves[i].Value));
+                        }
                     }
                 }
-                UnmakeMove(i);
+                UnmakeCurrentMove(i);
             }
             //---FOR TESTING---
-            //for (int i = 0; i < Moves.Count; i++)
-            //{
-            //    Trace.WriteLine($"{i+1}: |{Moves[i].StartingSquare}, {Moves[i].TargetSquare}, {Moves[i].Value}|");
-            //}
+            for (int i = 0; i < Moves.Count; i++)
+            {
+                if (Moves[i].Value<-1000 || Moves[i].Value>1000)
+                {
+                    Trace.WriteLine($"{i + 1}: |{Moves[i].StartingSquare}, {Moves[i].TargetSquare}, {Moves[i].Value}|");
+                }     
+            }
 
             //end of match:
             if (Moves.Count == 0)
@@ -1089,7 +1159,7 @@ namespace chessbot
             }
         }
         ImageSource TempTargetSquareSource = null;
-        private void MakeMove(int i)
+        private void MakeCurrentMove(int i)
         {
             PlayerToMoveWhite = !PlayerToMoveWhite;
             TempTargetSquareSource = Position[CurrentColorMoves[i].TargetSquare];
@@ -1099,10 +1169,24 @@ namespace chessbot
             PlayerToMoveWhite = !PlayerToMoveWhite;
         }
 
-        private void UnmakeMove(int i)
+        private void UnmakeCurrentMove(int i)
         {
             Position[CurrentColorMoves[i].StartingSquare] = Position[CurrentColorMoves[i].TargetSquare];
             Position[CurrentColorMoves[i].TargetSquare] = TempTargetSquareSource;
+        }
+        ImageSource TempTargetSquareSourceOpponent = null;
+        private void MakeMoveNext(int j)
+        {
+            TempTargetSquareSourceOpponent = Position[OpponentMoves[j].TargetSquare];
+            Position[OpponentMoves[j].TargetSquare] = Position[OpponentMoves[j].StartingSquare];
+            Position[OpponentMoves[j].StartingSquare] = NoPiece;
+            CurrentColorMovesOverOpponents = new List<Move>(PossibleMoves());
+        }
+
+        private void UnmakeMoveNext(int j)
+        {
+            Position[OpponentMoves[j].StartingSquare] = Position[OpponentMoves[j].TargetSquare];
+            Position[OpponentMoves[j].TargetSquare] = TempTargetSquareSourceOpponent;
         }
 
         ImageButton AISelectedBefore = null;
