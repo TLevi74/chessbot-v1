@@ -11,7 +11,7 @@
         <Grid Padding="0" ColumnSpacing="0" RowSpacing="0">
             <Grid.RowDefinitions>
 
-                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="45"></RowDefinition>
                 <RowDefinition Height="6"></RowDefinition>
                 <!--Next Row is the First Row Of The Chessboard-->
 
@@ -52,6 +52,11 @@
 
             <!--Setting The border Around The Table-->
             <BoxView BackgroundColor="#242424" Grid.Row="1" Grid.Column="1" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Grid.RowSpan="10" Grid.ColumnSpan="10"></BoxView>
+
+            <ImageButton BackgroundColor="Transparent" x:Name="PromotionQueen" Grid.Row="0" Grid.Column="4" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="PromotionPieceSelected"></ImageButton>
+            <ImageButton BackgroundColor="Transparent" x:Name="PromotionRook" Grid.Row="0" Grid.Column="5" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="PromotionPieceSelected"></ImageButton>
+            <ImageButton BackgroundColor="Transparent" x:Name="PromotionBishop" Grid.Row="0" Grid.Column="6" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="PromotionPieceSelected"></ImageButton>
+            <ImageButton BackgroundColor="Transparent" x:Name="PromotionKnight" Grid.Row="0" Grid.Column="7" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="PromotionPieceSelected"></ImageButton>
 
             <!--Setting The Background For BoardRow8-->
             <ImageButton x:Name="SquareA8" BackgroundColor="#EEEED2" Grid.Row="2" Grid.Column="2" VerticalOptions="Fill" HorizontalOptions="Fill" CornerRadius="0" Clicked="SquareSelected"></ImageButton>
