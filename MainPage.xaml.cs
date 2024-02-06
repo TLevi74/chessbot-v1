@@ -533,7 +533,7 @@ namespace chessbot
                             if (IsPlayerWhite == true && SquaresToEdge[i][0] >= 1)
                             {
                                 //double pawn push:
-                                if ((SquaresToEdge[i][2] == 1))
+                                if (SquaresToEdge[i][2] == 1)
                                 {
                                     if ((Position[i - 8] == NoPiece) && (Position[i - 16] == NoPiece))
                                     {
@@ -572,7 +572,7 @@ namespace chessbot
                                     }
                                     if (SquaresToEdge[i][1] > 0)
                                     {
-                                        if (Position[i - 7] == NoPiece || BlackPieces.Contains(Position[i - 7]))
+                                        if (BlackPieces.Contains(Position[i - 7]))
                                         {
                                             ValueTempMoves(i, i - 7, P2M_PawnExtraValues[i - 7] - P2M_PawnExtraValues[i], 1);
                                             ValueTempMoves(i, i - 7, P2M_PawnExtraValues[i - 7] - P2M_PawnExtraValues[i], 2);
@@ -582,7 +582,7 @@ namespace chessbot
                                     }
                                     if (SquaresToEdge[i][3] > 0)
                                     {
-                                        if (Position[i - 9] == NoPiece || BlackPieces.Contains(Position[i - 9]))
+                                        if (BlackPieces.Contains(Position[i - 9]))
                                         {
                                             ValueTempMoves(i, i - 9, P2M_PawnExtraValues[i - 9] - P2M_PawnExtraValues[i], 1);
                                             ValueTempMoves(i, i - 9, P2M_PawnExtraValues[i - 9] - P2M_PawnExtraValues[i], 2);
@@ -595,7 +595,7 @@ namespace chessbot
                             else
                             {
                                 //double pawn push:
-                                if ((SquaresToEdge[i][0] == 1))
+                                if (SquaresToEdge[i][0] == 1)
                                 {
                                     if ((Position[i + 8] == NoPiece) && (Position[i + 16] == NoPiece))
                                     {
@@ -620,6 +620,37 @@ namespace chessbot
                                     if (BlackPieces.Contains(Position[i + 9]))
                                     {
                                         ValueTempMoves(i, i + 9, AI2M_PawnExtraValues[i + 9] - AI2M_PawnExtraValues[i], 0);
+                                    }
+                                }
+                                //promotion:
+                                if (SquaresToEdge[i][2] == 1)
+                                {
+                                    if (Position[i + 8] == NoPiece)
+                                    {
+                                        ValueTempMoves(i, i + 8, AI2M_PawnExtraValues[i + 8] - AI2M_PawnExtraValues[i], 1);
+                                        ValueTempMoves(i, i + 8, AI2M_PawnExtraValues[i + 8] - AI2M_PawnExtraValues[i], 2);
+                                        ValueTempMoves(i, i + 8, AI2M_PawnExtraValues[i + 8] - AI2M_PawnExtraValues[i], 3);
+                                        ValueTempMoves(i, i + 8, AI2M_PawnExtraValues[i + 8] - AI2M_PawnExtraValues[i], 4);
+                                    }
+                                    if (SquaresToEdge[i][3] > 0)
+                                    {
+                                        if (BlackPieces.Contains(Position[i + 7]))
+                                        {
+                                            ValueTempMoves(i, i + 7, AI2M_PawnExtraValues[i + 7] - AI2M_PawnExtraValues[i], 1);
+                                            ValueTempMoves(i, i + 7, AI2M_PawnExtraValues[i + 7] - AI2M_PawnExtraValues[i], 2);
+                                            ValueTempMoves(i, i + 7, AI2M_PawnExtraValues[i + 7] - AI2M_PawnExtraValues[i], 3);
+                                            ValueTempMoves(i, i + 7, AI2M_PawnExtraValues[i + 7] - AI2M_PawnExtraValues[i], 4);
+                                        }
+                                    }
+                                    if (SquaresToEdge[i][1] > 0)
+                                    {
+                                        if (BlackPieces.Contains(Position[i + 9]))
+                                        {
+                                            ValueTempMoves(i, i + 9, AI2M_PawnExtraValues[i + 9] - AI2M_PawnExtraValues[i], 1);
+                                            ValueTempMoves(i, i + 9, AI2M_PawnExtraValues[i + 9] - AI2M_PawnExtraValues[i], 2);
+                                            ValueTempMoves(i, i + 9, AI2M_PawnExtraValues[i + 9] - AI2M_PawnExtraValues[i], 3);
+                                            ValueTempMoves(i, i + 9, AI2M_PawnExtraValues[i + 9] - AI2M_PawnExtraValues[i], 4);
+                                        }
                                     }
                                 }
                             }
@@ -809,7 +840,7 @@ namespace chessbot
                             }
                         }
                     }
-                }
+                } 
             }
             else
             {
@@ -823,7 +854,7 @@ namespace chessbot
                             if (IsPlayerWhite == false)
                             {
                                 //double pawn push:
-                                if ((SquaresToEdge[i][2] == 1))
+                                if (SquaresToEdge[i][2] == 1)
                                 {
                                     if ((Position[i - 8] == NoPiece) && (Position[i - 16] == NoPiece))
                                     {
@@ -850,11 +881,42 @@ namespace chessbot
                                         ValueTempMoves(i, i - 7, P2M_PawnExtraValues[i - 7] - P2M_PawnExtraValues[i], 0);
                                     }
                                 }
+                                //promotion:
+                                if (SquaresToEdge[i][0] == 1)
+                                {
+                                    if (Position[i - 8] == NoPiece)
+                                    {
+                                        ValueTempMoves(i, i - 8, P2M_PawnExtraValues[i - 8] - P2M_PawnExtraValues[i], 1);
+                                        ValueTempMoves(i, i - 8, P2M_PawnExtraValues[i - 8] - P2M_PawnExtraValues[i], 2);
+                                        ValueTempMoves(i, i - 8, P2M_PawnExtraValues[i - 8] - P2M_PawnExtraValues[i], 3);
+                                        ValueTempMoves(i, i - 8, P2M_PawnExtraValues[i - 8] - P2M_PawnExtraValues[i], 4);
+                                    }
+                                    if (SquaresToEdge[i][1] > 0)
+                                    {
+                                        if (WhitePieces.Contains(Position[i - 7]))
+                                        {
+                                            ValueTempMoves(i, i - 7, P2M_PawnExtraValues[i - 7] - P2M_PawnExtraValues[i], 1);
+                                            ValueTempMoves(i, i - 7, P2M_PawnExtraValues[i - 7] - P2M_PawnExtraValues[i], 2);
+                                            ValueTempMoves(i, i - 7, P2M_PawnExtraValues[i - 7] - P2M_PawnExtraValues[i], 3);
+                                            ValueTempMoves(i, i - 7, P2M_PawnExtraValues[i - 7] - P2M_PawnExtraValues[i], 4);
+                                        }
+                                    }
+                                    if (SquaresToEdge[i][3] > 0)
+                                    {
+                                        if (WhitePieces.Contains(Position[i - 9]))
+                                        {
+                                            ValueTempMoves(i, i - 9, P2M_PawnExtraValues[i - 9] - P2M_PawnExtraValues[i], 1);
+                                            ValueTempMoves(i, i - 9, P2M_PawnExtraValues[i - 9] - P2M_PawnExtraValues[i], 2);
+                                            ValueTempMoves(i, i - 9, P2M_PawnExtraValues[i - 9] - P2M_PawnExtraValues[i], 3);
+                                            ValueTempMoves(i, i - 9, P2M_PawnExtraValues[i - 9] - P2M_PawnExtraValues[i], 4);
+                                        }
+                                    }
+                                }
                             }
                             else
                             {
                                 //double pawn push:
-                                if ((SquaresToEdge[i][0] == 1))
+                                if (SquaresToEdge[i][0] == 1)
                                 {
                                     if ((Position[i + 8] == NoPiece) && (Position[i + 16] == NoPiece))
                                     {
@@ -879,6 +941,37 @@ namespace chessbot
                                     if (WhitePieces.Contains(Position[i + 9]))
                                     {
                                         ValueTempMoves(i, i + 9, AI2M_PawnExtraValues[i + 9] - AI2M_PawnExtraValues[i], 0);
+                                    }
+                                }
+                                //promotion:
+                                if (SquaresToEdge[i][2] == 1)
+                                {
+                                    if (Position[i + 8] == NoPiece)
+                                    {
+                                        ValueTempMoves(i, i + 8, AI2M_PawnExtraValues[i + 8] - AI2M_PawnExtraValues[i], 1);
+                                        ValueTempMoves(i, i + 8, AI2M_PawnExtraValues[i + 8] - AI2M_PawnExtraValues[i], 2);
+                                        ValueTempMoves(i, i + 8, AI2M_PawnExtraValues[i + 8] - AI2M_PawnExtraValues[i], 3);
+                                        ValueTempMoves(i, i + 8, AI2M_PawnExtraValues[i + 8] - AI2M_PawnExtraValues[i], 4);
+                                    }
+                                    if (SquaresToEdge[i][3] > 0)
+                                    {
+                                        if (WhitePieces.Contains(Position[i + 7]))
+                                        {
+                                            ValueTempMoves(i, i + 7, AI2M_PawnExtraValues[i + 7] - AI2M_PawnExtraValues[i], 1);
+                                            ValueTempMoves(i, i + 7, AI2M_PawnExtraValues[i + 7] - AI2M_PawnExtraValues[i], 2);
+                                            ValueTempMoves(i, i + 7, AI2M_PawnExtraValues[i + 7] - AI2M_PawnExtraValues[i], 3);
+                                            ValueTempMoves(i, i + 7, AI2M_PawnExtraValues[i + 7] - AI2M_PawnExtraValues[i], 4);
+                                        }
+                                    }
+                                    if (SquaresToEdge[i][1] > 0)
+                                    {
+                                        if (WhitePieces.Contains(Position[i + 9]))
+                                        {
+                                            ValueTempMoves(i, i + 9, AI2M_PawnExtraValues[i + 9] - AI2M_PawnExtraValues[i], 1);
+                                            ValueTempMoves(i, i + 9, AI2M_PawnExtraValues[i + 9] - AI2M_PawnExtraValues[i], 2);
+                                            ValueTempMoves(i, i + 9, AI2M_PawnExtraValues[i + 9] - AI2M_PawnExtraValues[i], 3);
+                                            ValueTempMoves(i, i + 9, AI2M_PawnExtraValues[i + 9] - AI2M_PawnExtraValues[i], 4);
+                                        }
                                     }
                                 }
                             }
@@ -1070,6 +1163,36 @@ namespace chessbot
                     }
                 }
             }
+            for (int i = 0; i < TempMoves.Count; i++)
+            {
+                if (TempMoves[i].Extra != 0)
+                {
+                    if (TempMoves[i].Extra == 1)
+                    {
+                        Move move = TempMoves[i];
+                        move.Value = move.Value + PieceValues[4] - PieceValues[0];
+                        TempMoves[i] = move;
+                    }
+                    else if (TempMoves[i].Extra == 2)
+                    {
+                        Move move = TempMoves[i];
+                        move.Value = move.Value + PieceValues[3] - PieceValues[0];
+                        TempMoves[i] = move;
+                    }
+                    else if (TempMoves[i].Extra == 3)
+                    {
+                        Move move = TempMoves[i];
+                        move.Value = move.Value + PieceValues[2] - PieceValues[0];
+                        TempMoves[i] = move;
+                    }
+                    else if (TempMoves[i].Extra == 4)
+                    {
+                        Move move = TempMoves[i];
+                        move.Value = move.Value + PieceValues[1] - PieceValues[0];
+                        TempMoves[i] = move;
+                    }
+                }
+            }
             //---FOR TESTING---
             //for (int i = 0; i < TempMoves.Count; i++)
             //{
@@ -1084,12 +1207,22 @@ namespace chessbot
             {
                 if (Position[_TargetSquare] == BlackPieces[8] || Position[_TargetSquare] == WhitePieces[8])
                 {
-                    TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[0], _Extra));
+                    if (_Extra == 0)
+                    {
+                        TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[0], _Extra));
+                    }
                 }
 
                 else if (Position[_TargetSquare] == BlackPieces[1] || Position[_TargetSquare] == BlackPieces[6] || Position[_TargetSquare] == WhitePieces[1] || Position[_TargetSquare] == WhitePieces[6])
                 {
-                    TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1], _Extra));
+                    if (_Extra == 0)
+                    {
+                        TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1], _Extra));
+                    }
+                    else if (_Extra == 1){TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1] + PieceValues[4] - PieceValues[0], _Extra));}
+                    else if (_Extra == 2){TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1] + PieceValues[3] - PieceValues[0], _Extra));}
+                    else if (_Extra == 3){TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1] + PieceValues[2] - PieceValues[0], _Extra));}
+                    else if (_Extra == 4){TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1] + PieceValues[1] - PieceValues[0], _Extra));}
                 }
 
                 else if (Position[_TargetSquare] == BlackPieces[2] || Position[_TargetSquare] == BlackPieces[5] || Position[_TargetSquare] == WhitePieces[2] || Position[_TargetSquare] == WhitePieces[5])
