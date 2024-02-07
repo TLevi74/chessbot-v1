@@ -102,10 +102,10 @@ namespace chessbot
                     AllSquares[i].BackgroundColor = Color.FromArgb("#769656");
                 }
             }
-            PromotionQueen.Source = null;
-            PromotionRook.Source = null;
-            PromotionBishop.Source = null;
-            PromotionKnight.Source = null;
+            PromotionQueen.Source = NoPiece;
+            PromotionRook.Source = NoPiece;
+            PromotionBishop.Source = NoPiece;
+            PromotionKnight.Source = NoPiece;
 
             if (IsPlayerWhite == true)
             {
@@ -215,7 +215,19 @@ namespace chessbot
 
         private void PromotionPieceSelected(object sender, System.EventArgs e)
         {
+            currentButton = (ImageButton)sender;
+            if (currentButton.Source != NoPiece)
+            {
+                Position[selectedIndexSquare] = currentButton.Source;
+                AllSquares[selectedIndexSquare].Source = currentButton.Source;
 
+                PromotionQueen.Source = NoPiece;
+                PromotionRook.Source = NoPiece;
+                PromotionBishop.Source = NoPiece;
+                PromotionKnight.Source = NoPiece;
+                PlayerToMoveWhite = !PlayerToMoveWhite;
+                AIToMove();
+            }   
         }
         private void SquareSelected(object sender, System.EventArgs e)
         {
@@ -430,6 +442,32 @@ namespace chessbot
                     SelectedSquare.BackgroundColor = Color.FromArgb("#BBCC44");
                 }
                 HasPlayerSelectedFromSquare = false;
+                
+                var selectedMove = Moves.First(move => move.StartingSquare == selectedIndexBefore && move.TargetSquare == selectedIndexSquare);
+                if (selectedMove.Extra > 0)
+                {
+                    //if promotion:
+                    if (selectedMove.Extra == 1 || selectedMove.Extra == 2 || selectedMove.Extra == 3 || selectedMove.Extra == 4)
+                    {
+                        if (TempPlayerWhiteMoves == true)
+                        {
+                            PromotionQueen.Source = WhitePieces[3];
+                            PromotionRook.Source = WhitePieces[0];
+                            PromotionBishop.Source = WhitePieces[2];
+                            PromotionKnight.Source = WhitePieces[1];
+                            return;
+                        }
+                        else
+                        {
+                            PromotionQueen.Source = BlackPieces[3];
+                            PromotionRook.Source = BlackPieces[0];
+                            PromotionBishop.Source = BlackPieces[2];
+                            PromotionKnight.Source = BlackPieces[1];
+                            return;
+                        }
+                    }
+                }
+
                 if (TempPlayerWhiteMoves == true)
                 {
                     PlayerToMoveWhite = false;
@@ -790,7 +828,6 @@ namespace chessbot
                         else if (Position[i] == WhitePieces[4])
                         {
                             //TODO: castleing (maybe haswhitekingmoved variable)
-                            //TODO: change P2M_KingExtraValues to Endgame_KingExtraValues in the endgame
                             for (int j = 0; j < 8; j++)
                             {
                                 if ((SquaresToEdge[i][j] > 0))
@@ -1111,7 +1148,6 @@ namespace chessbot
                         else if (Position[i] == BlackPieces[4])
                         {
                             //TODO: castleing (maybe haswhitekingmoved variable)
-                            //TODO: change P2M_KingExtraValues to Endgame_KingExtraValues in the endgame
                             for (int j = 0; j < 8; j++)
                             {
                                 if ((SquaresToEdge[i][j] > 0))
@@ -1207,22 +1243,12 @@ namespace chessbot
             {
                 if (Position[_TargetSquare] == BlackPieces[8] || Position[_TargetSquare] == WhitePieces[8])
                 {
-                    if (_Extra == 0)
-                    {
-                        TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[0], _Extra));
-                    }
+                    TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[0], _Extra));
                 }
 
                 else if (Position[_TargetSquare] == BlackPieces[1] || Position[_TargetSquare] == BlackPieces[6] || Position[_TargetSquare] == WhitePieces[1] || Position[_TargetSquare] == WhitePieces[6])
                 {
-                    if (_Extra == 0)
-                    {
-                        TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1], _Extra));
-                    }
-                    else if (_Extra == 1){TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1] + PieceValues[4] - PieceValues[0], _Extra));}
-                    else if (_Extra == 2){TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1] + PieceValues[3] - PieceValues[0], _Extra));}
-                    else if (_Extra == 3){TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1] + PieceValues[2] - PieceValues[0], _Extra));}
-                    else if (_Extra == 4){TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1] + PieceValues[1] - PieceValues[0], _Extra));}
+                    TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1], _Extra));
                 }
 
                 else if (Position[_TargetSquare] == BlackPieces[2] || Position[_TargetSquare] == BlackPieces[5] || Position[_TargetSquare] == WhitePieces[2] || Position[_TargetSquare] == WhitePieces[5])
