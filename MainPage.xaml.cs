@@ -225,7 +225,6 @@ namespace chessbot
                 PromotionRook.Source = NoPiece;
                 PromotionBishop.Source = NoPiece;
                 PromotionKnight.Source = NoPiece;
-                PlayerToMoveWhite = !PlayerToMoveWhite;
                 AIToMove();
             }   
         }
@@ -455,6 +454,7 @@ namespace chessbot
                             PromotionRook.Source = WhitePieces[0];
                             PromotionBishop.Source = WhitePieces[2];
                             PromotionKnight.Source = WhitePieces[1];
+                            PlayerToMoveWhite = !PlayerToMoveWhite;
                             return;
                         }
                         else
@@ -463,6 +463,7 @@ namespace chessbot
                             PromotionRook.Source = BlackPieces[0];
                             PromotionBishop.Source = BlackPieces[2];
                             PromotionKnight.Source = BlackPieces[1];
+                            PlayerToMoveWhite = !PlayerToMoveWhite;
                             return;
                         }
                     }
@@ -578,20 +579,19 @@ namespace chessbot
                                         ValueTempMoves(i, i-16, P2M_PawnExtraValues[i - 16] - P2M_PawnExtraValues[i], 0);
                                     }
                                 }
-                                //!!!!!after someone moved with a pawn, we need to check if it's not in the first line, because it has to promote!!!!!!
-                                if (Position[i-8] == NoPiece)
+                                if (Position[i-8] == NoPiece && SquaresToEdge[i][0] > 1)
                                 {
                                     ValueTempMoves(i, i - 8, P2M_PawnExtraValues[i - 8] - P2M_PawnExtraValues[i], 0);
                                 }
                                 //pawn takes:
-                                if (SquaresToEdge[i][3] > 0)
+                                if (SquaresToEdge[i][3] > 0 && SquaresToEdge[i][0] > 1)
                                 {
                                     if (BlackPieces.Contains(Position[i - 9]))
                                     {
                                         ValueTempMoves(i, i - 9, P2M_PawnExtraValues[i - 9] - P2M_PawnExtraValues[i], 0);
                                     }
                                 }
-                                if (SquaresToEdge[i][1] > 0)
+                                if (SquaresToEdge[i][1] > 0 && SquaresToEdge[i][0] > 1)
                                 {
                                     if (BlackPieces.Contains(Position[i - 7]))
                                     {
@@ -640,20 +640,19 @@ namespace chessbot
                                         ValueTempMoves(i, i + 16, AI2M_PawnExtraValues[i + 16] - AI2M_PawnExtraValues[i], 0);
                                     }
                                 }
-                                //!!!!!after someone moved with a pawn, we need to check if it's not in the first line, because it has to promote!!!!!!
-                                if (Position[i + 8] == NoPiece)
+                                if (Position[i + 8] == NoPiece && SquaresToEdge[i][2] > 1)
                                 {
                                     ValueTempMoves(i, i + 8, AI2M_PawnExtraValues[i + 8] - AI2M_PawnExtraValues[i], 0);
                                 }
                                 //pawn takes:
-                                if (SquaresToEdge[i][3] > 0)
+                                if (SquaresToEdge[i][3] > 0 && SquaresToEdge[i][2] > 1)
                                 {
                                     if (BlackPieces.Contains(Position[i + 7]))
                                     {
                                         ValueTempMoves(i, i + 7, AI2M_PawnExtraValues[i + 7] - AI2M_PawnExtraValues[i], 0);
                                     }
                                 }
-                                if (SquaresToEdge[i][1] > 0)
+                                if (SquaresToEdge[i][1] > 0 && SquaresToEdge[i][2] > 1)
                                 {
                                     if (BlackPieces.Contains(Position[i + 9]))
                                     {
@@ -898,20 +897,19 @@ namespace chessbot
                                         ValueTempMoves(i, i - 16, P2M_PawnExtraValues[i - 16] - P2M_PawnExtraValues[i], 0);
                                     }
                                 }
-                                //!!!!!after someone moved with a pawn, we need to check if it's not in the first line, because it has to promote!!!!!!
-                                if (Position[i - 8] == NoPiece)
+                                if (Position[i - 8] == NoPiece && SquaresToEdge[i][0] > 1)
                                 {
                                     ValueTempMoves(i, i - 8, P2M_PawnExtraValues[i - 8] - P2M_PawnExtraValues[i], 0);
                                 }
                                 //pawn takes:
-                                if (SquaresToEdge[i][3] > 0)
+                                if (SquaresToEdge[i][3] > 0 && SquaresToEdge[i][0] > 1)
                                 {
                                     if (WhitePieces.Contains(Position[i - 9]))
                                     {
                                         ValueTempMoves(i, i - 9, P2M_PawnExtraValues[i - 9] - P2M_PawnExtraValues[i], 0);
                                     }
                                 }
-                                if (SquaresToEdge[i][1] > 0)
+                                if (SquaresToEdge[i][1] > 0 && SquaresToEdge[i][0] > 1)
                                 {
                                     if (WhitePieces.Contains(Position[i - 7]))
                                     {
@@ -960,20 +958,19 @@ namespace chessbot
                                         ValueTempMoves(i, i + 16, AI2M_PawnExtraValues[i + 16] - AI2M_PawnExtraValues[i], 0);
                                     }
                                 }
-                                //!!!!!after someone moved with a pawn, we need to check if it's not in the first line, because it has to promote!!!!!!
-                                if (Position[i + 8] == NoPiece)
+                                if (Position[i + 8] == NoPiece && SquaresToEdge[i][2] > 1)
                                 {
                                     ValueTempMoves(i, i + 8, AI2M_PawnExtraValues[i + 8] - AI2M_PawnExtraValues[i], 0);
                                 }
                                 //pawn takes:
-                                if (SquaresToEdge[i][3] > 0)
+                                if (SquaresToEdge[i][3] > 0 && SquaresToEdge[i][2] > 1)
                                 {
                                     if (WhitePieces.Contains(Position[i + 7]))
                                     {
                                         ValueTempMoves(i, i + 7, AI2M_PawnExtraValues[i + 7] - AI2M_PawnExtraValues[i], 0);
                                     }
                                 }
-                                if (SquaresToEdge[i][1] > 0)
+                                if (SquaresToEdge[i][1] > 0 && SquaresToEdge[i][2] > 1)
                                 {
                                     if (WhitePieces.Contains(Position[i + 9]))
                                     {
