@@ -566,10 +566,10 @@ namespace chessbot
                 {
                     if (WhitePieces.Contains(Position[i]))
                     {
-                        //WHITE PAWN REMOVE THE && IN IF!!!!!!!!
+                        //WHITE PAWN
                         if (Position[i] == WhitePieces[8])
                         {
-                            if (IsPlayerWhite == true && SquaresToEdge[i][0] >= 1)
+                            if (IsPlayerWhite == true)
                             {
                                 //double pawn push:
                                 if (SquaresToEdge[i][2] == 1)
@@ -1453,6 +1453,7 @@ namespace chessbot
             }
         }
         ImageSource TempTargetSquareSource = null;
+        ImageSource TempStartingSquareSource = null;
         private void MakeCurrentMove(int i)
         {
             if ((PlayerToMoveWhite == true && IsPlayerWhite == false) || (PlayerToMoveWhite == false && IsPlayerWhite == true))
@@ -1465,10 +1466,57 @@ namespace chessbot
                 //Player moves, evalscore gets lower
                 EvalGameScore -= CurrentColorMoves[i].Value;
             }
-            PlayerToMoveWhite = !PlayerToMoveWhite;
             TempTargetSquareSource = Position[CurrentColorMoves[i].TargetSquare];
-            Position[CurrentColorMoves[i].TargetSquare] = Position[CurrentColorMoves[i].StartingSquare];
+            TempStartingSquareSource = Position[CurrentColorMoves[i].StartingSquare];
+            if (CurrentColorMoves[i].Extra > 0)
+            {
+                if (PlayerToMoveWhite == true)
+                {
+                    //promotion:
+                    if (CurrentColorMoves[i].Extra == 1)
+                    {
+                        Position[CurrentColorMoves[i].TargetSquare] = WhitePieces[3];
+                    }
+                    else if (CurrentColorMoves[i].Extra == 2)
+                    {
+                        Position[CurrentColorMoves[i].TargetSquare] = WhitePieces[0];
+                    }
+                    else if (CurrentColorMoves[i].Extra == 3)
+                    {
+                        Position[CurrentColorMoves[i].TargetSquare] = WhitePieces[2];
+                    }
+                    else if (CurrentColorMoves[i].Extra == 4)
+                    {
+                        Position[CurrentColorMoves[i].TargetSquare] = WhitePieces[1];
+                    }
+                }
+                else
+                {
+                    //promotion:
+                    if (CurrentColorMoves[i].Extra == 1)
+                    {
+                        Position[CurrentColorMoves[i].TargetSquare] = BlackPieces[3];
+                    }
+                    else if (CurrentColorMoves[i].Extra == 2)
+                    {
+                        Position[CurrentColorMoves[i].TargetSquare] = BlackPieces[0];
+                    }
+                    else if (CurrentColorMoves[i].Extra == 3)
+                    {
+                        Position[CurrentColorMoves[i].TargetSquare] = BlackPieces[2];
+                    }
+                    else if (CurrentColorMoves[i].Extra == 4)
+                    {
+                        Position[CurrentColorMoves[i].TargetSquare] = BlackPieces[1];
+                    }
+                }
+            }
+            else
+            {
+                Position[CurrentColorMoves[i].TargetSquare] = Position[CurrentColorMoves[i].StartingSquare];   
+            }
             Position[CurrentColorMoves[i].StartingSquare] = NoPiece;
+            PlayerToMoveWhite = !PlayerToMoveWhite;
             OpponentMoves = new List<Move>(PossibleMoves());
             PlayerToMoveWhite = !PlayerToMoveWhite;
         }
@@ -1483,21 +1531,70 @@ namespace chessbot
             {
                 EvalGameScore += CurrentColorMoves[i].Value;
             }
-            Position[CurrentColorMoves[i].StartingSquare] = Position[CurrentColorMoves[i].TargetSquare];
+            Position[CurrentColorMoves[i].StartingSquare] = TempStartingSquareSource;
             Position[CurrentColorMoves[i].TargetSquare] = TempTargetSquareSource;
         }
         ImageSource TempTargetSquareSourceOpponent = null;
+        ImageSource TempStartingSquareSourceOpponent = null;
         private void MakeMoveNext(int j)
         {
             TempTargetSquareSourceOpponent = Position[OpponentMoves[j].TargetSquare];
-            Position[OpponentMoves[j].TargetSquare] = Position[OpponentMoves[j].StartingSquare];
+            TempStartingSquareSourceOpponent = Position[OpponentMoves[j].StartingSquare];
+            if (OpponentMoves[j].Extra > 0)
+            {
+                //swapped if
+                if (PlayerToMoveWhite == false)
+                {
+                    //promotion:
+                    if (OpponentMoves[j].Extra == 1)
+                    {
+                        Position[OpponentMoves[j].TargetSquare] = WhitePieces[3];
+                    }
+                    else if (OpponentMoves[j].Extra == 2)
+                    {
+                        Position[OpponentMoves[j].TargetSquare] = WhitePieces[0];
+                    }
+                    else if (OpponentMoves[j].Extra == 3)
+                    {
+                        Position[OpponentMoves[j].TargetSquare] = WhitePieces[2];
+                    }
+                    else if (OpponentMoves[j].Extra == 4)
+                    {
+                        Position[OpponentMoves[j].TargetSquare] = WhitePieces[1];
+                    }
+                }
+                else
+                {
+                    //promotion:
+                    if (OpponentMoves[j].Extra == 1)
+                    {
+                        Position[OpponentMoves[j].TargetSquare] = BlackPieces[3];
+                    }
+                    else if (OpponentMoves[j].Extra == 2)
+                    {
+                        Position[OpponentMoves[j].TargetSquare] = BlackPieces[0];
+                    }
+                    else if (OpponentMoves[j].Extra == 3)
+                    {
+                        Position[OpponentMoves[j].TargetSquare] = BlackPieces[2];
+                    }
+                    else if (OpponentMoves[j].Extra == 4)
+                    {
+                        Position[OpponentMoves[j].TargetSquare] = BlackPieces[1];
+                    }
+                }
+            }
+            else
+            {
+                Position[OpponentMoves[j].TargetSquare] = Position[OpponentMoves[j].StartingSquare];
+            }
             Position[OpponentMoves[j].StartingSquare] = NoPiece;
             CurrentColorMovesOverOpponents = new List<Move>(PossibleMoves());
         }
 
         private void UnmakeMoveNext(int j)
         {
-            Position[OpponentMoves[j].StartingSquare] = Position[OpponentMoves[j].TargetSquare];
+            Position[OpponentMoves[j].StartingSquare] = TempStartingSquareSourceOpponent;
             Position[OpponentMoves[j].TargetSquare] = TempTargetSquareSourceOpponent;
         }
 
@@ -1525,7 +1622,95 @@ namespace chessbot
 
             GameScore += Moves[SelectedMoveIndexInList].Value;
             EvalGameScore = GameScore;
-            
+
+            for (int i = 0; i < AllSquares.Count(); i++)
+            {
+                if (AllSquares[i] == AISelectedBefore)
+                {
+                    AIselectedIndexBefore = i;
+                    break;
+                }
+            }
+            for (int i = 0; i < AllSquares.Count(); i++)
+            {
+                if (AllSquares[i] == AISelectedSquare)
+                {
+                    AIselectedIndexSquare = i;
+                    break;
+                }
+            }
+
+            if (Position[AIselectedIndexSquare] == NoPiece)
+            {
+                MoveSound.Play();
+            }
+            else
+            {
+                CaptureSound.Play();
+            }
+            var selectedMove = Moves.First(move => move.StartingSquare == AIselectedIndexBefore && move.TargetSquare == AIselectedIndexSquare);
+            if (selectedMove.Extra > 0)
+            {
+                if (PlayerToMoveWhite == true)
+                {
+                    //promotion:
+                    Position[AIselectedIndexBefore] = NoPiece;
+                    AISelectedBefore.Source = NoPiece;
+                    if (selectedMove.Extra == 1)
+                    {
+                        Position[AIselectedIndexSquare] = WhitePieces[3];
+                        AISelectedSquare.Source = WhitePieces[3];
+                    }
+                    else if (selectedMove.Extra == 2)
+                    {
+                        Position[AIselectedIndexSquare] = WhitePieces[0];
+                        AISelectedSquare.Source = WhitePieces[0];
+                    }
+                    else if (selectedMove.Extra == 3)
+                    {
+                        Position[AIselectedIndexSquare] = WhitePieces[2];
+                        AISelectedSquare.Source = WhitePieces[2];
+                    }
+                    else if (selectedMove.Extra == 4)
+                    {
+                        Position[AIselectedIndexSquare] = WhitePieces[1];
+                        AISelectedSquare.Source = WhitePieces[1];
+                    }
+                }
+                else
+                {
+                    //promotion:
+                    Position[AIselectedIndexBefore] = NoPiece;
+                    AISelectedBefore.Source = NoPiece;
+                    if (selectedMove.Extra == 1)
+                    {
+                        Position[AIselectedIndexSquare] = BlackPieces[3];
+                        AISelectedSquare.Source = BlackPieces[3];
+                    }
+                    else if (selectedMove.Extra == 2)
+                    {
+                        Position[AIselectedIndexSquare] = BlackPieces[0];
+                        AISelectedSquare.Source =BlackPieces[0];
+                    }
+                    else if (selectedMove.Extra == 3)
+                    {
+                        Position[AIselectedIndexSquare] = BlackPieces[2];
+                        AISelectedSquare.Source = BlackPieces[2];
+                    }
+                    else if (selectedMove.Extra == 4)
+                    {
+                        Position[AIselectedIndexSquare] = BlackPieces[1];
+                        AISelectedSquare.Source = BlackPieces[1];
+                    }
+                }
+            }
+            else
+            {
+                Position[AIselectedIndexBefore] = NoPiece;
+                Position[AIselectedIndexSquare] = AISelectedPiece;
+                AISelectedBefore.Source = NoPiece;
+                AISelectedSquare.Source = AISelectedPiece;
+            }
             //reset player move:
             if (WhiteSquares.Contains(SelectedBefore))
             {
@@ -1560,36 +1745,6 @@ namespace chessbot
             {
                 AISelectedSquare.BackgroundColor = Color.FromArgb("#BBCC44");
             }
-
-            for (int i = 0; i < AllSquares.Count(); i++)
-            {
-                if (AllSquares[i] == AISelectedBefore)
-                {
-                    AIselectedIndexBefore = i;
-                    break;
-                }
-            }
-            for (int i = 0; i < AllSquares.Count(); i++)
-            {
-                if (AllSquares[i] == AISelectedSquare)
-                {
-                    AIselectedIndexSquare = i;
-                    break;
-                }
-            }
-
-            if (Position[AIselectedIndexSquare] == NoPiece)
-            {
-                MoveSound.Play();
-            }
-            else
-            {
-                CaptureSound.Play();
-            }
-            Position[AIselectedIndexBefore] = NoPiece;
-            Position[AIselectedIndexSquare] = AISelectedPiece;
-            AISelectedBefore.Source = NoPiece;
-            AISelectedSquare.Source = AISelectedPiece;
 
             if (IsPlayerWhite == true)
             {
