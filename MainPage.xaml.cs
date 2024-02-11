@@ -1378,6 +1378,8 @@ namespace chessbot
                 {
                     if (!OpponentMoves.Any(move => Position[move.TargetSquare] == WhitePieces[4]))
                     {
+                        TempLastLastMoveStarting = LastMoveStarting;
+                        TempLastLastMoveTarget = LastMoveTarget;
                         OpponentMovesCount = 0;
                         for (int j = 0; j < OpponentMoves.Count; j++)
                         {
@@ -1436,6 +1438,8 @@ namespace chessbot
                 {
                     if (!OpponentMoves.Any(move => Position[move.TargetSquare] == BlackPieces[4]))
                     {
+                        TempLastLastMoveStarting = LastMoveStarting;
+                        TempLastLastMoveTarget = LastMoveTarget;
                         OpponentMovesCount = 0;
                         for (int j = 0; j < OpponentMoves.Count; j++)
                         {
@@ -1491,10 +1495,7 @@ namespace chessbot
                     }
                 }
                 UnmakeCurrentMove(i);
-
             }
-            LastMoveStarting = TempLastMoveStarting;
-            LastMoveTarget = TempLastMoveTarget;
             //---FOR TESTING---
             for (int i = 0; i < Moves.Count; i++)
             {
@@ -1552,7 +1553,7 @@ namespace chessbot
         }
         ImageSource TempTargetSquareSource = null;
         ImageSource TempStartingSquareSource = null;
-        int TempLastMoveStarting; int TempLastMoveTarget;
+        int TempLastMoveStarting; int TempLastMoveTarget; int TempLastLastMoveStarting; int TempLastLastMoveTarget;
         private void MakeCurrentMove(int i)
         {
             if ((PlayerToMoveWhite == true && IsPlayerWhite == false) || (PlayerToMoveWhite == false && IsPlayerWhite == true))
@@ -1666,7 +1667,9 @@ namespace chessbot
                 {
                     Position[CurrentColorMoves[i].StartingSquare - 1] = WhitePieces[8];
                 }
-            }  
+            }
+            LastMoveStarting = TempLastMoveStarting;
+            LastMoveTarget = TempLastMoveTarget;
         }
         ImageSource TempTargetSquareSourceOpponent = null;
         ImageSource TempStartingSquareSourceOpponent = null;
@@ -1674,7 +1677,7 @@ namespace chessbot
         {
             TempTargetSquareSourceOpponent = Position[OpponentMoves[j].TargetSquare];
             TempStartingSquareSourceOpponent = Position[OpponentMoves[j].StartingSquare];
-            if (OpponentMoves[j].Extra > 0)
+            if (OpponentMoves[j].Extra > 0 && OpponentMoves[j].Extra < 5)
             {
                 //swapped if
                 if (PlayerToMoveWhite == false)
@@ -1722,7 +1725,18 @@ namespace chessbot
             {
                 Position[OpponentMoves[j].TargetSquare] = Position[OpponentMoves[j].StartingSquare];
             }
+            //en passant:
+            if (OpponentMoves[j].Extra == 5)
+            {
+                Position[OpponentMoves[j].StartingSquare + 1] = NoPiece;
+            }
+            else if (OpponentMoves[j].Extra == 6)
+            {
+                Position[OpponentMoves[j].StartingSquare - 1] = NoPiece;
+            }
             Position[OpponentMoves[j].StartingSquare] = NoPiece;
+            LastMoveStarting = OpponentMoves[j].StartingSquare;
+            LastMoveTarget = OpponentMoves[j].TargetSquare;
             CurrentColorMovesOverOpponents = new List<Move>(PossibleMoves());
         }
 
@@ -1730,6 +1744,33 @@ namespace chessbot
         {
             Position[OpponentMoves[j].StartingSquare] = TempStartingSquareSourceOpponent;
             Position[OpponentMoves[j].TargetSquare] = TempTargetSquareSourceOpponent;
+            //swapped if:
+            if (PlayerToMoveWhite == false)
+            {
+                //en passant:
+                if (OpponentMoves[j].Extra == 5)
+                {
+                    Position[OpponentMoves[j].StartingSquare + 1] = BlackPieces[8];
+                }
+                else if (OpponentMoves[j].Extra == 6)
+                {
+                    Position[OpponentMoves[j].StartingSquare - 1] = BlackPieces[8];
+                }
+            }
+            else
+            {
+                //en passant:
+                if (OpponentMoves[j].Extra == 5)
+                {
+                    Position[OpponentMoves[j].StartingSquare + 1] = WhitePieces[8];
+                }
+                else if (OpponentMoves[j].Extra == 6)
+                {
+                    Position[OpponentMoves[j].StartingSquare - 1] = WhitePieces[8];
+                }
+            }
+            LastMoveStarting = TempLastLastMoveStarting;
+            LastMoveTarget = TempLastLastMoveTarget;
         }
 
         ImageButton AISelectedBefore = null;
