@@ -1505,6 +1505,12 @@ namespace chessbot
                         move.Value = move.Value + PieceValues[0];
                         TempMoves[i] = move;
                     }
+                    else if (TempMoves[i].Extra == 7 || TempMoves[i].Extra == 8 || TempMoves[i].Extra == 9 || TempMoves[i].Extra == 10)
+                    {
+                        Move move = TempMoves[i];
+                        move.Value = move.Value + 20;
+                        TempMoves[i] = move;
+                    }
                 }
             }
             //---FOR TESTING---
@@ -1813,6 +1819,55 @@ namespace chessbot
             {
                 Position[CurrentColorMoves[i].StartingSquare - 1] = NoPiece;
             }
+            //castling:
+            else if (CurrentColorMoves[i].Extra == 7)
+            {
+                Position[56] = NoPiece;
+                if (PlayerToMoveWhite)
+                {
+                    Position[59] = WhitePieces[0];
+                }
+                else
+                {
+                    Position[58] = BlackPieces[0];
+                }
+            }
+            else if (CurrentColorMoves[i].Extra == 8)
+            {
+                Position[63] = NoPiece;
+                if (PlayerToMoveWhite)
+                {
+                    Position[61] = WhitePieces[0];
+                }
+                else
+                {
+                    Position[60] = BlackPieces[0];
+                }
+            }
+            else if (CurrentColorMoves[i].Extra == 9)
+            {
+                Position[0] = NoPiece;
+                if (PlayerToMoveWhite)
+                {
+                    Position[2] = WhitePieces[0];
+                }
+                else
+                {
+                    Position[3] = BlackPieces[0];
+                }
+            }
+            else if (CurrentColorMoves[i].Extra == 10)
+            {
+                Position[7] = NoPiece;
+                if (PlayerToMoveWhite)
+                {
+                    Position[4] = WhitePieces[0];
+                }
+                else
+                {
+                    Position[5] = BlackPieces[0];
+                }
+            }
             Position[CurrentColorMoves[i].StartingSquare] = NoPiece;
             LastMoveStarting = CurrentColorMoves[i].StartingSquare;
             LastMoveTarget = CurrentColorMoves[i].TargetSquare;
@@ -1844,6 +1899,27 @@ namespace chessbot
                 {
                     Position[CurrentColorMoves[i].StartingSquare - 1] = BlackPieces[8];
                 }
+                //castling
+                else if (CurrentColorMoves[i].Extra == 7)
+                {
+                    Position[56] = WhitePieces[0];
+                    Position[59] = NoPiece;
+                }
+                else if (CurrentColorMoves[i].Extra == 8)
+                {
+                    Position[63] = WhitePieces[0];
+                    Position[61] = NoPiece;
+                }
+                else if (CurrentColorMoves[i].Extra == 9)
+                {
+                    Position[0] = WhitePieces[0];
+                    Position[2] = NoPiece;
+                }
+                else if (CurrentColorMoves[i].Extra == 10)
+                {
+                    Position[7] = WhitePieces[0];
+                    Position[4] = NoPiece;
+                }
             }
             else
             {
@@ -1855,6 +1931,27 @@ namespace chessbot
                 else if (CurrentColorMoves[i].Extra == 6)
                 {
                     Position[CurrentColorMoves[i].StartingSquare - 1] = WhitePieces[8];
+                }
+                //castling
+                else if (CurrentColorMoves[i].Extra == 7)
+                {
+                    Position[56] = BlackPieces[0];
+                    Position[58] = NoPiece;
+                }
+                else if (CurrentColorMoves[i].Extra == 8)
+                {
+                    Position[63] = BlackPieces[0];
+                    Position[60] = NoPiece;
+                }
+                else if (CurrentColorMoves[i].Extra == 9)
+                {
+                    Position[0] = BlackPieces[0];
+                    Position[3] = NoPiece;
+                }
+                else if (CurrentColorMoves[i].Extra == 10)
+                {
+                    Position[7] = BlackPieces[0];
+                    Position[5] = NoPiece;
                 }
             }
             LastMoveStarting = TempLastMoveStarting;
@@ -1923,6 +2020,55 @@ namespace chessbot
             {
                 Position[OpponentMoves[j].StartingSquare - 1] = NoPiece;
             }
+            //castling: (swapped if)
+            else if (OpponentMoves[j].Extra == 7)
+            {
+                Position[56] = NoPiece;
+                if (PlayerToMoveWhite == false)
+                {
+                    Position[59] = WhitePieces[0];
+                }
+                else
+                {
+                    Position[58] = BlackPieces[0];
+                }
+            }
+            else if (OpponentMoves[j].Extra == 8)
+            {
+                Position[63] = NoPiece;
+                if (PlayerToMoveWhite == false)
+                {
+                    Position[61] = WhitePieces[0];
+                }
+                else
+                {
+                    Position[60] = BlackPieces[0];
+                }
+            }
+            else if (OpponentMoves[j].Extra == 9)
+            {
+                Position[0] = NoPiece;
+                if (PlayerToMoveWhite == false)
+                {
+                    Position[2] = WhitePieces[0];
+                }
+                else
+                {
+                    Position[3] = BlackPieces[0];
+                }
+            }
+            else if (OpponentMoves[j].Extra == 10)
+            {
+                Position[7] = NoPiece;
+                if (PlayerToMoveWhite == false)
+                {
+                    Position[4] = WhitePieces[0];
+                }
+                else
+                {
+                    Position[5] = BlackPieces[0];
+                }
+            }
             Position[OpponentMoves[j].StartingSquare] = NoPiece;
             LastMoveStarting = OpponentMoves[j].StartingSquare;
             LastMoveTarget = OpponentMoves[j].TargetSquare;
@@ -1945,6 +2091,27 @@ namespace chessbot
                 {
                     Position[OpponentMoves[j].StartingSquare - 1] = BlackPieces[8];
                 }
+                //castling
+                else if (OpponentMoves[j].Extra == 7)
+                {
+                    Position[56] = WhitePieces[0];
+                    Position[59] = NoPiece;
+                }
+                else if (OpponentMoves[j].Extra == 8)
+                {
+                    Position[63] = WhitePieces[0];
+                    Position[61] = NoPiece;
+                }
+                else if (OpponentMoves[j].Extra == 9)
+                {
+                    Position[0] = WhitePieces[0];
+                    Position[2] = NoPiece;
+                }
+                else if (OpponentMoves[j].Extra == 10)
+                {
+                    Position[7] = WhitePieces[0];
+                    Position[4] = NoPiece;
+                }
             }
             else
             {
@@ -1956,6 +2123,27 @@ namespace chessbot
                 else if (OpponentMoves[j].Extra == 6)
                 {
                     Position[OpponentMoves[j].StartingSquare - 1] = WhitePieces[8];
+                }
+                //castling
+                else if (OpponentMoves[j].Extra == 7)
+                {
+                    Position[56] = BlackPieces[0];
+                    Position[58] = NoPiece;
+                }
+                else if (OpponentMoves[j].Extra == 8)
+                {
+                    Position[63] = BlackPieces[0];
+                    Position[60] = NoPiece;
+                }
+                else if (OpponentMoves[j].Extra == 9)
+                {
+                    Position[0] = BlackPieces[0];
+                    Position[3] = NoPiece;
+                }
+                else if (OpponentMoves[j].Extra == 10)
+                {
+                    Position[7] = BlackPieces[0];
+                    Position[5] = NoPiece;
                 }
             }
             LastMoveStarting = TempLastLastMoveStarting;
