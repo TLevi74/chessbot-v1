@@ -630,6 +630,8 @@ namespace chessbot
         List<Move> OpponentMoves = new List<Move>();
         List<Move> CurrentColorMovesOverOpponents = new List<Move>();
         List<Move> Moves = new List<Move>();
+        List<Move> Temp1 = new List<Move>();
+        List<Move> Temp2 = new List<Move>();
 
         List<Move> CastlingCheck = new List<Move>();
 
@@ -637,6 +639,60 @@ namespace chessbot
         private List<Move> PossibleMoves()
         {
             TempMoves.Clear();
+            TempMoves.AddRange(PossibleRegularMoves());
+            TempMoves.AddRange(PossibleCastlingMoves());
+            for (int i = 0; i < TempMoves.Count; i++)
+            {
+                if (TempMoves[i].Extra != 0)
+                {
+                    if (TempMoves[i].Extra == 1)
+                    {
+                        Move move = TempMoves[i];
+                        move.Value = move.Value + PieceValues[4] - PieceValues[0];
+                        TempMoves[i] = move;
+                    }
+                    else if (TempMoves[i].Extra == 2)
+                    {
+                        Move move = TempMoves[i];
+                        move.Value = move.Value + PieceValues[3] - PieceValues[0];
+                        TempMoves[i] = move;
+                    }
+                    else if (TempMoves[i].Extra == 3)
+                    {
+                        Move move = TempMoves[i];
+                        move.Value = move.Value + PieceValues[2] - PieceValues[0];
+                        TempMoves[i] = move;
+                    }
+                    else if (TempMoves[i].Extra == 4)
+                    {
+                        Move move = TempMoves[i];
+                        move.Value = move.Value + PieceValues[1] - PieceValues[0];
+                        TempMoves[i] = move;
+                    }
+                    else if (TempMoves[i].Extra == 5 || TempMoves[i].Extra == 6)
+                    {
+                        Move move = TempMoves[i];
+                        move.Value = move.Value + PieceValues[0];
+                        TempMoves[i] = move;
+                    }
+                    else if (TempMoves[i].Extra == 7 || TempMoves[i].Extra == 8 || TempMoves[i].Extra == 9 || TempMoves[i].Extra == 10)
+                    {
+                        Move move = TempMoves[i];
+                        move.Value = move.Value + 20;
+                        TempMoves[i] = move;
+                    }
+                }
+            }
+            //---FOR TESTING---
+            //for (int i = 0; i < TempMoves.Count; i++)
+            //{
+            //    Trace.WriteLine($"{i+1}: |{TempMoves[i].StartingSquare}, {TempMoves[i].TargetSquare}|");
+            //}
+            return TempMoves;
+        }
+        private List<Move> PossibleRegularMoves()
+        {
+            Temp1.Clear();
             if (PlayerToMoveWhite == true)
             {
                 for (int i = 0; i < 64; i++)
@@ -653,10 +709,10 @@ namespace chessbot
                                 {
                                     if ((Position[i - 8] == NoPiece) && (Position[i - 16] == NoPiece))
                                     {
-                                        ValueTempMoves(i, i-16, P2M_PawnExtraValues[i - 16] - P2M_PawnExtraValues[i], 0);
+                                        ValueTempMoves(i, i - 16, P2M_PawnExtraValues[i - 16] - P2M_PawnExtraValues[i], 0);
                                     }
                                 }
-                                if (Position[i-8] == NoPiece && SquaresToEdge[i][0] > 1)
+                                if (Position[i - 8] == NoPiece && SquaresToEdge[i][0] > 1)
                                 {
                                     ValueTempMoves(i, i - 8, P2M_PawnExtraValues[i - 8] - P2M_PawnExtraValues[i], 0);
                                 }
@@ -711,7 +767,7 @@ namespace chessbot
                                 {
                                     if (SquaresToEdge[i][1] > 0)
                                     {
-                                        if (Position[i+1] == BlackPieces[8] && LastMoveStarting == i - 15 && LastMoveTarget == i + 1)
+                                        if (Position[i + 1] == BlackPieces[8] && LastMoveStarting == i - 15 && LastMoveTarget == i + 1)
                                         {
                                             ValueTempMoves(i, i - 7, P2M_PawnExtraValues[i - 7] - P2M_PawnExtraValues[i], 5);
                                         }
@@ -987,72 +1043,9 @@ namespace chessbot
                                     }
                                 }
                             }
-                            //castling
-                            if (IsPlayerWhite == true)
-                            {
-                                //O-O-O
-                                if (castling[0] && castling[2] && SquareB1.Source == NoPiece && SquareC1.Source == NoPiece && SquareD1.Source == NoPiece)
-                                {
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    CastlingCheck = new List<Move>(PossibleMoves());
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    if (!CastlingCheck.Any(move => move.TargetSquare == 60) && !CastlingCheck.Any(move => move.TargetSquare == 59))
-                                    {
-                                        if (Position[49] != BlackPieces[4] && Position[50] != BlackPieces[4])
-                                        {
-                                            ValueTempMoves(60, 58, P2M_KingExtraValues[58] - P2M_KingExtraValues[60], 7);
-                                        }
-                                    }
-                                }
-                                //O-O
-                                if (castling[0] && castling[3] && SquareF1.Source == NoPiece && SquareG1.Source == NoPiece)
-                                {
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    CastlingCheck = new List<Move>(PossibleMoves());
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    if (!CastlingCheck.Any(move => move.TargetSquare == 60) && !CastlingCheck.Any(move => move.TargetSquare == 61))
-                                    {
-                                        if (Position[54] != BlackPieces[4] && Position[55] != BlackPieces[4])
-                                        {
-                                            ValueTempMoves(60, 62, P2M_KingExtraValues[62] - P2M_KingExtraValues[60], 8);
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                //O-O-O
-                                if (castling[0] && castling[5] && SquareE8.Source == NoPiece && SquareF8.Source == NoPiece && SquareG8.Source == NoPiece)
-                                {
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    CastlingCheck = new List<Move>(PossibleMoves());
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    if (!CastlingCheck.Any(move => move.TargetSquare == 3) && !CastlingCheck.Any(move => move.TargetSquare == 4))
-                                    {
-                                        if (Position[13] != BlackPieces[4] && Position[14] != BlackPieces[4])
-                                        {
-                                            ValueTempMoves(3, 5, AI2M_KingExtraValues[5] - AI2M_KingExtraValues[3], 10);
-                                        }
-                                    }
-                                }
-                                //O-O
-                                if (castling[0] && castling[4] && SquareB8.Source == NoPiece && SquareC8.Source == NoPiece)
-                                {
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    CastlingCheck = new List<Move>(PossibleMoves());
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    if (!CastlingCheck.Any(move => move.TargetSquare == 3) && !CastlingCheck.Any(move => move.TargetSquare == 2))
-                                    {
-                                        if (Position[8] != BlackPieces[4] && Position[9] != BlackPieces[4])
-                                        {
-                                            ValueTempMoves(3, 1, P2M_KingExtraValues[1] - P2M_KingExtraValues[3], 9);
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
-                } 
+                }
             }
             else
             {
@@ -1404,66 +1397,80 @@ namespace chessbot
                                     }
                                 }
                             }
-                            //castling
-                            if (IsPlayerWhite == false)
+                        }
+                    }
+                }
+            }
+            return Temp1;
+        }
+        private List<Move> PossibleCastlingMoves()
+        {
+            Temp2.Clear();
+            if (PlayerToMoveWhite == true)
+            {
+                for (int j = 0; j < 64; j++)
+                {
+                    if (Position[j] == WhitePieces[4])
+                    {
+                        //castling
+                        if (IsPlayerWhite == true)
+                        {
+                            //O-O-O
+                            if (castling[0] && castling[2] && SquareB1.Source == NoPiece && SquareC1.Source == NoPiece && SquareD1.Source == NoPiece)
                             {
-                                //O-O-O
-                                if (castling[1] && castling[3] && SquareE1.Source == NoPiece && SquareF1.Source == NoPiece && SquareG1.Source == NoPiece)
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                CastlingCheck = new List<Move>(PossibleRegularMoves());
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                if (!CastlingCheck.Any(move => move.TargetSquare == 60) && !CastlingCheck.Any(move => move.TargetSquare == 59))
                                 {
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    CastlingCheck = new List<Move>(PossibleMoves());
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    if (!CastlingCheck.Any(move => move.TargetSquare == 59) && !CastlingCheck.Any(move => move.TargetSquare == 60))
+                                    if (Position[49] != BlackPieces[4] && Position[50] != BlackPieces[4])
                                     {
-                                        if (Position[53] != WhitePieces[4] && Position[54] != WhitePieces[4])
-                                        {
-                                            ValueTempMoves(59, 61, P2M_KingExtraValues[61] - P2M_KingExtraValues[59], 8);
-                                        }
-                                    }
-                                }
-                                //O-O
-                                if (castling[1] && castling[2] && SquareB1.Source == NoPiece && SquareC1.Source == NoPiece)
-                                {
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    CastlingCheck = new List<Move>(PossibleMoves());
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    if (!CastlingCheck.Any(move => move.TargetSquare == 59) && !CastlingCheck.Any(move => move.TargetSquare == 58))
-                                    {
-                                        if (Position[48] != WhitePieces[4] && Position[49] != WhitePieces[4])
-                                        {
-                                            ValueTempMoves(59, 57, P2M_KingExtraValues[57] - P2M_KingExtraValues[59], 7);
-                                        }
+                                        Temp2.Add(new Move(60, 58, P2M_KingExtraValues[58] - P2M_KingExtraValues[60], 7));
                                     }
                                 }
                             }
-                            else
+                            //O-O
+                            if (castling[0] && castling[3] && SquareF1.Source == NoPiece && SquareG1.Source == NoPiece)
                             {
-                                //O-O-O
-                                if (castling[1] && castling[4] && SquareB8.Source == NoPiece && SquareC8.Source == NoPiece && SquareD8.Source == NoPiece)
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                CastlingCheck = new List<Move>(PossibleRegularMoves());
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                if (!CastlingCheck.Any(move => move.TargetSquare == 60) && !CastlingCheck.Any(move => move.TargetSquare == 61))
                                 {
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    CastlingCheck = new List<Move>(PossibleMoves());
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    if (!CastlingCheck.Any(move => move.TargetSquare == 4) && !CastlingCheck.Any(move => move.TargetSquare == 3))
+                                    if (Position[54] != BlackPieces[4] && Position[55] != BlackPieces[4])
                                     {
-                                        if (Position[9] != WhitePieces[4] && Position[10] != WhitePieces[4])
-                                        {
-                                            ValueTempMoves(4, 2, AI2M_KingExtraValues[2] - AI2M_KingExtraValues[4], 9);
-                                        }
+                                        Temp2.Add(new Move(60, 62, P2M_KingExtraValues[62] - P2M_KingExtraValues[60], 8));
                                     }
                                 }
-                                //O-O
-                                if (castling[1] && castling[5] && SquareF8.Source == NoPiece && SquareG8.Source == NoPiece)
+                            }
+                        }
+                        else
+                        {
+                            //O-O-O
+                            if (castling[0] && castling[5] && SquareE8.Source == NoPiece && SquareF8.Source == NoPiece && SquareG8.Source == NoPiece)
+                            {
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                CastlingCheck = new List<Move>(PossibleRegularMoves());
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                if (!CastlingCheck.Any(move => move.TargetSquare == 3) && !CastlingCheck.Any(move => move.TargetSquare == 4))
                                 {
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    CastlingCheck = new List<Move>(PossibleMoves());
-                                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                                    if (!CastlingCheck.Any(move => move.TargetSquare == 4) && !CastlingCheck.Any(move => move.TargetSquare == 5))
+                                    if (Position[13] != BlackPieces[4] && Position[14] != BlackPieces[4])
                                     {
-                                        if (Position[14] != WhitePieces[4] && Position[15] != WhitePieces[4])
-                                        {
-                                            ValueTempMoves(4, 6, P2M_KingExtraValues[6] - P2M_KingExtraValues[4], 10);
-                                        }
+                                        Temp2.Add(new Move(3, 5, AI2M_KingExtraValues[5] - AI2M_KingExtraValues[3], 10));
+                                    }
+                                }
+                            }
+                            //O-O
+                            if (castling[0] && castling[4] && SquareB8.Source == NoPiece && SquareC8.Source == NoPiece)
+                            {
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                CastlingCheck = new List<Move>(PossibleRegularMoves());
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                if (!CastlingCheck.Any(move => move.TargetSquare == 3) && !CastlingCheck.Any(move => move.TargetSquare == 2))
+                                {
+                                    if (Position[8] != BlackPieces[4] && Position[9] != BlackPieces[4])
+                                    {
+                                        Temp2.Add(new Move(3, 1, AI2M_KingExtraValues[1] - AI2M_KingExtraValues[3], 9));
                                     }
                                 }
                             }
@@ -1471,54 +1478,79 @@ namespace chessbot
                     }
                 }
             }
-            for (int i = 0; i < TempMoves.Count; i++)
+            else
             {
-                if (TempMoves[i].Extra != 0)
+                for (int j = 0; j < 64; j++)
                 {
-                    if (TempMoves[i].Extra == 1)
+                    if (Position[j] == BlackPieces[4])
                     {
-                        Move move = TempMoves[i];
-                        move.Value = move.Value + PieceValues[4] - PieceValues[0];
-                        TempMoves[i] = move;
-                    }
-                    else if (TempMoves[i].Extra == 2)
-                    {
-                        Move move = TempMoves[i];
-                        move.Value = move.Value + PieceValues[3] - PieceValues[0];
-                        TempMoves[i] = move;
-                    }
-                    else if (TempMoves[i].Extra == 3)
-                    {
-                        Move move = TempMoves[i];
-                        move.Value = move.Value + PieceValues[2] - PieceValues[0];
-                        TempMoves[i] = move;
-                    }
-                    else if (TempMoves[i].Extra == 4)
-                    {
-                        Move move = TempMoves[i];
-                        move.Value = move.Value + PieceValues[1] - PieceValues[0];
-                        TempMoves[i] = move;
-                    }
-                    else if (TempMoves[i].Extra == 5 || TempMoves[i].Extra == 6)
-                    {
-                        Move move = TempMoves[i];
-                        move.Value = move.Value + PieceValues[0];
-                        TempMoves[i] = move;
-                    }
-                    else if (TempMoves[i].Extra == 7 || TempMoves[i].Extra == 8 || TempMoves[i].Extra == 9 || TempMoves[i].Extra == 10)
-                    {
-                        Move move = TempMoves[i];
-                        move.Value = move.Value + 20;
-                        TempMoves[i] = move;
+                        //castling
+                        if (IsPlayerWhite == false)
+                        {
+                            //O-O-O
+                            if (castling[1] && castling[3] && SquareE1.Source == NoPiece && SquareF1.Source == NoPiece && SquareG1.Source == NoPiece)
+                            {
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                CastlingCheck = new List<Move>(PossibleRegularMoves());
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                if (!CastlingCheck.Any(move => move.TargetSquare == 59) && !CastlingCheck.Any(move => move.TargetSquare == 60))
+                                {
+                                    if (Position[53] != WhitePieces[4] && Position[54] != WhitePieces[4])
+                                    {
+                                        Temp2.Add(new Move(59, 61, P2M_KingExtraValues[61] - P2M_KingExtraValues[59], 8));
+                                    }
+                                }
+                            }
+                            //O-O
+                            if (castling[1] && castling[2] && SquareB1.Source == NoPiece && SquareC1.Source == NoPiece)
+                            {
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                CastlingCheck = new List<Move>(PossibleRegularMoves());
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                if (!CastlingCheck.Any(move => move.TargetSquare == 59) && !CastlingCheck.Any(move => move.TargetSquare == 58))
+                                {
+                                    if (Position[48] != WhitePieces[4] && Position[49] != WhitePieces[4])
+                                    {
+                                        Temp2.Add(new Move(59, 57, P2M_KingExtraValues[57] - P2M_KingExtraValues[59], 7));
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //O-O-O
+                            if (castling[1] && castling[4] && SquareB8.Source == NoPiece && SquareC8.Source == NoPiece && SquareD8.Source == NoPiece)
+                            {
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                CastlingCheck = new List<Move>(PossibleRegularMoves());
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                if (!CastlingCheck.Any(move => move.TargetSquare == 4) && !CastlingCheck.Any(move => move.TargetSquare == 3))
+                                {
+                                    if (Position[9] != WhitePieces[4] && Position[10] != WhitePieces[4])
+                                    {
+                                        Temp2.Add(new Move(4, 2, AI2M_KingExtraValues[2] - AI2M_KingExtraValues[4], 9));
+                                    }
+                                }
+                            }
+                            //O-O
+                            if (castling[1] && castling[5] && SquareF8.Source == NoPiece && SquareG8.Source == NoPiece)
+                            {
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                CastlingCheck = new List<Move>(PossibleRegularMoves());
+                                PlayerToMoveWhite = !PlayerToMoveWhite;
+                                if (!CastlingCheck.Any(move => move.TargetSquare == 4) && !CastlingCheck.Any(move => move.TargetSquare == 5))
+                                {
+                                    if (Position[14] != WhitePieces[4] && Position[15] != WhitePieces[4])
+                                    {
+                                        Temp2.Add(new Move(4, 6, AI2M_KingExtraValues[6] - AI2M_KingExtraValues[4], 10));
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
-            //---FOR TESTING---
-            //for (int i = 0; i < TempMoves.Count; i++)
-            //{
-            //    Trace.WriteLine($"{i+1}: |{TempMoves[i].StartingSquare}, {TempMoves[i].TargetSquare}|");
-            //}
-            return TempMoves;
+            return Temp2;
         }
         private void ValueTempMoves(int _StartingSquare, int _TargetSquare, int _Value, int _Extra)
         {
@@ -1527,32 +1559,32 @@ namespace chessbot
             {
                 if (Position[_TargetSquare] == BlackPieces[8] || Position[_TargetSquare] == WhitePieces[8])
                 {
-                    TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[0], _Extra));
+                    Temp1.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[0], _Extra));
                 }
 
                 else if (Position[_TargetSquare] == BlackPieces[1] || Position[_TargetSquare] == BlackPieces[6] || Position[_TargetSquare] == WhitePieces[1] || Position[_TargetSquare] == WhitePieces[6])
                 {
-                    TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1], _Extra));
+                    Temp1.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1], _Extra));
                 }
 
                 else if (Position[_TargetSquare] == BlackPieces[2] || Position[_TargetSquare] == BlackPieces[5] || Position[_TargetSquare] == WhitePieces[2] || Position[_TargetSquare] == WhitePieces[5])
                 {
-                    TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[2], _Extra));
+                    Temp1.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[2], _Extra));
                 }
 
                 else if (Position[_TargetSquare] == BlackPieces[0] || Position[_TargetSquare] == BlackPieces[7] || Position[_TargetSquare] == WhitePieces[0] || Position[_TargetSquare] == WhitePieces[7])
                 {
-                    TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[3], _Extra));
+                    Temp1.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[3], _Extra));
                 }
 
                 else
                 {
-                    TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[4], _Extra));
+                    Temp1.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[4], _Extra));
                 }
             }
             else
             {
-                TempMoves.Add(new Move(_StartingSquare, _TargetSquare, _Value, _Extra));
+                Temp1.Add(new Move(_StartingSquare, _TargetSquare, _Value, _Extra));
             }
         }
 
