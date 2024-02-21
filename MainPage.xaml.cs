@@ -1617,7 +1617,9 @@ namespace chessbot
             {
                 
                 MakeCurrentMove(i, CurrentColorMoves);
-                
+                PlayerToMoveWhite = !PlayerToMoveWhite;
+                OpponentMoves = new List<Move>(PossibleMoves());
+                PlayerToMoveWhite = !PlayerToMoveWhite;
                 if (PlayerToMoveWhite == true)
                 {
                     if (!OpponentMoves.Any(move => Position[move.TargetSquare] == WhitePieces[4]))
@@ -1920,9 +1922,6 @@ namespace chessbot
             Position[currentList[i].StartingSquare] = NoPiece;
             LastMoveStarting = currentList[i].StartingSquare;
             LastMoveTarget = currentList[i].TargetSquare;
-            PlayerToMoveWhite = !PlayerToMoveWhite;
-            OpponentMoves = new List<Move>(PossibleMoves());
-            PlayerToMoveWhite = !PlayerToMoveWhite;
         }
 
         private void UnmakeCurrentMove(int i, List<Move> currentList)
@@ -2429,13 +2428,15 @@ namespace chessbot
         //---------------------
         //minimax eval:
         List<Move> possibleMoves = new List<Move>();
-        private int Minimax(int depth, bool maximizingPlayer)
+        private int Minimax(ImageSource[] position, int depth, bool maximizingPlayer, int alpha, int beta)
         {
             GenerateMoves(possibleMoves);
             //OR CHECKMATE
             if (depth == 0 || possibleMoves.Count == 0)
             {
-                //return EvaluateBoard();
+                int BoardValue = 0;
+                //calculate board value
+                return BoardValue;
             }
             if (maximizingPlayer)
             {
@@ -2443,9 +2444,13 @@ namespace chessbot
                 for (int i = 0; i < possibleMoves.Count; i++)
                 {
                     MakeCurrentMove(i, possibleMoves);
-                    int eval = Minimax(depth - 1, false);
+                    int eval = Minimax(position, depth - 1, false, alpha, beta);
                     maxEval = Math.Max(maxEval, eval);
-                    UnmakeCurrentMove(i, possibleMoves);
+                    alpha = Math.Max(alpha, eval);
+                    if (beta <= alpha)
+                    {
+                        break;
+                    }
                 }
                 return maxEval;
             }
@@ -2455,9 +2460,13 @@ namespace chessbot
                 for (int i = 0; i < possibleMoves.Count; i++)
                 {
                     MakeCurrentMove(i, possibleMoves);
-                    int eval = Minimax(depth - 1, true);
+                    int eval = Minimax(position, depth - 1, true, alpha, beta);
                     minEval = Math.Min(minEval, eval);
-                    UnmakeCurrentMove(i, possibleMoves);
+                    beta = Math.Min(beta, eval);
+                    if (beta <= alpha)
+                    {
+                        break;
+                    }
                 }
                 return minEval;
             }
@@ -2471,16 +2480,14 @@ namespace chessbot
             for (int i = 0; i < possibleMoves.Count; i++)
             {
                 MakeCurrentMove(i, possibleMoves);
-                int eval = Minimax(depth - 1, false);
+                int eval = Minimax(Position, depth - 1, false, int.MinValue, int.MaxValue);
                 if (eval > bestEval)
                 {
                     bestEval = eval;
                     bestMove = possibleMoves[i];
                 }
-                UnmakeCurrentMove(i, possibleMoves);
             }
             return bestMove;
         }
     }
-
 }
