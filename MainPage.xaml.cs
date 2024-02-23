@@ -1613,10 +1613,9 @@ namespace chessbot
             //checking for checks:
             TempLastMoveStarting = LastMoveStarting;
             TempLastMoveTarget = LastMoveTarget;
-            for (int i = 0; i < CurrentColorMoves.Count; i++)
+            foreach (Move move in CurrentColorMoves)
             {
-                
-                MakeCurrentMove(i, CurrentColorMoves);
+                MakeCurrentMove(move, Position);
                 PlayerToMoveWhite = !PlayerToMoveWhite;
                 OpponentMoves = new List<Move>(PossibleMoves());
                 PlayerToMoveWhite = !PlayerToMoveWhite;
@@ -1644,7 +1643,7 @@ namespace chessbot
                             if (CurrentColorMovesOverOpponents.Any(move => Position[move.TargetSquare] == BlackPieces[4]))
                             {
                                 //making this move will result in checkmate:
-                                ListToAddMoves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, 20000, CurrentColorMoves[i].Extra));
+                                ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, 20000, move.Extra));
                             }
                             else
                             {
@@ -1653,22 +1652,22 @@ namespace chessbot
                                 {
                                     if (EvalGameScore > 1000)
                                     {
-                                        ListToAddMoves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, 18000, CurrentColorMoves[i].Extra));
+                                        ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, 18000, move.Extra));
                                     }
                                     else
                                     {
-                                        ListToAddMoves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, -18000, CurrentColorMoves[i].Extra));
+                                        ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, -18000, move.Extra));
                                     }
                                 }
                                 else
                                 {
                                     if (EvalGameScore < -1000)
                                     {
-                                        ListToAddMoves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, 18000, CurrentColorMoves[i].Extra));
+                                        ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, 18000, move.Extra));
                                     }
                                     else
                                     {
-                                        ListToAddMoves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, -18000, CurrentColorMoves[i].Extra));
+                                        ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, -18000, move.Extra));
                                     }
                                 }
                             }
@@ -1676,8 +1675,8 @@ namespace chessbot
                         else
                         {
                             //regular move
-                            ListToAddMoves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, CurrentColorMoves[i].Value, CurrentColorMoves[i].Extra));
-                        } 
+                            ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, move.Value, move.Extra));
+                        }
                     }
                 }
                 else
@@ -1704,7 +1703,7 @@ namespace chessbot
                             if (CurrentColorMovesOverOpponents.Any(move => Position[move.TargetSquare] == WhitePieces[4]))
                             {
                                 //making this move will result in checkmate:
-                                ListToAddMoves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, 20000, CurrentColorMoves[i].Extra));
+                                ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, 20000, move.Extra));
                             }
                             else
                             {
@@ -1713,22 +1712,22 @@ namespace chessbot
                                 {
                                     if (EvalGameScore > 1000)
                                     {
-                                        ListToAddMoves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, 18000, CurrentColorMoves[i].Extra));
+                                        ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, 18000, move.Extra));
                                     }
                                     else
                                     {
-                                        ListToAddMoves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, -18000, CurrentColorMoves[i].Extra));
+                                        ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, -18000, move.Extra));
                                     }
                                 }
                                 else
                                 {
                                     if (EvalGameScore < -1000)
                                     {
-                                        ListToAddMoves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, 18000, CurrentColorMoves[i].Extra));
+                                        ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, 18000, move.Extra));
                                     }
                                     else
                                     {
-                                        ListToAddMoves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, -18000, CurrentColorMoves[i].Extra));
+                                        ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, -18000, move.Extra));
                                     }
                                 }
                             }
@@ -1736,11 +1735,11 @@ namespace chessbot
                         else
                         {
                             //regular move
-                            ListToAddMoves.Add(new Move(CurrentColorMoves[i].StartingSquare, CurrentColorMoves[i].TargetSquare, CurrentColorMoves[i].Value, CurrentColorMoves[i].Extra));
+                            ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, move.Value, move.Extra));
                         }
                     }
                 }
-                UnmakeCurrentMove(i, CurrentColorMoves);
+                UnmakeCurrentMove(move, Position);
             }
             //---FOR TESTING---
             for (int i = 0; i < ListToAddMoves.Count; i++)
@@ -1800,206 +1799,206 @@ namespace chessbot
         ImageSource TempTargetSquareSource = null;
         ImageSource TempStartingSquareSource = null;
         int TempLastMoveStarting; int TempLastMoveTarget; int TempLastLastMoveStarting; int TempLastLastMoveTarget;
-        private void MakeCurrentMove(int i, List<Move> currentList)
+        private void MakeCurrentMove(Move move, ImageSource[] onPosition)
         {
             if ((PlayerToMoveWhite == true && IsPlayerWhite == false) || (PlayerToMoveWhite == false && IsPlayerWhite == true))
             {
                 //AI moves, evalscore gets higher
-                EvalGameScore += currentList[i].Value;
+                EvalGameScore += move.Value;
             }
             else
             {
                 //Player moves, evalscore gets lower
-                EvalGameScore -= currentList[i].Value;
+                EvalGameScore -= move.Value;
             }
-            TempTargetSquareSource = Position[currentList[i].TargetSquare];
-            TempStartingSquareSource = Position[currentList[i].StartingSquare];
-            if (currentList[i].Extra > 0 && currentList[i].Extra < 5)
+            TempTargetSquareSource = onPosition[move.TargetSquare];
+            TempStartingSquareSource = onPosition[move.StartingSquare];
+            if (move.Extra > 0 && move.Extra < 5)
             {
                 if (PlayerToMoveWhite == true)
                 {
                     //promotion:
-                    if (currentList[i].Extra == 1)
+                    if (move.Extra == 1)
                     {
-                        Position[currentList[i].TargetSquare] = WhitePieces[3];
+                        onPosition[move.TargetSquare] = WhitePieces[3];
                     }
-                    else if (currentList[i].Extra == 2)
+                    else if (move.Extra == 2)
                     {
-                        Position[currentList[i].TargetSquare] = WhitePieces[0];
+                        onPosition[move.TargetSquare] = WhitePieces[0];
                     }
-                    else if (currentList[i].Extra == 3)
+                    else if (move.Extra == 3)
                     {
-                        Position[currentList[i].TargetSquare] = WhitePieces[2];
+                        onPosition[move.TargetSquare] = WhitePieces[2];
                     }
-                    else if (currentList[i].Extra == 4)
+                    else if (move.Extra == 4)
                     {
-                        Position[currentList[i].TargetSquare] = WhitePieces[1];
+                        onPosition[move.TargetSquare] = WhitePieces[1];
                     }
                 }
                 else
                 {
                     //promotion:
-                    if (currentList[i].Extra == 1)
+                    if (move.Extra == 1)
                     {
-                        Position[currentList[i].TargetSquare] = BlackPieces[3];
+                        onPosition[move.TargetSquare] = BlackPieces[3];
                     }
-                    else if (currentList[i].Extra == 2)
+                    else if (move.Extra == 2)
                     {
-                        Position[currentList[i].TargetSquare] = BlackPieces[0];
+                        onPosition[move.TargetSquare] = BlackPieces[0];
                     }
-                    else if (currentList[i].Extra == 3)
+                    else if (move.Extra == 3)
                     {
-                        Position[currentList[i].TargetSquare] = BlackPieces[2];
+                        onPosition[move.TargetSquare] = BlackPieces[2];
                     }
-                    else if (currentList[i].Extra == 4)
+                    else if (move.Extra == 4)
                     {
-                        Position[currentList[i].TargetSquare] = BlackPieces[1];
+                        onPosition[move.TargetSquare] = BlackPieces[1];
                     }
                 }
             }
             else
             {
-                Position[currentList[i].TargetSquare] = Position[currentList[i].StartingSquare];   
+                onPosition[move.TargetSquare] = onPosition[move.StartingSquare];   
             }
             //en passant:
-            if (currentList[i].Extra == 5)
+            if (move.Extra == 5)
             {
-                Position[currentList[i].StartingSquare + 1] = NoPiece;
+                onPosition[move.StartingSquare + 1] = NoPiece;
             }
-            else if (currentList[i].Extra == 6)
+            else if (move.Extra == 6)
             {
-                Position[currentList[i].StartingSquare - 1] = NoPiece;
+                onPosition[move.StartingSquare - 1] = NoPiece;
             }
             //castling:
-            else if (currentList[i].Extra == 7)
+            else if (move.Extra == 7)
             {
-                Position[56] = NoPiece;
+                onPosition[56] = NoPiece;
                 if (PlayerToMoveWhite)
                 {
-                    Position[59] = WhitePieces[0];
+                    onPosition[59] = WhitePieces[0];
                 }
                 else
                 {
-                    Position[58] = BlackPieces[0];
+                    onPosition[58] = BlackPieces[0];
                 }
             }
-            else if (currentList[i].Extra == 8)
+            else if (move.Extra == 8)
             {
-                Position[63] = NoPiece;
+                onPosition[63] = NoPiece;
                 if (PlayerToMoveWhite)
                 {
-                    Position[61] = WhitePieces[0];
+                    onPosition[61] = WhitePieces[0];
                 }
                 else
                 {
-                    Position[60] = BlackPieces[0];
+                    onPosition[60] = BlackPieces[0];
                 }
             }
-            else if (currentList[i].Extra == 9)
+            else if (move.Extra == 9)
             {
-                Position[0] = NoPiece;
+                onPosition[0] = NoPiece;
                 if (PlayerToMoveWhite)
                 {
-                    Position[2] = WhitePieces[0];
+                    onPosition[2] = WhitePieces[0];
                 }
                 else
                 {
-                    Position[3] = BlackPieces[0];
+                    onPosition[3] = BlackPieces[0];
                 }
             }
-            else if (currentList[i].Extra == 10)
+            else if (move.Extra == 10)
             {
-                Position[7] = NoPiece;
+                onPosition[7] = NoPiece;
                 if (PlayerToMoveWhite)
                 {
-                    Position[4] = WhitePieces[0];
+                    onPosition[4] = WhitePieces[0];
                 }
                 else
                 {
-                    Position[5] = BlackPieces[0];
+                    onPosition[5] = BlackPieces[0];
                 }
             }
-            Position[currentList[i].StartingSquare] = NoPiece;
-            LastMoveStarting = currentList[i].StartingSquare;
-            LastMoveTarget = currentList[i].TargetSquare;
+            onPosition[move.StartingSquare] = NoPiece;
+            LastMoveStarting = move.StartingSquare;
+            LastMoveTarget = move.TargetSquare;
         }
 
-        private void UnmakeCurrentMove(int i, List<Move> currentList)
+        private void UnmakeCurrentMove(Move move, ImageSource[] onPosition)
         {
             if ((PlayerToMoveWhite == true && IsPlayerWhite == false) || (PlayerToMoveWhite == false && IsPlayerWhite == true))
             {
-                EvalGameScore -= currentList[i].Value;
+                EvalGameScore -= move.Value;
             }
             else
             {
-                EvalGameScore += currentList[i].Value;
+                EvalGameScore += move.Value;
             }
-            Position[currentList[i].StartingSquare] = TempStartingSquareSource;
-            Position[currentList[i].TargetSquare] = TempTargetSquareSource;
+            onPosition[move.StartingSquare] = TempStartingSquareSource;
+            onPosition[move.TargetSquare] = TempTargetSquareSource;
             if (PlayerToMoveWhite == true)
             {
                 //en passant:
-                if (currentList[i].Extra == 5)
+                if (move.Extra == 5)
                 {
-                    Position[currentList[i].StartingSquare + 1] = BlackPieces[8];
+                    onPosition[move.StartingSquare + 1] = BlackPieces[8];
                 }
-                else if (currentList[i].Extra == 6)
+                else if (move.Extra == 6)
                 {
-                    Position[currentList[i].StartingSquare - 1] = BlackPieces[8];
+                    onPosition[move.StartingSquare - 1] = BlackPieces[8];
                 }
                 //castling
-                else if (currentList[i].Extra == 7)
+                else if (move.Extra == 7)
                 {
-                    Position[56] = WhitePieces[0];
-                    Position[59] = NoPiece;
+                    onPosition[56] = WhitePieces[0];
+                    onPosition[59] = NoPiece;
                 }
-                else if (currentList[i].Extra == 8)
+                else if (move.Extra == 8)
                 {
-                    Position[63] = WhitePieces[0];
-                    Position[61] = NoPiece;
+                    onPosition[63] = WhitePieces[0];
+                    onPosition[61] = NoPiece;
                 }
-                else if (currentList[i].Extra == 9)
+                else if (move.Extra == 9)
                 {
-                    Position[0] = WhitePieces[0];
-                    Position[2] = NoPiece;
+                    onPosition[0] = WhitePieces[0];
+                    onPosition[2] = NoPiece;
                 }
-                else if (currentList[i].Extra == 10)
+                else if (move.Extra == 10)
                 {
-                    Position[7] = WhitePieces[0];
-                    Position[4] = NoPiece;
+                    onPosition[7] = WhitePieces[0];
+                    onPosition[4] = NoPiece;
                 }
             }
             else
             {
                 //en passant:
-                if (currentList[i].Extra == 5)
+                if (move.Extra == 5)
                 {
-                    Position[currentList[i].StartingSquare + 1] = WhitePieces[8];
+                    onPosition[move.StartingSquare + 1] = WhitePieces[8];
                 }
-                else if (currentList[i].Extra == 6)
+                else if (move.Extra == 6)
                 {
-                    Position[currentList[i].StartingSquare - 1] = WhitePieces[8];
+                    onPosition[move.StartingSquare - 1] = WhitePieces[8];
                 }
                 //castling
-                else if (currentList[i].Extra == 7)
+                else if (move.Extra == 7)
                 {
-                    Position[56] = BlackPieces[0];
-                    Position[58] = NoPiece;
+                    onPosition[56] = BlackPieces[0];
+                    onPosition[58] = NoPiece;
                 }
-                else if (currentList[i].Extra == 8)
+                else if (move.Extra == 8)
                 {
-                    Position[63] = BlackPieces[0];
-                    Position[60] = NoPiece;
+                    onPosition[63] = BlackPieces[0];
+                    onPosition[60] = NoPiece;
                 }
-                else if (currentList[i].Extra == 9)
+                else if (move.Extra == 9)
                 {
-                    Position[0] = BlackPieces[0];
-                    Position[3] = NoPiece;
+                    onPosition[0] = BlackPieces[0];
+                    onPosition[3] = NoPiece;
                 }
-                else if (currentList[i].Extra == 10)
+                else if (move.Extra == 10)
                 {
-                    Position[7] = BlackPieces[0];
-                    Position[5] = NoPiece;
+                    onPosition[7] = BlackPieces[0];
+                    onPosition[5] = NoPiece;
                 }
             }
             LastMoveStarting = TempLastMoveStarting;
@@ -2436,14 +2435,22 @@ namespace chessbot
             {
                 int BoardValue = 0;
                 //calculate board value
+                if (IsPlayerWhite)
+                {
+
+                }
+                else
+                {
+
+                }
                 return BoardValue;
             }
             if (maximizingPlayer)
             {
                 int maxEval = int.MinValue;
-                for (int i = 0; i < possibleMoves.Count; i++)
+                foreach (Move move in possibleMoves)
                 {
-                    MakeCurrentMove(i, possibleMoves);
+                    MakeCurrentMove(move, position);
                     int eval = Minimax(position, depth - 1, false, alpha, beta);
                     maxEval = Math.Max(maxEval, eval);
                     alpha = Math.Max(alpha, eval);
@@ -2457,9 +2464,9 @@ namespace chessbot
             else
             {
                 int minEval = int.MaxValue;
-                for (int i = 0; i < possibleMoves.Count; i++)
+                foreach (Move move in possibleMoves)
                 {
-                    MakeCurrentMove(i, possibleMoves);
+                    MakeCurrentMove(move, position);
                     int eval = Minimax(position, depth - 1, true, alpha, beta);
                     minEval = Math.Min(minEval, eval);
                     beta = Math.Min(beta, eval);
@@ -2477,14 +2484,16 @@ namespace chessbot
             GenerateMoves(possibleMoves);
             int bestEval = int.MinValue;
             Move bestMove = default(Move);
-            for (int i = 0; i < possibleMoves.Count; i++)
+            foreach (Move move in possibleMoves)
             {
-                MakeCurrentMove(i, possibleMoves);
-                int eval = Minimax(Position, depth - 1, false, int.MinValue, int.MaxValue);
+                //NEXT 2 LINES: What goes to position??
+                //PlayerToMove? when generating moves
+                MakeCurrentMove(move, Position);
+                int eval = Minimax(Position, depth - 1, true, int.MinValue, int.MaxValue);
                 if (eval > bestEval)
                 {
                     bestEval = eval;
-                    bestMove = possibleMoves[i];
+                    bestMove = move;
                 }
             }
             return bestMove;
