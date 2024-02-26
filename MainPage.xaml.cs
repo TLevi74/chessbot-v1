@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 
@@ -1739,7 +1740,7 @@ namespace chessbot
                         }
                     }
                 }
-                UnmakeCurrentMove(move, inposition);
+                UnmakeCurrentMove(move, inposition, TempStartingSquareSource, TempTargetSquareSource);
             }
             //---FOR TESTING---
             for (int i = 0; i < ListToAddMoves.Count; i++)
@@ -1923,7 +1924,7 @@ namespace chessbot
             LastMoveTarget = move.TargetSquare;
         }
 
-        private void UnmakeCurrentMove(Move move, ImageSource[] onPosition)
+        private void UnmakeCurrentMove(Move move, ImageSource[] onPosition, ImageSource TempStarting, ImageSource TempTarget)
         {
             if ((PlayerToMoveWhite == true && IsPlayerWhite == false) || (PlayerToMoveWhite == false && IsPlayerWhite == true))
             {
@@ -1933,8 +1934,8 @@ namespace chessbot
             {
                 EvalGameScore += move.Value;
             }
-            onPosition[move.StartingSquare] = TempStartingSquareSource;
-            onPosition[move.TargetSquare] = TempTargetSquareSource;
+            onPosition[move.StartingSquare] = TempStarting;
+            onPosition[move.TargetSquare] = TempTarget;
             if (PlayerToMoveWhite == true)
             {
                 //en passant:
@@ -2449,7 +2450,7 @@ namespace chessbot
                     PlayerToMoveWhite = true;
                 }
             }
-            GenerateMoves(possibleMoves, GenPosition);
+            GenerateMoves(possibleMoves, position);
             //OR CHECKMATE
             if (depth == 0 || possibleMoves.Count == 0)
             {
@@ -2723,10 +2724,12 @@ namespace chessbot
                 foreach (Move move in possibleMoves.ToList())
                 {
                     MakeCurrentMove(move, position);
+                    StartStack.Push(TempStartingSquareSource);
+                    TargetStack.Push(TempTargetSquareSource);
                     int eval = Minimax(position, depth - 1, false, alpha, beta);
                     maxEval = Math.Max(maxEval, eval);
                     alpha = Math.Max(alpha, eval);
-                    UnmakeCurrentMove(move, position);
+                    UnmakeCurrentMove(move, position, StartStack.Pop(), TargetStack.Pop());
                     if (beta <= alpha)
                     {
                         break;
@@ -2740,10 +2743,12 @@ namespace chessbot
                 foreach (Move move in possibleMoves.ToList())
                 {
                     MakeCurrentMove(move, position);
+                    StartStack.Push(TempStartingSquareSource);
+                    TargetStack.Push(TempTargetSquareSource);
                     int eval = Minimax(position, depth - 1, true, alpha, beta);
                     minEval = Math.Min(minEval, eval);
                     beta = Math.Min(beta, eval);
-                    UnmakeCurrentMove(move, position);
+                    UnmakeCurrentMove(move, position, StartStack.Pop(), TargetStack.Pop());
                     if (beta <= alpha)
                     {
                         break;
@@ -2753,6 +2758,8 @@ namespace chessbot
             }
         }
         ImageSource[] GenPosition = new ImageSource[64];
+        Stack<ImageSource> StartStack = new Stack<ImageSource>();
+        Stack<ImageSource> TargetStack = new Stack<ImageSource>();
         private Move GetBestMove(int depth)
         {
             GenerateMoves(possibleMoves, Position);
@@ -2762,13 +2769,32 @@ namespace chessbot
             {
                 Position.CopyTo(GenPosition, 0);
                 MakeCurrentMove(move, GenPosition);
+                StartStack.Push(TempStartingSquareSource);
+                TargetStack.Push(TempTargetSquareSource);
                 int eval = Minimax(GenPosition, depth - 1, true, int.MinValue, int.MaxValue);
                 if (eval > bestEval)
                 {
                     bestEval = eval;
                     bestMove = move;
                 }
-                UnmakeCurrentMove(move, GenPosition);
+                UnmakeCurrentMove(move, GenPosition, StartStack.Pop(), TargetStack.Pop());
+            }
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    Trace.Write($"{GenPosition[i*8+j]}");
+                }
+                Trace.WriteLine(" ");
+            }
+            Trace.WriteLine("Position: ");
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    Trace.Write($"{Position[i * 8 + j]}");
+                }
+                Trace.WriteLine(" ");
             }
             return bestMove;
         }
