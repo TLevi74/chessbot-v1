@@ -141,7 +141,6 @@
             <StackLayout Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="12" VerticalOptions="Center" HorizontalOptions="Center">
                 <Button x:Name="btnReset" Margin="10" BackgroundColor="#242424" TextColor="White" Text="Reset" Clicked="ButtonResetClicked" FontAttributes="Bold"></Button>
                 <Button x:Name="btnFlipBoard" Margin="10" BackgroundColor="#242424" TextColor="White" Text="Flip Board" Clicked="FlipBoard" FontAttributes="Bold"></Button>
-                <Label x:Name="gameScoreLabel" TextColor="White" Text="{Binding GameScore}" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
             </StackLayout>
             <toolkit:MediaElement x:Name="MoveSound" IsVisible="false" Source="embed://move-self.mp3" />
             <toolkit:MediaElement x:Name="CaptureSound" IsVisible="false" Source="embed://capture.mp3" />
