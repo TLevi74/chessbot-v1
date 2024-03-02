@@ -600,7 +600,6 @@ namespace chessbot
         List<Move> TempMoves = new List<Move>();
         List<Move> CurrentColorMoves = new List<Move>();
         List<Move> OpponentMoves = new List<Move>();
-        List<Move> CurrentColorMovesOverOpponents = new List<Move>();
         List<Move> Moves = new List<Move>();
         List<Move> Temp1 = new List<Move>();
         List<Move> Temp2 = new List<Move>();
@@ -1453,43 +1452,7 @@ namespace chessbot
             //end of match:
             if (ListToAddMoves.Count == 0)
             {
-                PlayerToMoveWhite = !PlayerToMoveWhite;
-                OpponentMoves = new List<Move>(PossibleMoves(inposition));
-                PlayerToMoveWhite = !PlayerToMoveWhite;
-                if (PlayerToMoveWhite == true)
-                {
-                    if (OpponentMoves.Any(move => inposition[move.TargetSquare] == WhitePieces[4]))
-                    {
-                        //checkmate:
-                        MateSound.Play();
-                        btnReset.Text = "CHECKMATE!";
-                        return false;
-                    }
-                    else
-                    {
-                        //stalemate:
-                        MateSound.Play();
-                        btnReset.Text = "STALEMATE!";
-                        return false;
-                    }
-                }
-                else
-                {
-                    if (OpponentMoves.Any(move => inposition[move.TargetSquare] == BlackPieces[4]))
-                    {
-                        //checkmate:
-                        MateSound.Play();
-                        btnReset.Text = "CHECKMATE!";
-                        return false;
-                    }
-                    else
-                    {
-                        //stalemate:
-                        MateSound.Play();
-                        btnReset.Text = "STALEMATE!";
-                        return false;
-                    }
-                }
+                return false;
             }
             else
             {
@@ -1693,6 +1656,39 @@ namespace chessbot
             if (GenerateMoves(Moves, Position) == false)
             {
                 //checkmate or stalemate
+                PlayerToMoveWhite = !PlayerToMoveWhite;
+                OpponentMoves = new List<Move>(PossibleMoves(Position));
+                PlayerToMoveWhite = !PlayerToMoveWhite;
+                if (PlayerToMoveWhite == true)
+                {
+                    if (OpponentMoves.Any(move => Position[move.TargetSquare] == WhitePieces[4]))
+                    {
+                        //checkmate:
+                        MateSound.Play();
+                        btnReset.Text = "CHECKMATE!";
+                    }
+                    else
+                    {
+                        //stalemate:
+                        MateSound.Play();
+                        btnReset.Text = "STALEMATE!";
+                    }
+                }
+                else
+                {
+                    if (OpponentMoves.Any(move => Position[move.TargetSquare] == BlackPieces[4]))
+                    {
+                        //checkmate:
+                        MateSound.Play();
+                        btnReset.Text = "CHECKMATE!";
+                    }
+                    else
+                    {
+                        //stalemate:
+                        MateSound.Play();
+                        btnReset.Text = "STALEMATE!";
+                    }
+                }
                 return;
             }
             GeneratedMove = GetBestMove(3);
@@ -1898,9 +1894,45 @@ namespace chessbot
             {
                 PlayerToMoveWhite = false;
             }
-
             //At the end after everything is set so that it's the player's turn, we need to run possiblemoves again for the other color:
-            GenerateMoves(Moves, Position);
+            if (GenerateMoves(Moves, Position) == false)
+            {
+                //checkmate or stalemate
+                PlayerToMoveWhite = !PlayerToMoveWhite;
+                OpponentMoves = new List<Move>(PossibleMoves(Position));
+                PlayerToMoveWhite = !PlayerToMoveWhite;
+                if (PlayerToMoveWhite == true)
+                {
+                    if (OpponentMoves.Any(move => Position[move.TargetSquare] == WhitePieces[4]))
+                    {
+                        //checkmate:
+                        MateSound.Play();
+                        btnReset.Text = "CHECKMATE!";
+                    }
+                    else
+                    {
+                        //stalemate:
+                        MateSound.Play();
+                        btnReset.Text = "STALEMATE!";
+                    }
+                }
+                else
+                {
+                    if (OpponentMoves.Any(move => Position[move.TargetSquare] == BlackPieces[4]))
+                    {
+                        //checkmate:
+                        MateSound.Play();
+                        btnReset.Text = "CHECKMATE!";
+                    }
+                    else
+                    {
+                        //stalemate:
+                        MateSound.Play();
+                        btnReset.Text = "STALEMATE!";
+                    }
+                }
+                return;
+            }
         }
         //---------------------
         //minimax eval:
