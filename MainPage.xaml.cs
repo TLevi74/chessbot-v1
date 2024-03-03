@@ -1432,32 +1432,15 @@ namespace chessbot
                 PlayerToMoveWhite = !PlayerToMoveWhite;
                 OpponentMoves = new List<Move>(PossibleMoves(inposition));
                 PlayerToMoveWhite = !PlayerToMoveWhite;
-                if (PlayerToMoveWhite == true)
+                if (!OpponentMoves.Any(move => inposition[move.TargetSquare] == (PlayerToMoveWhite ? WhitePieces[4] : BlackPieces[4])))
                 {
-                    if (!OpponentMoves.Any(move => inposition[move.TargetSquare] == WhitePieces[4]))
-                    {
-                        ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, move.Extra));
-                    }
-                }
-                else
-                {
-                    if (!OpponentMoves.Any(move => inposition[move.TargetSquare] == BlackPieces[4]))
-                    {
-                        ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, move.Extra));
-                    }
+                    ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, move.Extra));
                 }
                 UnmakeCurrentMove(move, inposition, TempStartingSquareSource, TempTargetSquareSource);
             }
 
             //end of match:
-            if (ListToAddMoves.Count == 0)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return ListToAddMoves.Count > 0;
         }
         ImageSource TempTargetSquareSource = null;
         ImageSource TempStartingSquareSource = null;
@@ -1465,110 +1448,52 @@ namespace chessbot
         {
             TempTargetSquareSource = onPosition[move.TargetSquare];
             TempStartingSquareSource = onPosition[move.StartingSquare];
-            if (move.Extra > 0 && move.Extra < 5)
+            
+            switch (move.Extra)
             {
-                if (PlayerToMoveWhite == true)
-                {
-                    //promotion:
-                    if (move.Extra == 1)
-                    {
-                        onPosition[move.TargetSquare] = WhitePieces[3];
-                    }
-                    else if (move.Extra == 2)
-                    {
-                        onPosition[move.TargetSquare] = WhitePieces[0];
-                    }
-                    else if (move.Extra == 3)
-                    {
-                        onPosition[move.TargetSquare] = WhitePieces[2];
-                    }
-                    else if (move.Extra == 4)
-                    {
-                        onPosition[move.TargetSquare] = WhitePieces[1];
-                    }
-                }
-                else
-                {
-                    //promotion:
-                    if (move.Extra == 1)
-                    {
-                        onPosition[move.TargetSquare] = BlackPieces[3];
-                    }
-                    else if (move.Extra == 2)
-                    {
-                        onPosition[move.TargetSquare] = BlackPieces[0];
-                    }
-                    else if (move.Extra == 3)
-                    {
-                        onPosition[move.TargetSquare] = BlackPieces[2];
-                    }
-                    else if (move.Extra == 4)
-                    {
-                        onPosition[move.TargetSquare] = BlackPieces[1];
-                    }
-                }
-            }
-            else
-            {
-                onPosition[move.TargetSquare] = onPosition[move.StartingSquare];   
-            }
-            //en passant:
-            if (move.Extra == 5)
-            {
-                onPosition[move.StartingSquare + 1] = NoPiece;
-            }
-            else if (move.Extra == 6)
-            {
-                onPosition[move.StartingSquare - 1] = NoPiece;
-            }
-            //castling:
-            else if (move.Extra == 7)
-            {
-                onPosition[56] = NoPiece;
-                if (PlayerToMoveWhite)
-                {
-                    onPosition[59] = WhitePieces[0];
-                }
-                else
-                {
-                    onPosition[58] = BlackPieces[0];
-                }
-            }
-            else if (move.Extra == 8)
-            {
-                onPosition[63] = NoPiece;
-                if (PlayerToMoveWhite)
-                {
-                    onPosition[61] = WhitePieces[0];
-                }
-                else
-                {
-                    onPosition[60] = BlackPieces[0];
-                }
-            }
-            else if (move.Extra == 9)
-            {
-                onPosition[0] = NoPiece;
-                if (PlayerToMoveWhite)
-                {
-                    onPosition[2] = WhitePieces[0];
-                }
-                else
-                {
-                    onPosition[3] = BlackPieces[0];
-                }
-            }
-            else if (move.Extra == 10)
-            {
-                onPosition[7] = NoPiece;
-                if (PlayerToMoveWhite)
-                {
-                    onPosition[4] = WhitePieces[0];
-                }
-                else
-                {
-                    onPosition[5] = BlackPieces[0];
-                }
+                case 0: // regular move
+                    onPosition[move.TargetSquare] = onPosition[move.StartingSquare];
+                    break;
+                case 1: //promotion
+                    onPosition[move.TargetSquare] = PlayerToMoveWhite ? WhitePieces[3] : BlackPieces[3];
+                    break;
+                case 2: //promotion
+                    onPosition[move.TargetSquare] = PlayerToMoveWhite ? WhitePieces[0] : BlackPieces[0];
+                    break;
+                case 3: //promotion
+                    onPosition[move.TargetSquare] = PlayerToMoveWhite ? WhitePieces[2] : BlackPieces[2];
+                    break;
+                case 4: //promotion
+                    onPosition[move.TargetSquare] = PlayerToMoveWhite ? WhitePieces[1] : BlackPieces[1];
+                    break;
+                case 5: // en passant
+                    onPosition[move.TargetSquare] = onPosition[move.StartingSquare];
+                    onPosition[move.StartingSquare + 1] = NoPiece;
+                    break;
+                case 6: // en passant
+                    onPosition[move.TargetSquare] = onPosition[move.StartingSquare];
+                    onPosition[move.StartingSquare - 1] = NoPiece;
+                    break;
+                case 7: // castling
+                    onPosition[move.TargetSquare] = onPosition[move.StartingSquare];
+                    onPosition[56] = NoPiece;
+                    onPosition[PlayerToMoveWhite ? 59 : 58] = PlayerToMoveWhite ? WhitePieces[0] : BlackPieces[0];
+                    break;
+                case 8: // castling
+                    onPosition[move.TargetSquare] = onPosition[move.StartingSquare];
+                    onPosition[63] = NoPiece;
+                    onPosition[PlayerToMoveWhite ? 61 : 60] = PlayerToMoveWhite ? WhitePieces[0] : BlackPieces[0];
+                    break;
+                case 9: // castling
+                    onPosition[move.TargetSquare] = onPosition[move.StartingSquare];
+                    onPosition[0] = NoPiece;
+                    onPosition[PlayerToMoveWhite ? 2 : 3] = PlayerToMoveWhite ? WhitePieces[0] : BlackPieces[0];
+                    break;
+                case 10: // castling
+                    onPosition[move.TargetSquare] = onPosition[move.StartingSquare];
+                    onPosition[7] = NoPiece;
+                    onPosition[PlayerToMoveWhite ? 4 : 5] = PlayerToMoveWhite ? WhitePieces[0] : BlackPieces[0];
+                    break;
             }
             onPosition[move.StartingSquare] = NoPiece;
         }
@@ -1577,71 +1502,55 @@ namespace chessbot
         {
             onPosition[move.StartingSquare] = TempStarting;
             onPosition[move.TargetSquare] = TempTarget;
-            if (PlayerToMoveWhite == true)
+
+            switch (move.Extra)
             {
-                //en passant:
-                if (move.Extra == 5)
-                {
-                    onPosition[move.StartingSquare + 1] = BlackPieces[8];
-                }
-                else if (move.Extra == 6)
-                {
-                    onPosition[move.StartingSquare - 1] = BlackPieces[8];
-                }
-                //castling
-                else if (move.Extra == 7)
-                {
-                    onPosition[56] = WhitePieces[0];
-                    onPosition[59] = NoPiece;
-                }
-                else if (move.Extra == 8)
-                {
-                    onPosition[63] = WhitePieces[0];
-                    onPosition[61] = NoPiece;
-                }
-                else if (move.Extra == 9)
-                {
-                    onPosition[0] = WhitePieces[0];
-                    onPosition[2] = NoPiece;
-                }
-                else if (move.Extra == 10)
-                {
-                    onPosition[7] = WhitePieces[0];
-                    onPosition[4] = NoPiece;
-                }
-            }
-            else
-            {
-                //en passant:
-                if (move.Extra == 5)
-                {
-                    onPosition[move.StartingSquare + 1] = WhitePieces[8];
-                }
-                else if (move.Extra == 6)
-                {
-                    onPosition[move.StartingSquare - 1] = WhitePieces[8];
-                }
-                //castling
-                else if (move.Extra == 7)
-                {
-                    onPosition[56] = BlackPieces[0];
-                    onPosition[58] = NoPiece;
-                }
-                else if (move.Extra == 8)
-                {
-                    onPosition[63] = BlackPieces[0];
-                    onPosition[60] = NoPiece;
-                }
-                else if (move.Extra == 9)
-                {
-                    onPosition[0] = BlackPieces[0];
-                    onPosition[3] = NoPiece;
-                }
-                else if (move.Extra == 10)
-                {
-                    onPosition[7] = BlackPieces[0];
-                    onPosition[5] = NoPiece;
-                }
+                case 0: // regular move
+                    break;
+                case 1: // promotion
+                    break;
+                case 2: // promotion
+                    break;
+                case 3: // promotion
+                    break;
+                case 4: // promotion
+                    break;
+                case 5: // en passant
+                    if (PlayerToMoveWhite)
+                    {
+                        onPosition[move.StartingSquare + 1] = BlackPieces[8];
+                    }
+                    else
+                    {
+                        onPosition[move.StartingSquare + 1] = WhitePieces[8];
+                    }
+                    break;
+                case 6: // en passant
+                    if (PlayerToMoveWhite)
+                    {
+                        onPosition[move.StartingSquare - 1] = BlackPieces[8];
+                    }
+                    else
+                    {
+                        onPosition[move.StartingSquare - 1] = WhitePieces[8];
+                    }
+                    break;
+                case 7: // castling
+                    onPosition[56] = PlayerToMoveWhite ? WhitePieces[0] : BlackPieces[0];
+                    onPosition[PlayerToMoveWhite ? 59 : 58] = NoPiece;
+                    break;
+                case 8: // castling
+                    onPosition[63] = PlayerToMoveWhite ? WhitePieces[0] : BlackPieces[0];
+                    onPosition[PlayerToMoveWhite ? 61 : 60] = NoPiece;
+                    break;
+                case 9: // castling
+                    onPosition[0] = PlayerToMoveWhite ? WhitePieces[0] : BlackPieces[0];
+                    onPosition[PlayerToMoveWhite ? 2 : 3] = NoPiece;
+                    break;
+                case 10: // castling
+                    onPosition[7] = PlayerToMoveWhite ? WhitePieces[0] : BlackPieces[0];
+                    onPosition[PlayerToMoveWhite ? 4 : 5] = NoPiece;
+                    break;
             }
         }
 
@@ -1691,7 +1600,7 @@ namespace chessbot
                 }
                 return;
             }
-            GeneratedMove = GetBestMove(3);
+            GeneratedMove = GetBestMove(4);
  
             AISelectedBefore = AllSquares[GeneratedMove.StartingSquare];
             AISelectedPiece = AllSquares[GeneratedMove.StartingSquare].Source;
@@ -1938,37 +1847,18 @@ namespace chessbot
         //minimax eval:
         List<Move> possibleMoves = new List<Move>();
         List<Move> possibleOpponentMoves = new List<Move>();
-
+        
         private int Minimax(ImageSource[] position, int depth, bool maximizingPlayer, int alpha, int beta)
-        {
-            if (maximizingPlayer)
-            {
-                if (IsPlayerWhite)
-                {
-                    PlayerToMoveWhite = true;
-                }
-                else
-                {
-                    PlayerToMoveWhite = false;
-                }
-            }
-            else
-            {
-                if (IsPlayerWhite)
-                {
-                    PlayerToMoveWhite = false;
-                }
-                else
-                {
-                    PlayerToMoveWhite = true;
-                }
-            }
+        { 
+            PlayerToMoveWhite = (maximizingPlayer && IsPlayerWhite) || (!maximizingPlayer && !IsPlayerWhite);
+
             GenerateMoves(possibleMoves, position);
             //OR CHECKMATE
             if (depth == 0 || possibleMoves.Count == 0)
             {
-                int BoardValue = 0;
                 //calculate board value
+                //todo: give extra points for castling?
+                int BoardValue = 0;
                 if (IsPlayerWhite)
                 {
                     PiecesOnBoard = GenPosition.Count(source => source != NoPiece);
