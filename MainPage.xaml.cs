@@ -1600,7 +1600,7 @@ namespace chessbot
                 }
                 return;
             }
-            GeneratedMove = GetBestMove(4);
+            GeneratedMove = GetBestMove(3);
  
             AISelectedBefore = AllSquares[GeneratedMove.StartingSquare];
             AISelectedPiece = AllSquares[GeneratedMove.StartingSquare].Source;
@@ -2126,10 +2126,14 @@ namespace chessbot
                 int maxEval = int.MinValue;
                 foreach (Move move in possibleMoves.ToList())
                 {
+                    ValueStack.Push(CurrentValue);
+
                     MakeCurrentMove(move, position);
                     StartStack.Push(TempStartingSquareSource);
                     TargetStack.Push(TempTargetSquareSource);
+
                     int eval = Minimax(position, depth - 1, false, alpha, beta);
+
                     maxEval = Math.Max(maxEval, eval);
                     alpha = Math.Max(alpha, eval);
                     UnmakeCurrentMove(move, position, StartStack.Pop(), TargetStack.Pop());
@@ -2145,10 +2149,14 @@ namespace chessbot
                 int minEval = int.MaxValue;
                 foreach (Move move in possibleMoves.ToList())
                 {
+                    ValueStack.Push(CurrentValue);
+
                     MakeCurrentMove(move, position);
                     StartStack.Push(TempStartingSquareSource);
                     TargetStack.Push(TempTargetSquareSource);
+
                     int eval = Minimax(position, depth - 1, true, alpha, beta);
+
                     minEval = Math.Min(minEval, eval);
                     beta = Math.Min(beta, eval);
                     UnmakeCurrentMove(move, position, StartStack.Pop(), TargetStack.Pop());
@@ -2163,6 +2171,8 @@ namespace chessbot
         ImageSource[] GenPosition = new ImageSource[64];
         Stack<ImageSource> StartStack = new Stack<ImageSource>();
         Stack<ImageSource> TargetStack = new Stack<ImageSource>();
+        Stack<int> ValueStack = new Stack<int>();
+        int CurrentValue;
         private Move GetBestMove(int depth)
         {
             GenerateMoves(possibleMoves, Position);
