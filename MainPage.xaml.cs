@@ -7,8 +7,8 @@ namespace chessbot
 {
     public partial class MainPage : ContentPage, INotifyPropertyChanged
     {
-        //P-N-B-R-Q
-        readonly int[] PieceValues = { 100, 320, 330, 500, 900 };
+        //R-N-B-Q-K-B-N-R-P
+        readonly int[] PieceValues = {500, 320, 330, 900, 0, 330, 320, 500, 100};
         readonly int[] P2M_PawnExtraValues = { 0, 0, 0, 0, 0, 0, 0, 0, 50, 50, 50, 50, 50, 50, 50, 50, 10, 10, 20, 30, 30, 20, 10, 10, 5, 5, 10, 25, 25, 10, 5, 5, 0, 0, 0, 20, 20, 0, 0, 0, 5, -5, -10, 0, 0, -10, -5, 5, 5, 10, 10, -20, -20, 10, 10, 5, 0, 0, 0, 0, 0, 0, 0, 0 };
         readonly int[] AI2M_PawnExtraValues = { 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 10, -20, -20, 10, 10, 5, 5, -5, -10, 0, 0, -10, -5, 5, 0, 0, 0, 20, 20, 0, 0, 0, 5, 5, 10, 25, 25, 10, 5, 5, 10, 10, 20, 30, 30, 20, 10, 10, 50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 0, 0, 0, 0, 0, 0 };
         readonly int[] KnightExtraValues = { -50, -20, -30, -30, -30, -30, -20, -50, -40, -20, 0, 0, 0, 0, -20, -40, -30, 0, 10, 15, 15, 10, 0, -30, -30, 5, 15, 20, 20, 15, 5, -30, -30, 0, 15, 20, 20, 15, 0, -30, -30, 5, 10, 15, 15, 10, 5, -30, -40, -20, 0, 5, 5, 0, -20, -40, -50, -20, -30, -30, -30, -30, -20, -50 };
@@ -47,8 +47,8 @@ namespace chessbot
             ImageButton[] TempBlackSquares = { SquareB8, SquareD8, SquareF8, SquareH8, SquareA7, SquareC7, SquareE7, SquareG7, SquareB6, SquareD6, SquareF6, SquareH6, SquareA5, SquareC5, SquareE5, SquareG5, SquareB4, SquareD4, SquareF4, SquareH4, SquareA3, SquareC3, SquareE3, SquareG3, SquareB2, SquareD2, SquareF2, SquareH2, SquareA1, SquareC1, SquareE1, SquareG1 };
             pieceValuesMap = new Dictionary<ImageSource, int>
             {
-                { BlackPieces[8], PieceValues[0] },
-                { WhitePieces[8], PieceValues[0] },
+                { BlackPieces[8], PieceValues[8] },
+                { WhitePieces[8], PieceValues[8] },
                 { BlackPieces[1], PieceValues[1] },
                 { BlackPieces[6], PieceValues[1] },
                 { WhitePieces[1], PieceValues[1] },
@@ -57,13 +57,13 @@ namespace chessbot
                 { BlackPieces[5], PieceValues[2] },
                 { WhitePieces[2], PieceValues[2] },
                 { WhitePieces[5], PieceValues[2] },
-                { BlackPieces[0], PieceValues[3] },
-                { BlackPieces[7], PieceValues[3] },
-                { WhitePieces[0], PieceValues[3] },
-                { WhitePieces[7], PieceValues[3] },
-                { BlackPieces[3], PieceValues[4] },
+                { BlackPieces[0], PieceValues[0] },
+                { BlackPieces[7], PieceValues[0] },
+                { WhitePieces[0], PieceValues[0] },
+                { WhitePieces[7], PieceValues[0] },
+                { BlackPieces[3], PieceValues[3] },
                 { BlackPieces[4], 0 },
-                { WhitePieces[3], PieceValues[4] },
+                { WhitePieces[3], PieceValues[3] },
                 { WhitePieces[4], 0 }
             };
             for (int i = 0; i < 64; i++)
@@ -181,9 +181,10 @@ namespace chessbot
 
         //calculate for every square
         //required for rook, bishop, queen
-        List<List<int>> SquaresToEdge = new List<List<int>>();
+        int[,] SquaresToEdge = new int[64, 8];
         private void CalculateSquaresToEdge()
         {
+            int index = 0;
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
@@ -192,26 +193,17 @@ namespace chessbot
                     int K = 7 - j;
                     int D = 7 - i;
                     int N = j;
-                    List<int> rowList = new List<int>();
-                    rowList.AddRange(new List<int>
-                    {
-                        E,
-                        K,
-                        D,
-                        N,
-                        Math.Min(E, K),
-                        Math.Min(K, D),
-                        Math.Min(D, N),
-                        Math.Min(N, E)
-                    });
-                    SquaresToEdge.Add(rowList);
+                    SquaresToEdge[index, 0] = E;
+                    SquaresToEdge[index, 1] = K;
+                    SquaresToEdge[index, 2] = D;
+                    SquaresToEdge[index, 3] = N;
+                    SquaresToEdge[index, 4] = Math.Min(E, K);
+                    SquaresToEdge[index, 5] = Math.Min(K, D);
+                    SquaresToEdge[index, 6] = Math.Min(D, N);
+                    SquaresToEdge[index, 7] = Math.Min(N, E);
+                    index++;
                 }
             }
-            //---FOR TESTING---
-            //for (int i = 0; i < SquaresToEdge.Count; i++)
-            //{
-            //    Trace.WriteLine($"{i}: |" + string.Join(", ", SquaresToEdge[i]) + "|");
-            //}
         }
 
         bool HasPlayerSelectedFromSquare = false;
@@ -644,26 +636,25 @@ namespace chessbot
                     switch (TempMoves[i].Extra)
                     {
                         case 1:
-                            move.Value += PieceValues[4] - PieceValues[0];
+                            move.Value += PieceValues[3] - PieceValues[8];
                             break;
                         case 2:
-                            move.Value += PieceValues[3] - PieceValues[0];
+                            move.Value += PieceValues[0] - PieceValues[8];
                             break;
                         case 3:
-                            move.Value += PieceValues[2] - PieceValues[0];
+                            move.Value += PieceValues[2] - PieceValues[8];
                             break;
                         case 4:
-                            move.Value += PieceValues[1] - PieceValues[0];
+                            move.Value += PieceValues[1] - PieceValues[8];
                             break;
                         case 5:
                         case 6:
-                            move.Value += PieceValues[0];
+                            move.Value += PieceValues[8];
                             break;
                         case 7:
                         case 8:
                         case 9:
                         case 10:
-                            move.Value += 20;
                             break;
                     }
                     TempMoves[i] = move;
@@ -686,26 +677,26 @@ namespace chessbot
                             if (IsPlayerWhite == true)
                             {
                                 //double pawn push:
-                                if (SquaresToEdge[i][2] == 1)
+                                if (SquaresToEdge[i, 2] == 1)
                                 {
                                     if ((inposition[i - 8] == NoPiece) && (inposition[i - 16] == NoPiece))
                                     {
                                         ValueTempMoves(i, i - 16, 0, 0, inposition);
                                     }
                                 }
-                                if (inposition[i - 8] == NoPiece && SquaresToEdge[i][0] > 1)
+                                if (inposition[i - 8] == NoPiece && SquaresToEdge[i, 0] > 1)
                                 {
                                     ValueTempMoves(i, i - 8, 0, 0, inposition);
                                 }
                                 //pawn takes:
-                                if (SquaresToEdge[i][3] > 0 && SquaresToEdge[i][0] > 1)
+                                if (SquaresToEdge[i, 3] > 0 && SquaresToEdge[i, 0] > 1)
                                 {
                                     if (BlackPieces.Contains(inposition[i - 9]))
                                     {
                                         ValueTempMoves(i, i - 9, 0, 0, inposition);
                                     }
                                 }
-                                if (SquaresToEdge[i][1] > 0 && SquaresToEdge[i][0] > 1)
+                                if (SquaresToEdge[i, 1] > 0 && SquaresToEdge[i, 0] > 1)
                                 {
                                     if (BlackPieces.Contains(inposition[i - 7]))
                                     {
@@ -713,7 +704,7 @@ namespace chessbot
                                     }
                                 }
                                 //promotion:
-                                if (SquaresToEdge[i][0] == 1)
+                                if (SquaresToEdge[i, 0] == 1)
                                 {
                                     if (inposition[i - 8] == NoPiece)
                                     {
@@ -722,7 +713,7 @@ namespace chessbot
                                         ValueTempMoves(i, i - 8, 0, 3, inposition);
                                         ValueTempMoves(i, i - 8, 0, 4, inposition);
                                     }
-                                    if (SquaresToEdge[i][1] > 0)
+                                    if (SquaresToEdge[i, 1] > 0)
                                     {
                                         if (BlackPieces.Contains(inposition[i - 7]))
                                         {
@@ -732,7 +723,7 @@ namespace chessbot
                                             ValueTempMoves(i, i - 7, 0, 4, inposition);
                                         }
                                     }
-                                    if (SquaresToEdge[i][3] > 0)
+                                    if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (BlackPieces.Contains(inposition[i - 9]))
                                         {
@@ -744,16 +735,16 @@ namespace chessbot
                                     }
                                 }
                                 //en passant:
-                                if (SquaresToEdge[i][0] == 3)
+                                if (SquaresToEdge[i, 0] == 3)
                                 {
-                                    if (SquaresToEdge[i][1] > 0)
+                                    if (SquaresToEdge[i, 1] > 0)
                                     {
                                         if (inposition[i + 1] == BlackPieces[8] && LastMoveStarting == i - 15 && LastMoveTarget == i + 1)
                                         {
                                             ValueTempMoves(i, i - 7, 0, 5, inposition);
                                         }
                                     }
-                                    if (SquaresToEdge[i][3] > 0)
+                                    if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (inposition[i - 1] == BlackPieces[8] && LastMoveStarting == i - 17 && LastMoveTarget == i - 1)
                                         {
@@ -765,26 +756,26 @@ namespace chessbot
                             else
                             {
                                 //double pawn push:
-                                if (SquaresToEdge[i][0] == 1)
+                                if (SquaresToEdge[i, 0] == 1)
                                 {
                                     if ((inposition[i + 8] == NoPiece) && (inposition[i + 16] == NoPiece))
                                     {
                                         ValueTempMoves(i, i + 16, 0, 0, inposition);
                                     }
                                 }
-                                if (inposition[i + 8] == NoPiece && SquaresToEdge[i][2] > 1)
+                                if (inposition[i + 8] == NoPiece && SquaresToEdge[i, 2] > 1)
                                 {
                                     ValueTempMoves(i, i + 8, 0, 0, inposition);
                                 }
                                 //pawn takes:
-                                if (SquaresToEdge[i][3] > 0 && SquaresToEdge[i][2] > 1)
+                                if (SquaresToEdge[i, 3] > 0 && SquaresToEdge[i, 2] > 1)
                                 {
                                     if (BlackPieces.Contains(inposition[i + 7]))
                                     {
                                         ValueTempMoves(i, i + 7, 0, 0, inposition);
                                     }
                                 }
-                                if (SquaresToEdge[i][1] > 0 && SquaresToEdge[i][2] > 1)
+                                if (SquaresToEdge[i, 1] > 0 && SquaresToEdge[i, 2] > 1)
                                 {
                                     if (BlackPieces.Contains(inposition[i + 9]))
                                     {
@@ -792,7 +783,7 @@ namespace chessbot
                                     }
                                 }
                                 //promotion:
-                                if (SquaresToEdge[i][2] == 1)
+                                if (SquaresToEdge[i, 2] == 1)
                                 {
                                     if (inposition[i + 8] == NoPiece)
                                     {
@@ -801,7 +792,7 @@ namespace chessbot
                                         ValueTempMoves(i, i + 8, 0, 3, inposition);
                                         ValueTempMoves(i, i + 8, 0, 4, inposition);
                                     }
-                                    if (SquaresToEdge[i][3] > 0)
+                                    if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (BlackPieces.Contains(inposition[i + 7]))
                                         {
@@ -811,7 +802,7 @@ namespace chessbot
                                             ValueTempMoves(i, i + 7, 0, 4, inposition);
                                         }
                                     }
-                                    if (SquaresToEdge[i][1] > 0)
+                                    if (SquaresToEdge[i, 1] > 0)
                                     {
                                         if (BlackPieces.Contains(inposition[i + 9]))
                                         {
@@ -823,16 +814,16 @@ namespace chessbot
                                     }
                                 }
                                 //en passant:
-                                if (SquaresToEdge[i][2] == 3)
+                                if (SquaresToEdge[i, 2] == 3)
                                 {
-                                    if (SquaresToEdge[i][1] > 0)
+                                    if (SquaresToEdge[i, 1] > 0)
                                     {
                                         if (inposition[i + 1] == BlackPieces[8] && LastMoveStarting == i + 17 && LastMoveTarget == i + 1)
                                         {
                                             ValueTempMoves(i, i + 9, 0, 5, inposition);
                                         }
                                     }
-                                    if (SquaresToEdge[i][3] > 0)
+                                    if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (inposition[i - 1] == BlackPieces[8] && LastMoveStarting == i + 15 && LastMoveTarget == i - 1)
                                         {
@@ -847,7 +838,7 @@ namespace chessbot
                         {
                             for (int j = 0; j < 4; j++)
                             {
-                                for (int k = 0; k < SquaresToEdge[i][j]; k++)
+                                for (int k = 0; k < SquaresToEdge[i, j]; k++)
                                 {
                                     if (WhitePieces.Contains(inposition[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
@@ -875,7 +866,7 @@ namespace chessbot
                         {
                             for (int j = 4; j < 8; j++)
                             {
-                                for (int k = 0; k < SquaresToEdge[i][j]; k++)
+                                for (int k = 0; k < SquaresToEdge[i, j]; k++)
                                 {
                                     if (WhitePieces.Contains(inposition[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
@@ -896,7 +887,7 @@ namespace chessbot
                         {
                             for (int j = 0; j < 8; j++)
                             {
-                                for (int k = 0; k < SquaresToEdge[i][j]; k++)
+                                for (int k = 0; k < SquaresToEdge[i, j]; k++)
                                 {
                                     if (WhitePieces.Contains(inposition[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
@@ -916,56 +907,56 @@ namespace chessbot
                         else if (inposition[i] == WhitePieces[1] || inposition[i] == WhitePieces[6])
                         {
                             //8 if, 8 possible move
-                            if (SquaresToEdge[i][0] >= 2 && SquaresToEdge[i][1] >= 1)
+                            if (SquaresToEdge[i, 0] >= 2 && SquaresToEdge[i, 1] >= 1)
                             {
                                 if (!(WhitePieces.Contains(inposition[i - 15])))
                                 {
                                     ValueTempMoves(i, i - 15, 0, 0, inposition);
                                 }
                             }
-                            if (SquaresToEdge[i][0] >= 1 && SquaresToEdge[i][1] >= 2)
+                            if (SquaresToEdge[i, 0] >= 1 && SquaresToEdge[i, 1] >= 2)
                             {
                                 if (!(WhitePieces.Contains(inposition[i - 6])))
                                 {
                                     ValueTempMoves(i, i - 6, 0, 0, inposition);
                                 }
                             }
-                            if (SquaresToEdge[i][1] >= 2 && SquaresToEdge[i][2] >= 1)
+                            if (SquaresToEdge[i, 1] >= 2 && SquaresToEdge[i, 2] >= 1)
                             {
                                 if (!(WhitePieces.Contains(inposition[i + 10])))
                                 {
                                     ValueTempMoves(i, i + 10, 0, 0, inposition);
                                 }
                             }
-                            if (SquaresToEdge[i][1] >= 1 && SquaresToEdge[i][2] >= 2)
+                            if (SquaresToEdge[i, 1] >= 1 && SquaresToEdge[i, 2] >= 2)
                             {
                                 if (!(WhitePieces.Contains(inposition[i + 17])))
                                 {
                                     ValueTempMoves(i, i + 17, 0, 0, inposition);
                                 }
                             }
-                            if (SquaresToEdge[i][3] >= 1 && SquaresToEdge[i][2] >= 2)
+                            if (SquaresToEdge[i, 3] >= 1 && SquaresToEdge[i, 2] >= 2)
                             {
                                 if (!(WhitePieces.Contains(inposition[i + 15])))
                                 {
                                     ValueTempMoves(i, i + 15, 0, 0, inposition);
                                 }
                             }
-                            if (SquaresToEdge[i][3] >= 2 && SquaresToEdge[i][2] >= 1)
+                            if (SquaresToEdge[i, 3] >= 2 && SquaresToEdge[i, 2] >= 1)
                             {
                                 if (!(WhitePieces.Contains(inposition[i + 6])))
                                 {
                                     ValueTempMoves(i, i + 6, 0, 0, inposition);
                                 }
                             }
-                            if (SquaresToEdge[i][3] >= 2 && SquaresToEdge[i][0] >= 1)
+                            if (SquaresToEdge[i, 3] >= 2 && SquaresToEdge[i, 0] >= 1)
                             {
                                 if (!(WhitePieces.Contains(inposition[i - 10])))
                                 {
                                     ValueTempMoves(i, i - 10, 0, 0, inposition);
                                 }
                             }
-                            if (SquaresToEdge[i][3] >= 1 && SquaresToEdge[i][0] >= 2)
+                            if (SquaresToEdge[i, 3] >= 1 && SquaresToEdge[i, 0] >= 2)
                             {
                                 if (!(WhitePieces.Contains(inposition[i - 17])))
                                 {
@@ -979,13 +970,13 @@ namespace chessbot
                             //regular
                             for (int j = 0; j < 8; j++)
                             {
-                                if ((SquaresToEdge[i][j] > 0))
+                                if ((SquaresToEdge[i, j] > 0))
                                 {
                                     if (!(WhitePieces.Contains(inposition[i + DirectionOffsets[j]])))
                                     {
                                         for (int k = 0; k < 8; k++)
                                         {
-                                            if ((SquaresToEdge[i + DirectionOffsets[j]][k] > 0))
+                                            if ((SquaresToEdge[i + DirectionOffsets[j], k] > 0))
                                             {
                                                 //check if the kings are next to each other:
                                                 if (inposition[i + DirectionOffsets[j] + DirectionOffsets[k]] == BlackPieces[4])
@@ -1040,26 +1031,26 @@ namespace chessbot
                             if (IsPlayerWhite == false)
                             {
                                 //double pawn push:
-                                if (SquaresToEdge[i][2] == 1)
+                                if (SquaresToEdge[i, 2] == 1)
                                 {
                                     if ((inposition[i - 8] == NoPiece) && (inposition[i - 16] == NoPiece))
                                     {
                                         ValueTempMoves(i, i - 16, 0, 0, inposition);
                                     }
                                 }
-                                if (inposition[i - 8] == NoPiece && SquaresToEdge[i][0] > 1)
+                                if (inposition[i - 8] == NoPiece && SquaresToEdge[i, 0] > 1)
                                 {
                                     ValueTempMoves(i, i - 8, 0, 0, inposition);
                                 }
                                 //pawn takes:
-                                if (SquaresToEdge[i][3] > 0 && SquaresToEdge[i][0] > 1)
+                                if (SquaresToEdge[i, 3] > 0 && SquaresToEdge[i, 0] > 1)
                                 {
                                     if (WhitePieces.Contains(inposition[i - 9]))
                                     {
                                         ValueTempMoves(i, i - 9, 0, 0, inposition);
                                     }
                                 }
-                                if (SquaresToEdge[i][1] > 0 && SquaresToEdge[i][0] > 1)
+                                if (SquaresToEdge[i, 1] > 0 && SquaresToEdge[i, 0] > 1)
                                 {
                                     if (WhitePieces.Contains(inposition[i - 7]))
                                     {
@@ -1067,7 +1058,7 @@ namespace chessbot
                                     }
                                 }
                                 //promotion:
-                                if (SquaresToEdge[i][0] == 1)
+                                if (SquaresToEdge[i, 0] == 1)
                                 {
                                     if (inposition[i - 8] == NoPiece)
                                     {
@@ -1076,7 +1067,7 @@ namespace chessbot
                                         ValueTempMoves(i, i - 8, 0, 3, inposition);
                                         ValueTempMoves(i, i - 8, 0, 4, inposition);
                                     }
-                                    if (SquaresToEdge[i][1] > 0)
+                                    if (SquaresToEdge[i, 1] > 0)
                                     {
                                         if (WhitePieces.Contains(inposition[i - 7]))
                                         {
@@ -1086,7 +1077,7 @@ namespace chessbot
                                             ValueTempMoves(i, i - 7, 0, 4, inposition);
                                         }
                                     }
-                                    if (SquaresToEdge[i][3] > 0)
+                                    if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (WhitePieces.Contains(inposition[i - 9]))
                                         {
@@ -1098,16 +1089,16 @@ namespace chessbot
                                     }
                                 }
                                 //en passant:
-                                if (SquaresToEdge[i][0] == 3)
+                                if (SquaresToEdge[i, 0] == 3)
                                 {
-                                    if (SquaresToEdge[i][1] > 0)
+                                    if (SquaresToEdge[i, 1] > 0)
                                     {
                                         if (inposition[i + 1] == WhitePieces[8] && LastMoveStarting == i - 15 && LastMoveTarget == i + 1)
                                         {
                                             ValueTempMoves(i, i - 7, 0, 5, inposition);
                                         }
                                     }
-                                    if (SquaresToEdge[i][3] > 0)
+                                    if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (inposition[i - 1] == WhitePieces[8] && LastMoveStarting == i - 17 && LastMoveTarget == i - 1)
                                         {
@@ -1119,26 +1110,26 @@ namespace chessbot
                             else
                             {
                                 //double pawn push:
-                                if (SquaresToEdge[i][0] == 1)
+                                if (SquaresToEdge[i, 0] == 1)
                                 {
                                     if ((inposition[i + 8] == NoPiece) && (inposition[i + 16] == NoPiece))
                                     {
                                         ValueTempMoves(i, i + 16, 0, 0, inposition);
                                     }
                                 }
-                                if (inposition[i + 8] == NoPiece && SquaresToEdge[i][2] > 1)
+                                if (inposition[i + 8] == NoPiece && SquaresToEdge[i, 2] > 1)
                                 {
                                     ValueTempMoves(i, i + 8, 0, 0, inposition);
                                 }
                                 //pawn takes:
-                                if (SquaresToEdge[i][3] > 0 && SquaresToEdge[i][2] > 1)
+                                if (SquaresToEdge[i, 3] > 0 && SquaresToEdge[i, 2] > 1)
                                 {
                                     if (WhitePieces.Contains(inposition[i + 7]))
                                     {
                                         ValueTempMoves(i, i + 7, 0, 0, inposition);
                                     }
                                 }
-                                if (SquaresToEdge[i][1] > 0 && SquaresToEdge[i][2] > 1)
+                                if (SquaresToEdge[i, 1] > 0 && SquaresToEdge[i, 2] > 1)
                                 {
                                     if (WhitePieces.Contains(inposition[i + 9]))
                                     {
@@ -1146,7 +1137,7 @@ namespace chessbot
                                     }
                                 }
                                 //promotion:
-                                if (SquaresToEdge[i][2] == 1)
+                                if (SquaresToEdge[i, 2] == 1)
                                 {
                                     if (inposition[i + 8] == NoPiece)
                                     {
@@ -1155,7 +1146,7 @@ namespace chessbot
                                         ValueTempMoves(i, i + 8, 0, 3, inposition);
                                         ValueTempMoves(i, i + 8, 0, 4, inposition);
                                     }
-                                    if (SquaresToEdge[i][3] > 0)
+                                    if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (WhitePieces.Contains(inposition[i + 7]))
                                         {
@@ -1165,7 +1156,7 @@ namespace chessbot
                                             ValueTempMoves(i, i + 7, 0, 4, inposition);
                                         }
                                     }
-                                    if (SquaresToEdge[i][1] > 0)
+                                    if (SquaresToEdge[i, 1] > 0)
                                     {
                                         if (WhitePieces.Contains(inposition[i + 9]))
                                         {
@@ -1177,16 +1168,16 @@ namespace chessbot
                                     }
                                 }
                                 //en passant:
-                                if (SquaresToEdge[i][2] == 3)
+                                if (SquaresToEdge[i, 2] == 3)
                                 {
-                                    if (SquaresToEdge[i][1] > 0)
+                                    if (SquaresToEdge[i, 1] > 0)
                                     {
                                         if (inposition[i + 1] == WhitePieces[8] && LastMoveStarting == i + 17 && LastMoveTarget == i + 1)
                                         {
                                             ValueTempMoves(i, i + 9, 0, 5, inposition);
                                         }
                                     }
-                                    if (SquaresToEdge[i][3] > 0)
+                                    if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (inposition[i - 1] == WhitePieces[8] && LastMoveStarting == i + 15 && LastMoveTarget == i - 1)
                                         {
@@ -1201,7 +1192,7 @@ namespace chessbot
                         {
                             for (int j = 0; j < 4; j++)
                             {
-                                for (int k = 0; k < SquaresToEdge[i][j]; k++)
+                                for (int k = 0; k < SquaresToEdge[i, j]; k++)
                                 {
                                     if (BlackPieces.Contains(inposition[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
@@ -1229,7 +1220,7 @@ namespace chessbot
                         {
                             for (int j = 4; j < 8; j++)
                             {
-                                for (int k = 0; k < SquaresToEdge[i][j]; k++)
+                                for (int k = 0; k < SquaresToEdge[i, j]; k++)
                                 {
                                     if (BlackPieces.Contains(inposition[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
@@ -1250,7 +1241,7 @@ namespace chessbot
                         {
                             for (int j = 0; j < 8; j++)
                             {
-                                for (int k = 0; k < SquaresToEdge[i][j]; k++)
+                                for (int k = 0; k < SquaresToEdge[i, j]; k++)
                                 {
                                     if (BlackPieces.Contains(inposition[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
@@ -1270,56 +1261,56 @@ namespace chessbot
                         else if (inposition[i] == BlackPieces[1] || inposition[i] == BlackPieces[6])
                         {
                             //8 if, 8 possible move
-                            if (SquaresToEdge[i][0] >= 2 && SquaresToEdge[i][1] >= 1)
+                            if (SquaresToEdge[i, 0] >= 2 && SquaresToEdge[i, 1] >= 1)
                             {
                                 if (!(BlackPieces.Contains(inposition[i - 15])))
                                 {
                                     ValueTempMoves(i, i - 15, 0, 0, inposition);
                                 }
                             }
-                            if (SquaresToEdge[i][0] >= 1 && SquaresToEdge[i][1] >= 2)
+                            if (SquaresToEdge[i, 0] >= 1 && SquaresToEdge[i, 1] >= 2)
                             {
                                 if (!(BlackPieces.Contains(inposition[i - 6])))
                                 {
                                     ValueTempMoves(i, i - 6, 0, 0, inposition);
                                 }
                             }
-                            if (SquaresToEdge[i][1] >= 2 && SquaresToEdge[i][2] >= 1)
+                            if (SquaresToEdge[i, 1] >= 2 && SquaresToEdge[i, 2] >= 1)
                             {
                                 if (!(BlackPieces.Contains(inposition[i + 10])))
                                 {
                                     ValueTempMoves(i, i + 10, 0, 0, inposition);
                                 }
                             }
-                            if (SquaresToEdge[i][1] >= 1 && SquaresToEdge[i][2] >= 2)
+                            if (SquaresToEdge[i, 1] >= 1 && SquaresToEdge[i, 2] >= 2)
                             {
                                 if (!(BlackPieces.Contains(inposition[i + 17])))
                                 {
                                     ValueTempMoves(i, i + 17, 0, 0, inposition);
                                 }
                             }
-                            if (SquaresToEdge[i][3] >= 1 && SquaresToEdge[i][2] >= 2)
+                            if (SquaresToEdge[i, 3] >= 1 && SquaresToEdge[i, 2] >= 2)
                             {
                                 if (!(BlackPieces.Contains(inposition[i + 15])))
                                 {
                                     ValueTempMoves(i, i + 15, 0, 0, inposition);
                                 }
                             }
-                            if (SquaresToEdge[i][3] >= 2 && SquaresToEdge[i][2] >= 1)
+                            if (SquaresToEdge[i, 3] >= 2 && SquaresToEdge[i, 2] >= 1)
                             {
                                 if (!(BlackPieces.Contains(inposition[i + 6])))
                                 {
                                     ValueTempMoves(i, i + 6, 0, 0, inposition);
                                 }
                             }
-                            if (SquaresToEdge[i][3] >= 2 && SquaresToEdge[i][0] >= 1)
+                            if (SquaresToEdge[i, 3] >= 2 && SquaresToEdge[i, 0] >= 1)
                             {
                                 if (!(BlackPieces.Contains(inposition[i - 10])))
                                 {
                                     ValueTempMoves(i, i - 10, 0, 0, inposition);
                                 }
                             }
-                            if (SquaresToEdge[i][3] >= 1 && SquaresToEdge[i][0] >= 2)
+                            if (SquaresToEdge[i, 3] >= 1 && SquaresToEdge[i, 0] >= 2)
                             {
                                 if (!(BlackPieces.Contains(inposition[i - 17])))
                                 {
@@ -1333,13 +1324,13 @@ namespace chessbot
                             //regular
                             for (int j = 0; j < 8; j++)
                             {
-                                if ((SquaresToEdge[i][j] > 0))
+                                if ((SquaresToEdge[i, j] > 0))
                                 {
                                     if (!(BlackPieces.Contains(inposition[i + DirectionOffsets[j]])))
                                     {
                                         for (int k = 0; k < 8; k++)
                                         {
-                                            if ((SquaresToEdge[i + DirectionOffsets[j]][k] > 0))
+                                            if ((SquaresToEdge[i + DirectionOffsets[j], k] > 0))
                                             {
                                                 //check if the kings are next to each other:
                                                 if (inposition[i + DirectionOffsets[j] + DirectionOffsets[k]] == WhitePieces[4])
@@ -1962,70 +1953,109 @@ namespace chessbot
             if (depth == 0 || possibleMoves.Count == 0)
             {
                 int BoardValue = 0;
-                //calculate board value
                 PiecesOnBoard = GenPosition.Count(source => source != NoPiece);
-                for (int i = 0; i < 64; i++)
+                //calculate board value
+                if (IsPlayerWhite)
                 {
-                    ImageSource currentPiece = GenPosition[i];
-                    if (currentPiece != NoPiece)
+                    for (int i = 0; i < 64; i++)
                     {
-                        int pieceValue = pieceValuesMap[currentPiece];
-                        //int extraValue = GetExtraValue(currentPiece, i, PiecesOnBoard);
-                        int extraValue = 0;
-                        if (IsPlayerWhite)
+                        var piece = GenPosition[i];
+                        if (piece != NoPiece)
                         {
-                            if (WhitePieces.Contains(currentPiece))
+                            int pieceIndex = Array.IndexOf(WhitePieces, piece);
+                            if (pieceIndex == -1)
                             {
-                                BoardValue += pieceValue + extraValue;
+                                pieceIndex = Array.IndexOf(BlackPieces, piece);
+                                BoardValue -= PieceValues[pieceIndex] + GetExtraValuesWhite(pieceIndex, i, false);
                             }
                             else
                             {
-                                BoardValue -= pieceValue + extraValue;
+                                BoardValue += PieceValues[pieceIndex] + GetExtraValuesWhite(pieceIndex, i, true);
+                            }
+                        }
+                    }
+                    if (possibleMoves.Count == 0)
+                    {
+                        PlayerToMoveWhite = !PlayerToMoveWhite;
+                        possibleOpponentMoves = new List<Move>(PossibleMoves(GenPosition));
+                        PlayerToMoveWhite = !PlayerToMoveWhite;
+                        if (PlayerToMoveWhite)
+                        {
+                            if (possibleOpponentMoves.Any(move => GenPosition[move.TargetSquare] == WhitePieces[4]))
+                            {
+                                //making this move will result in checkmate:
+                                BoardValue = -20000;
+                            }
+                            else
+                            {
+                                //making this move will result in stalemate:
+                                BoardValue = BoardValue < -100 ? 18000 : -18000;
                             }
                         }
                         else
                         {
-                            if (WhitePieces.Contains(currentPiece))
+                            if (possibleOpponentMoves.Any(move => GenPosition[move.TargetSquare] == BlackPieces[4]))
                             {
-                                BoardValue -= pieceValue + extraValue;
+                                //making this move will result in checkmate:
+                                BoardValue = 20000;
                             }
                             else
                             {
-                                BoardValue += pieceValue + extraValue;
+                                //making this move will result in stalemate:
+                                BoardValue = BoardValue > 100 ? -18000 : 18000;
                             }
                         }
-                    }
+                    } 
                 }
-                if (possibleMoves.Count == 0)
+                else
                 {
-                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                    possibleOpponentMoves = new List<Move>(PossibleMoves(GenPosition));
-                    PlayerToMoveWhite = !PlayerToMoveWhite;
-                    bool isCheckmate = false;
-                    ImageSource kingPiece = PlayerToMoveWhite ? WhitePieces[4] : BlackPieces[4];
-                    foreach (var move in possibleOpponentMoves)
+                    for (int i = 0; i < 64; i++)
                     {
-                        if (GenPosition[move.TargetSquare] == kingPiece)
+                        var piece = GenPosition[i];
+                        if (piece != NoPiece)
                         {
-                            isCheckmate = true;
-                            break;
+                            int pieceIndex = Array.IndexOf(BlackPieces, piece);
+                            if (pieceIndex == -1)
+                            {
+                                pieceIndex = Array.IndexOf(WhitePieces, piece);
+                                BoardValue -= PieceValues[pieceIndex] + GetExtraValuesBlack(pieceIndex, i, true);
+                            }
+                            else
+                            {
+                                BoardValue += PieceValues[pieceIndex] + GetExtraValuesBlack(pieceIndex, i, false);
+                            }
                         }
                     }
-                    if (isCheckmate)
+                    if (possibleMoves.Count == 0)
                     {
-                        //making this move will result in checkmate:
-                        BoardValue = PlayerToMoveWhite ? -20000 : 20000;
-                    }
-                    else
-                    {
-                        //making this move will result in stalemate:
-                        if ((PlayerToMoveWhite && BoardValue > 100) || (!PlayerToMoveWhite && BoardValue < -100))
+                        PlayerToMoveWhite = !PlayerToMoveWhite;
+                        possibleOpponentMoves = new List<Move>(PossibleMoves(GenPosition));
+                        PlayerToMoveWhite = !PlayerToMoveWhite;
+                        if (PlayerToMoveWhite)
                         {
-                            BoardValue = -18000;
+                            if (possibleOpponentMoves.Any(move => GenPosition[move.TargetSquare] == WhitePieces[4]))
+                            {
+                                //making this move will result in checkmate:
+                                BoardValue = 20000;
+                            }
+                            else
+                            {
+                                //making this move will result in stalemate:
+                                BoardValue = BoardValue > 100 ? -18000 : 18000;
+                            }
                         }
                         else
                         {
-                            BoardValue = 18000;
+                            if (possibleOpponentMoves.Any(move => GenPosition[move.TargetSquare] == BlackPieces[4]))
+                            {
+                                //making this move will result in checkmate:
+                                BoardValue = -20000;
+                            }
+                            else
+                            {
+                                //making this move will result in stalemate:
+                                BoardValue = BoardValue < -100 ? 18000 : -18000;
+                            }
                         }
                     }
                 }
@@ -2077,7 +2107,7 @@ namespace chessbot
         {
             GenerateMoves(possibleMoves, Position);
             int bestEval = int.MaxValue;
-            Move bestMove = default(Move);
+            Move bestMove = default;
             foreach (Move move in possibleMoves.ToList())
             {
                 Position.CopyTo(GenPosition, 0);
@@ -2094,6 +2124,53 @@ namespace chessbot
             }
 
             return bestMove;
+        }
+
+        private int GetExtraValuesWhite(int pieceIndex, int position, bool isWhite)
+        {
+            switch (pieceIndex)
+            {
+                case 8:
+                    return isWhite ? P2M_PawnExtraValues[position] : AI2M_PawnExtraValues[position];
+                case 0:
+                case 7:
+                    return isWhite ? P2M_RookExtraValues[position] : AI2M_RookExtraValues[position];
+                case 2:
+                case 5:
+                    return BishopExtraValues[position];
+                case 3:
+                    return QueenExtraValues[position];
+                case 1:
+                case 6:
+                    return KnightExtraValues[position];
+                case 4:
+                    return (PiecesOnBoard > 12 ? (isWhite ? P2M_KingExtraValues[position] : AI2M_KingExtraValues[position]) : Endgame_KingExtraValues[position]);
+                default:
+                    return 0;
+            }
+        }
+        private int GetExtraValuesBlack(int pieceIndex, int position, bool isWhite)
+        {
+            switch (pieceIndex)
+            {
+                case 8:
+                    return isWhite ? AI2M_PawnExtraValues[position] : P2M_PawnExtraValues[position];
+                case 0:
+                case 7:
+                    return isWhite ? AI2M_RookExtraValues[position] : P2M_RookExtraValues[position];
+                case 2:
+                case 5:
+                    return BishopExtraValues[position];
+                case 3:
+                    return QueenExtraValues[position];
+                case 1:
+                case 6:
+                    return KnightExtraValues[position];
+                case 4:
+                    return (PiecesOnBoard > 12 ? (isWhite ? AI2M_KingExtraValues[position] : P2M_KingExtraValues[position]) : Endgame_KingExtraValues[position]);
+                default:
+                    return 0;
+            }
         }
     }
 }
