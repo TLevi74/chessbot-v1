@@ -62,9 +62,9 @@ namespace chessbot
                 { WhitePieces[0], PieceValues[3] },
                 { WhitePieces[7], PieceValues[3] },
                 { BlackPieces[3], PieceValues[4] },
-                { BlackPieces[4], PieceValues[4] },
+                { BlackPieces[4], 0 },
                 { WhitePieces[3], PieceValues[4] },
-                { WhitePieces[4], PieceValues[4] }
+                { WhitePieces[4], 0 }
             };
             for (int i = 0; i < 64; i++)
             {
@@ -1727,7 +1727,7 @@ namespace chessbot
                     break;
                 }
             }
-
+            //todo: en passant move sound
             if (Position[AIselectedIndexSquare] == NoPiece)
             {
                 MoveSound.Play();
@@ -1963,263 +1963,69 @@ namespace chessbot
             {
                 int BoardValue = 0;
                 //calculate board value
-                if (IsPlayerWhite)
+                PiecesOnBoard = GenPosition.Count(source => source != NoPiece);
+                for (int i = 0; i < 64; i++)
                 {
-                    PiecesOnBoard = GenPosition.Count(source => source != NoPiece);
-                    for (int i = 0; i < 64; i++)
+                    ImageSource currentPiece = GenPosition[i];
+                    if (currentPiece != NoPiece)
                     {
-                        if (GenPosition[i] != NoPiece)
+                        int pieceValue = pieceValuesMap[currentPiece];
+                        //int extraValue = GetExtraValue(currentPiece, i, PiecesOnBoard);
+                        int extraValue = 0;
+                        if (IsPlayerWhite)
                         {
-                            //White pawn
-                            if (GenPosition[i] == WhitePieces[8])
+                            if (WhitePieces.Contains(currentPiece))
                             {
-                                BoardValue += 100 + P2M_PawnExtraValues[i];
-                            }
-                            //Black pawn
-                            else if (GenPosition[i] == BlackPieces[8])
-                            {
-                                BoardValue -= 100 + AI2M_PawnExtraValues[i];
-                            }
-                            //White rook
-                            else if (GenPosition[i] == WhitePieces[0] || GenPosition[i] == WhitePieces[7])
-                            {
-                                BoardValue += 500 + P2M_RookExtraValues[i];
-                            }
-                            //Black rook
-                            else if (GenPosition[i] == BlackPieces[0] || GenPosition[i] == BlackPieces[7])
-                            {
-                                BoardValue -= 500 + AI2M_RookExtraValues[i];
-                            }
-                            //White bishop
-                            else if (GenPosition[i] == WhitePieces[2] || GenPosition[i] == WhitePieces[5])
-                            {
-                                BoardValue += 330 + BishopExtraValues[i];
-                            }
-                            //Black bishop
-                            else if (GenPosition[i] == BlackPieces[2] || GenPosition[i] == BlackPieces[5])
-                            {
-                                BoardValue -= 330 + BishopExtraValues[i];
-                            }
-                            //White queen
-                            else if (GenPosition[i] == WhitePieces[3])
-                            {
-                                BoardValue += 900 + QueenExtraValues[i];
-                            }
-                            //Black queen
-                            else if (GenPosition[i] == BlackPieces[3])
-                            {
-                                BoardValue -= 900 + QueenExtraValues[i];
-                            }
-                            //White Knight
-                            else if (GenPosition[i] == WhitePieces[1] || GenPosition[i] == WhitePieces[6])
-                            {
-                                BoardValue += 320 + KnightExtraValues[i];
-                            }
-                            //Black Knight
-                            else if (GenPosition[i] == BlackPieces[1] || GenPosition[i] == BlackPieces[6])
-                            {
-                                BoardValue -= 320 + KnightExtraValues[i];
-                            }
-                            //White king
-                            else if (GenPosition[i] == WhitePieces[4])
-                            {
-                                if (PiecesOnBoard > 12)
-                                {
-                                    BoardValue += P2M_KingExtraValues[i];
-                                }
-                                else
-                                {
-                                    BoardValue += Endgame_KingExtraValues[i];
-                                }
-                            }
-                            //Black king
-                            else if (GenPosition[i] == BlackPieces[4])
-                            {
-                                if (PiecesOnBoard > 12)
-                                {
-                                    BoardValue -= AI2M_KingExtraValues[i];
-                                }
-                                else
-                                {
-                                    BoardValue -= Endgame_KingExtraValues[i];
-                                }
-                            }
-                        }
-                    }
-                    if (possibleMoves.Count == 0)
-                    {
-                        PlayerToMoveWhite = !PlayerToMoveWhite;
-                        possibleOpponentMoves = new List<Move>(PossibleMoves(GenPosition));
-                        PlayerToMoveWhite = !PlayerToMoveWhite;
-                        if (PlayerToMoveWhite)
-                        {
-                            if (possibleOpponentMoves.Any(move => GenPosition[move.TargetSquare] == WhitePieces[4]))
-                            {
-                                //making this move will result in checkmate:
-                                BoardValue = -20000;
+                                BoardValue += pieceValue + extraValue;
                             }
                             else
                             {
-                                //making this move will result in stalemate:
-                                if (BoardValue < -100)
-                                {
-                                    BoardValue = 18000;
-                                }
-                                else
-                                {
-                                    BoardValue = -18000;
-                                }
+                                BoardValue -= pieceValue + extraValue;
                             }
                         }
                         else
                         {
-                            if (possibleOpponentMoves.Any(move => GenPosition[move.TargetSquare] == BlackPieces[4]))
+                            if (WhitePieces.Contains(currentPiece))
                             {
-                                //making this move will result in checkmate:
-                                BoardValue = 20000;
+                                BoardValue -= pieceValue + extraValue;
                             }
                             else
                             {
-                                //making this move will result in stalemate:
-                                if (BoardValue > 100)
-                                {
-                                    BoardValue = -18000;
-                                }
-                                else
-                                {
-                                    BoardValue = 18000;
-                                }
+                                BoardValue += pieceValue + extraValue;
                             }
                         }
                     }
                 }
-                else
+                if (possibleMoves.Count == 0)
                 {
-                    PiecesOnBoard = GenPosition.Count(source => source != NoPiece);
-                    for (int i = 0; i < 64; i++)
+                    PlayerToMoveWhite = !PlayerToMoveWhite;
+                    possibleOpponentMoves = new List<Move>(PossibleMoves(GenPosition));
+                    PlayerToMoveWhite = !PlayerToMoveWhite;
+                    bool isCheckmate = false;
+                    ImageSource kingPiece = PlayerToMoveWhite ? WhitePieces[4] : BlackPieces[4];
+                    foreach (var move in possibleOpponentMoves)
                     {
-                        if (GenPosition[i] != NoPiece)
+                        if (GenPosition[move.TargetSquare] == kingPiece)
                         {
-                            //White pawn
-                            if (GenPosition[i] == WhitePieces[8])
-                            {
-                                BoardValue -= 100 + AI2M_PawnExtraValues[i];
-                            }
-                            //Black pawn
-                            else if (GenPosition[i] == BlackPieces[8])
-                            {
-                                BoardValue += 100 + P2M_PawnExtraValues[i];
-                            }
-                            //White rook
-                            else if (GenPosition[i] == WhitePieces[0] || GenPosition[i] == WhitePieces[7])
-                            {
-                                BoardValue -= 500 + AI2M_RookExtraValues[i];
-                            }
-                            //Black rook
-                            else if (GenPosition[i] == BlackPieces[0] || GenPosition[i] == BlackPieces[7])
-                            {
-                                BoardValue += 500 + P2M_RookExtraValues[i];
-                            }
-                            //White bishop
-                            else if (GenPosition[i] == WhitePieces[2] || GenPosition[i] == WhitePieces[5])
-                            {
-                                BoardValue -= 330 + BishopExtraValues[i];
-                            }
-                            //Black bishop
-                            else if (GenPosition[i] == BlackPieces[2] || GenPosition[i] == BlackPieces[5])
-                            {
-                                BoardValue += 330 + BishopExtraValues[i];
-                            }
-                            //White queen
-                            else if (GenPosition[i] == WhitePieces[3])
-                            {
-                                BoardValue -= 900 + QueenExtraValues[i];
-                            }
-                            //Black queen
-                            else if (GenPosition[i] == BlackPieces[3])
-                            {
-                                BoardValue += 900 + QueenExtraValues[i];
-                            }
-                            //White Knight
-                            else if (GenPosition[i] == WhitePieces[1] || GenPosition[i] == WhitePieces[6])
-                            {
-                                BoardValue -= 320 + KnightExtraValues[i];
-                            }
-                            //Black Knight
-                            else if (GenPosition[i] == BlackPieces[1] || GenPosition[i] == BlackPieces[6])
-                            {
-                                BoardValue += 320 + KnightExtraValues[i];
-                            }
-                            //White king
-                            else if (GenPosition[i] == WhitePieces[4])
-                            {
-                                if (PiecesOnBoard > 12)
-                                {
-                                    BoardValue -= AI2M_KingExtraValues[i];
-                                }
-                                else
-                                {
-                                    BoardValue -= Endgame_KingExtraValues[i];
-                                }
-                            }
-                            //Black king
-                            else if (GenPosition[i] == BlackPieces[4])
-                            {
-                                if (PiecesOnBoard > 12)
-                                {
-                                    BoardValue += P2M_KingExtraValues[i];
-                                }
-                                else
-                                {
-                                    BoardValue += Endgame_KingExtraValues[i];
-                                }
-                            }
+                            isCheckmate = true;
+                            break;
                         }
                     }
-                    if (possibleMoves.Count == 0)
+                    if (isCheckmate)
                     {
-                        PlayerToMoveWhite = !PlayerToMoveWhite;
-                        possibleOpponentMoves = new List<Move>(PossibleMoves(GenPosition));
-                        PlayerToMoveWhite = !PlayerToMoveWhite;
-                        if (PlayerToMoveWhite)
+                        //making this move will result in checkmate:
+                        BoardValue = PlayerToMoveWhite ? -20000 : 20000;
+                    }
+                    else
+                    {
+                        //making this move will result in stalemate:
+                        if ((PlayerToMoveWhite && BoardValue > 100) || (!PlayerToMoveWhite && BoardValue < -100))
                         {
-                            if (possibleOpponentMoves.Any(move => GenPosition[move.TargetSquare] == WhitePieces[4]))
-                            {
-                                //making this move will result in checkmate:
-                                BoardValue = 20000;
-                            }
-                            else
-                            {
-                                //making this move will result in stalemate:
-                                if (BoardValue > 100)
-                                {
-                                    BoardValue = -18000;
-                                }
-                                else
-                                {
-                                    BoardValue = 18000;
-                                }
-                            }
+                            BoardValue = -18000;
                         }
                         else
                         {
-                            if (possibleOpponentMoves.Any(move => GenPosition[move.TargetSquare] == BlackPieces[4]))
-                            {
-                                //making this move will result in checkmate:
-                                BoardValue = -20000;
-                            }
-                            else
-                            {
-                                //making this move will result in stalemate:
-                                if (BoardValue < -100)
-                                {
-                                    BoardValue = 18000;
-                                }
-                                else
-                                {
-                                    BoardValue = -18000;
-                                }
-                            }
+                            BoardValue = 18000;
                         }
                     }
                 }
