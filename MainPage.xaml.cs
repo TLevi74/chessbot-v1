@@ -8,27 +8,28 @@ namespace chessbot
     public partial class MainPage : ContentPage, INotifyPropertyChanged
     {
         //P-N-B-R-Q
-        int[] PieceValues = { 100, 320, 330, 500, 900 };
-        int[] P2M_PawnExtraValues = { 0, 0, 0, 0, 0, 0, 0, 0, 50, 50, 50, 50, 50, 50, 50, 50, 10, 10, 20, 30, 30, 20, 10, 10, 5, 5, 10, 25, 25, 10, 5, 5, 0, 0, 0, 20, 20, 0, 0, 0, 5, -5, -10, 0, 0, -10, -5, 5, 5, 10, 10, -20, -20, 10, 10, 5, 0, 0, 0, 0, 0, 0, 0, 0 };
-        int[] AI2M_PawnExtraValues = { 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 10, -20, -20, 10, 10, 5, 5, -5, -10, 0, 0, -10, -5, 5, 0, 0, 0, 20, 20, 0, 0, 0, 5, 5, 10, 25, 25, 10, 5, 5, 10, 10, 20, 30, 30, 20, 10, 10, 50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 0, 0, 0, 0, 0, 0 };
-        int[] KnightExtraValues = { -50, -20, -30, -30, -30, -30, -20, -50, -40, -20, 0, 0, 0, 0, -20, -40, -30, 0, 10, 15, 15, 10, 0, -30, -30, 5, 15, 20, 20, 15, 5, -30, -30, 0, 15, 20, 20, 15, 0, -30, -30, 5, 10, 15, 15, 10, 5, -30, -40, -20, 0, 5, 5, 0, -20, -40, -50, -20, -30, -30, -30, -30, -20, -50 };
-        int[] BishopExtraValues = { -20, -10, -10, -10, -10, -10, -10, -20, -10, 5, 0, 0, 0, 0, 5, -10, -10, 10, 10, 10, 10, 10, 10, -10, -10, 0, 10, 10, 10, 10, 0, -10, -10, 0, 10, 10, 10, 10, 0, -10, -10, 10, 10, 10, 10, 10, 10, -10, -10, 5, 0, 0, 0, 0, 5, -10, -20, -10, -10, -10, -10, -10, -10, -20 };
-        int[] P2M_RookExtraValues = { 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 10, 10, 10, 10, 10, 5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, 0, 0, 0, 5, 5, 0, 0, 0 };
-        int[] AI2M_RookExtraValues = { 0, 0, 0, 5, 5, 0, 0, 0, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, 5, 10, 10, 10, 10, 10, 10, 5, 0, 0, 0, 0, 0, 0, 0, 0 };
-        int[] QueenExtraValues = { -20, -10, -10, -5, -5, -10, -10, -20, -10, 0, 0, 0, 0, 0, 0, -10, -10, 0, 5, 5, 5, 5, 0, -10, -5, 0, 5, 5, 5, 5, 0, -5, -5, 0, 5, 5, 5, 5, 0, -5, -10, 5, 5, 5, 5, 5, 0, -10, -10, 0, 5, 0, 0, 0, 0, -10, -20, -10, -10, -5, -5, -10, -10, -20 };
-        int[] P2M_KingExtraValues = { -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30, -20, -30, -30, -40, -40, -30, -30, -20, -10, -20, -20, -20, -20, -20, -20, -10, 20, 20, 0, 0, 0, 0, 20, 20, 20, 30, 10, 0, 0, 10, 30, 20 };
-        int[] AI2M_KingExtraValues = { 20, 30, 10, 0, 0, 10, 30, 20, 20, 20, 0, 0, 0, 0, 20, 20, -10, -20, -20, -20, -20, -20, -20, -10, -20, -30, -30, -40, -40, -30, -30, -20, -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30 };
-        int[] Endgame_KingExtraValues = { -50, -40, -30, -20, -20, -30, -40, -50, -30, -20, -10, 0, 0, -10, -20, -30, -30, -10, 20, 30, 30, 20, -10, -30, -30, -10, 30, 40, 40, 30, -10, -30, -30, -10, 30, 40, 40, 30, -10, -30, -30, -10, 20, 30, 30, 20, -10, -30, -30, -30, 0, 0, 0, 0, -30, -30, -50, -30, -30, -30, -30, -30, -30, -50 };
+        readonly int[] PieceValues = { 100, 320, 330, 500, 900 };
+        readonly int[] P2M_PawnExtraValues = { 0, 0, 0, 0, 0, 0, 0, 0, 50, 50, 50, 50, 50, 50, 50, 50, 10, 10, 20, 30, 30, 20, 10, 10, 5, 5, 10, 25, 25, 10, 5, 5, 0, 0, 0, 20, 20, 0, 0, 0, 5, -5, -10, 0, 0, -10, -5, 5, 5, 10, 10, -20, -20, 10, 10, 5, 0, 0, 0, 0, 0, 0, 0, 0 };
+        readonly int[] AI2M_PawnExtraValues = { 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 10, -20, -20, 10, 10, 5, 5, -5, -10, 0, 0, -10, -5, 5, 0, 0, 0, 20, 20, 0, 0, 0, 5, 5, 10, 25, 25, 10, 5, 5, 10, 10, 20, 30, 30, 20, 10, 10, 50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 0, 0, 0, 0, 0, 0 };
+        readonly int[] KnightExtraValues = { -50, -20, -30, -30, -30, -30, -20, -50, -40, -20, 0, 0, 0, 0, -20, -40, -30, 0, 10, 15, 15, 10, 0, -30, -30, 5, 15, 20, 20, 15, 5, -30, -30, 0, 15, 20, 20, 15, 0, -30, -30, 5, 10, 15, 15, 10, 5, -30, -40, -20, 0, 5, 5, 0, -20, -40, -50, -20, -30, -30, -30, -30, -20, -50 };
+        readonly int[] BishopExtraValues = { -20, -10, -10, -10, -10, -10, -10, -20, -10, 5, 0, 0, 0, 0, 5, -10, -10, 10, 10, 10, 10, 10, 10, -10, -10, 0, 10, 10, 10, 10, 0, -10, -10, 0, 10, 10, 10, 10, 0, -10, -10, 10, 10, 10, 10, 10, 10, -10, -10, 5, 0, 0, 0, 0, 5, -10, -20, -10, -10, -10, -10, -10, -10, -20 };
+        readonly int[] P2M_RookExtraValues = { 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 10, 10, 10, 10, 10, 5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, 0, 0, 0, 5, 5, 0, 0, 0 };
+        readonly int[] AI2M_RookExtraValues = { 0, 0, 0, 5, 5, 0, 0, 0, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, 5, 10, 10, 10, 10, 10, 10, 5, 0, 0, 0, 0, 0, 0, 0, 0 };
+        readonly int[] QueenExtraValues = { -20, -10, -10, -5, -5, -10, -10, -20, -10, 0, 0, 0, 0, 0, 0, -10, -10, 0, 5, 5, 5, 5, 0, -10, -5, 0, 5, 5, 5, 5, 0, -5, -5, 0, 5, 5, 5, 5, 0, -5, -10, 5, 5, 5, 5, 5, 0, -10, -10, 0, 5, 0, 0, 0, 0, -10, -20, -10, -10, -5, -5, -10, -10, -20 };
+        readonly int[] P2M_KingExtraValues = { -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30, -20, -30, -30, -40, -40, -30, -30, -20, -10, -20, -20, -20, -20, -20, -20, -10, 20, 20, 0, 0, 0, 0, 20, 20, 20, 30, 10, 0, 0, 10, 30, 20 };
+        readonly int[] AI2M_KingExtraValues = { 20, 30, 10, 0, 0, 10, 30, 20, 20, 20, 0, 0, 0, 0, 20, 20, -10, -20, -20, -20, -20, -20, -20, -10, -20, -30, -30, -40, -40, -30, -30, -20, -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30 };
+        readonly int[] Endgame_KingExtraValues = { -50, -40, -30, -20, -20, -30, -40, -50, -30, -20, -10, 0, 0, -10, -20, -30, -30, -10, 20, 30, 30, 20, -10, -30, -30, -10, 30, 40, 40, 30, -10, -30, -30, -10, 30, 40, 40, 30, -10, -30, -30, -10, 20, 30, 30, 20, -10, -30, -30, -30, 0, 0, 0, 0, -30, -30, -50, -30, -30, -30, -30, -30, -30, -50 };
 
         ImageButton[] AllSquares = new ImageButton[64];
         ImageSource[] Position = new ImageSource[64];
         ImageButton[] WhiteSquares = new ImageButton[32];
         ImageButton[] BlackSquares = new ImageButton[32];
-        ImageSource[] WhitePieces = { "white_rook.png", "white_knight.png", "white_bishop.png", "white_queen.png", "white_king.png", "white_bishop.png", "white_knight.png", "white_rook.png", "white_pawn.png" };
-        ImageSource[] BlackPieces = { "black_rook.png", "black_knight.png", "black_bishop.png", "black_queen.png", "black_king.png", "black_bishop.png", "black_knight.png", "black_rook.png", "black_pawn.png" };
-        ImageSource NoPiece = "transparent.png";
-        Boolean IsPlayerWhite = true;
-        Boolean PlayerToMoveWhite = true;
+        readonly ImageSource[] WhitePieces = { "white_rook.png", "white_knight.png", "white_bishop.png", "white_queen.png", "white_king.png", "white_bishop.png", "white_knight.png", "white_rook.png", "white_pawn.png" };
+        readonly ImageSource[] BlackPieces = { "black_rook.png", "black_knight.png", "black_bishop.png", "black_queen.png", "black_king.png", "black_bishop.png", "black_knight.png", "black_rook.png", "black_pawn.png" };
+        readonly ImageSource NoPiece = "transparent.png";
+        private Dictionary<ImageSource, int> pieceValuesMap;
+        bool IsPlayerWhite = true;
+        bool PlayerToMoveWhite = true;
 
         public MainPage()
         {
@@ -44,7 +45,27 @@ namespace chessbot
                                             SquareA1, SquareB1, SquareC1, SquareD1, SquareE1, SquareF1, SquareG1, SquareH1};
             ImageButton[] TempWhiteSquares = { SquareA8, SquareC8, SquareE8, SquareG8, SquareB7, SquareD7, SquareF7, SquareH7, SquareA6, SquareC6, SquareE6, SquareG6, SquareB5, SquareD5, SquareF5, SquareH5, SquareA4, SquareC4, SquareE4, SquareG4, SquareB3, SquareD3, SquareF3, SquareH3, SquareA2, SquareC2, SquareE2, SquareG2, SquareB1, SquareD1, SquareF1, SquareH1 };
             ImageButton[] TempBlackSquares = { SquareB8, SquareD8, SquareF8, SquareH8, SquareA7, SquareC7, SquareE7, SquareG7, SquareB6, SquareD6, SquareF6, SquareH6, SquareA5, SquareC5, SquareE5, SquareG5, SquareB4, SquareD4, SquareF4, SquareH4, SquareA3, SquareC3, SquareE3, SquareG3, SquareB2, SquareD2, SquareF2, SquareH2, SquareA1, SquareC1, SquareE1, SquareG1 };
-
+            pieceValuesMap = new Dictionary<ImageSource, int>
+            {
+                { BlackPieces[8], PieceValues[0] },
+                { WhitePieces[8], PieceValues[0] },
+                { BlackPieces[1], PieceValues[1] },
+                { BlackPieces[6], PieceValues[1] },
+                { WhitePieces[1], PieceValues[1] },
+                { WhitePieces[6], PieceValues[1] },
+                { BlackPieces[2], PieceValues[2] },
+                { BlackPieces[5], PieceValues[2] },
+                { WhitePieces[2], PieceValues[2] },
+                { WhitePieces[5], PieceValues[2] },
+                { BlackPieces[0], PieceValues[3] },
+                { BlackPieces[7], PieceValues[3] },
+                { WhitePieces[0], PieceValues[3] },
+                { WhitePieces[7], PieceValues[3] },
+                { BlackPieces[3], PieceValues[4] },
+                { BlackPieces[4], PieceValues[4] },
+                { WhitePieces[3], PieceValues[4] },
+                { WhitePieces[4], PieceValues[4] }
+            };
             for (int i = 0; i < 64; i++)
             {
                 AllSquares[i] = TempAllSquares[i];
@@ -144,7 +165,7 @@ namespace chessbot
         {
             ResetBoard();
         }
-        private void FlipBoard(object sender, System.EventArgs e)
+        private void FlipBoard(object sender, EventArgs e)
         {
             if (IsPlayerWhite == true)
             {
@@ -193,13 +214,13 @@ namespace chessbot
             //}
         }
 
-        Boolean HasPlayerSelectedFromSquare = false;
+        bool HasPlayerSelectedFromSquare = false;
         ImageSource SelectedPiece = null;
         ImageButton SelectedSquare = null;
         ImageButton SelectedBefore = null;
         public ImageButton currentButton = new ImageButton();
 
-        private void PromotionPieceSelected(object sender, System.EventArgs e)
+        private void PromotionPieceSelected(object sender, EventArgs e)
         {
             currentButton = (ImageButton)sender;
             if (currentButton.Source != NoPiece)
@@ -213,7 +234,7 @@ namespace chessbot
                 AIToMove();
             }
         }
-        private void SquareSelected(object sender, System.EventArgs e)
+        private void SquareSelected(object sender, EventArgs e)
         {
             currentButton = (ImageButton)sender;
             //------PLAYER MOVES AS WHITE--------
@@ -325,7 +346,7 @@ namespace chessbot
         }
         public int selectedIndexBefore = -1;
         public int selectedIndexSquare = -1;
-        private void PlayerMovesTargetSquare(Boolean TempPlayerWhiteMoves)
+        private void PlayerMovesTargetSquare(bool TempPlayerWhiteMoves)
         {
             SelectedBefore = SelectedSquare;
             SelectedSquare = currentButton;
@@ -579,12 +600,12 @@ namespace chessbot
 
         //-----CALCULATE POSSIBLE MOVES-----
 
-        int[] DirectionOffsets = { -8, 1, 8, -1, -7, 9, 7, -9 };
-        Boolean IsKingNextTo = false;
+        readonly int[] DirectionOffsets = { -8, 1, 8, -1, -7, 9, 7, -9 };
+        bool IsKingNextTo = false;
         //for castling:
         //white king - black king - a1 rook - h1 rook - a8 rook - h8 rook
 
-        Boolean[] castling = new Boolean[6];
+        bool[] castling = new bool[6];
         public struct Move
         {
             public int StartingSquare;
@@ -603,7 +624,6 @@ namespace chessbot
         List<Move> TempMoves = new List<Move>();
         List<Move> CurrentColorMoves = new List<Move>();
         List<Move> OpponentMoves = new List<Move>();
-        List<Move> CurrentColorMovesOverOpponents = new List<Move>();
         List<Move> Moves = new List<Move>();
         List<Move> Temp1 = new List<Move>();
         List<Move> Temp2 = new List<Move>();
@@ -620,49 +640,35 @@ namespace chessbot
             {
                 if (TempMoves[i].Extra != 0)
                 {
-                    if (TempMoves[i].Extra == 1)
+                    Move move = TempMoves[i];
+                    switch (TempMoves[i].Extra)
                     {
-                        Move move = TempMoves[i];
-                        move.Value = move.Value + PieceValues[4] - PieceValues[0];
-                        TempMoves[i] = move;
+                        case 1:
+                            move.Value += PieceValues[4] - PieceValues[0];
+                            break;
+                        case 2:
+                            move.Value += PieceValues[3] - PieceValues[0];
+                            break;
+                        case 3:
+                            move.Value += PieceValues[2] - PieceValues[0];
+                            break;
+                        case 4:
+                            move.Value += PieceValues[1] - PieceValues[0];
+                            break;
+                        case 5:
+                        case 6:
+                            move.Value += PieceValues[0];
+                            break;
+                        case 7:
+                        case 8:
+                        case 9:
+                        case 10:
+                            move.Value += 20;
+                            break;
                     }
-                    else if (TempMoves[i].Extra == 2)
-                    {
-                        Move move = TempMoves[i];
-                        move.Value = move.Value + PieceValues[3] - PieceValues[0];
-                        TempMoves[i] = move;
-                    }
-                    else if (TempMoves[i].Extra == 3)
-                    {
-                        Move move = TempMoves[i];
-                        move.Value = move.Value + PieceValues[2] - PieceValues[0];
-                        TempMoves[i] = move;
-                    }
-                    else if (TempMoves[i].Extra == 4)
-                    {
-                        Move move = TempMoves[i];
-                        move.Value = move.Value + PieceValues[1] - PieceValues[0];
-                        TempMoves[i] = move;
-                    }
-                    else if (TempMoves[i].Extra == 5 || TempMoves[i].Extra == 6)
-                    {
-                        Move move = TempMoves[i];
-                        move.Value = move.Value + PieceValues[0];
-                        TempMoves[i] = move;
-                    }
-                    else if (TempMoves[i].Extra == 7 || TempMoves[i].Extra == 8 || TempMoves[i].Extra == 9 || TempMoves[i].Extra == 10)
-                    {
-                        Move move = TempMoves[i];
-                        move.Value = move.Value + 20;
-                        TempMoves[i] = move;
-                    }
+                    TempMoves[i] = move;
                 }
             }
-            //---FOR TESTING---
-            //for (int i = 0; i < TempMoves.Count; i++)
-            //{
-            //    Trace.WriteLine($"{i+1}: |{TempMoves[i].StartingSquare}, {TempMoves[i].TargetSquare}|");
-            //}
             return TempMoves;
         }
         private List<Move> PossibleRegularMoves(ImageSource[] inposition)
@@ -1529,48 +1535,14 @@ namespace chessbot
         }
         private void ValueTempMoves(int _StartingSquare, int _TargetSquare, int _Value, int _Extra, ImageSource[] inposition)
         {
-            //P-N-B-R-Q
-            if (inposition[_TargetSquare] != NoPiece)
-            {
-                if (inposition[_TargetSquare] == BlackPieces[8] || inposition[_TargetSquare] == WhitePieces[8])
-                {
-                    Temp1.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[0], _Extra));
-                }
-
-                else if (inposition[_TargetSquare] == BlackPieces[1] || inposition[_TargetSquare] == BlackPieces[6] || inposition[_TargetSquare] == WhitePieces[1] || inposition[_TargetSquare] == WhitePieces[6])
-                {
-                    Temp1.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[1], _Extra));
-                }
-
-                else if (inposition[_TargetSquare] == BlackPieces[2] || inposition[_TargetSquare] == BlackPieces[5] || inposition[_TargetSquare] == WhitePieces[2] || inposition[_TargetSquare] == WhitePieces[5])
-                {
-                    Temp1.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[2], _Extra));
-                }
-
-                else if (inposition[_TargetSquare] == BlackPieces[0] || inposition[_TargetSquare] == BlackPieces[7] || inposition[_TargetSquare] == WhitePieces[0] || inposition[_TargetSquare] == WhitePieces[7])
-                {
-                    Temp1.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[3], _Extra));
-                }
-
-                else
-                {
-                    Temp1.Add(new Move(_StartingSquare, _TargetSquare, _Value + PieceValues[4], _Extra));
-                }
-            }
-            else
-            {
-                Temp1.Add(new Move(_StartingSquare, _TargetSquare, _Value, _Extra));
-            }
+            pieceValuesMap.TryGetValue(inposition[_TargetSquare], out int pieceValue);
+            Temp1.Add(new Move(_StartingSquare, _TargetSquare, _Value + pieceValue, _Extra));
         }
-
-        int OpponentMovesCount = 0;
         private bool GenerateMoves(List<Move> ListToAddMoves, ImageSource[] inposition)
         {
             ListToAddMoves.Clear();
             CurrentColorMoves = new List<Move>(PossibleMoves(inposition));
             //checking for checks:
-            TempLastMoveStarting = LastMoveStarting;
-            TempLastMoveTarget = LastMoveTarget;
             foreach (Move move in CurrentColorMoves)
             {
                 MakeCurrentMove(move, inposition);
@@ -1579,39 +1551,7 @@ namespace chessbot
                 PlayerToMoveWhite = !PlayerToMoveWhite;
                 if (!OpponentMoves.Any(move => inposition[move.TargetSquare] == (PlayerToMoveWhite ? WhitePieces[4] : BlackPieces[4])))
                 {
-                    TempLastLastMoveStarting = LastMoveStarting;
-                    TempLastLastMoveTarget = LastMoveTarget;
-                    OpponentMovesCount = 0;
-                    foreach (Move nextmove in OpponentMoves)
-                    {
-                        MakeMoveNext(nextmove, inposition);
-
-                        if (!CurrentColorMovesOverOpponents.Any(move => inposition[move.TargetSquare] == (PlayerToMoveWhite ? BlackPieces[4] : WhitePieces[4])))
-                        {
-                            OpponentMovesCount++;
-                        }
-
-                        UnmakeMoveNext(nextmove, inposition);
-                    }
-                    if (OpponentMovesCount == 0)
-                    {
-                        //making this move will result in checkmate/stalemate
-                        if (CurrentColorMovesOverOpponents.Any(move => inposition[move.TargetSquare] == (PlayerToMoveWhite ? BlackPieces[4] : WhitePieces[4])))
-                        {
-                            //making this move will result in checkmate:
-                            ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, 20000, move.Extra));
-                        }
-                        else
-                        {
-                            //making this move will result in stalemate:
-                            ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, 18000, move.Extra));
-                        }
-                    }
-                    else
-                    {
-                        //regular move
-                        ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, move.Value, move.Extra));
-                    }
+                    ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, move.Value, move.Extra));
                 }
                 UnmakeCurrentMove(move, inposition, TempStartingSquareSource, TempTargetSquareSource);
             }
@@ -1621,7 +1561,6 @@ namespace chessbot
         }
         ImageSource TempTargetSquareSource = null;
         ImageSource TempStartingSquareSource = null;
-        int TempLastMoveStarting; int TempLastMoveTarget; int TempLastLastMoveStarting; int TempLastLastMoveTarget;
         private void MakeCurrentMove(Move move, ImageSource[] onPosition)
         {
             TempTargetSquareSource = onPosition[move.TargetSquare];
@@ -1676,23 +1615,12 @@ namespace chessbot
             LastMoveStarting = move.StartingSquare;
             LastMoveTarget = move.TargetSquare;
         }
-
         private void UnmakeCurrentMove(Move move, ImageSource[] onPosition, ImageSource TempStarting, ImageSource TempTarget)
         {
             onPosition[move.StartingSquare] = TempStarting;
             onPosition[move.TargetSquare] = TempTarget;
             switch (move.Extra)
             {
-                case 0: // regular move
-                    break;
-                case 1: // promotion
-                    break;
-                case 2: // promotion
-                    break;
-                case 3: // promotion
-                    break;
-                case 4: // promotion
-                    break;
                 case 5: // en passant
                     if (PlayerToMoveWhite)
                     {
@@ -1730,202 +1658,7 @@ namespace chessbot
                     onPosition[PlayerToMoveWhite ? 4 : 5] = NoPiece;
                     break;
             }
-            LastMoveStarting = TempLastMoveStarting;
-            LastMoveTarget = TempLastMoveTarget;
         }
-        ImageSource TempTargetSquareSourceOpponent = null;
-        ImageSource TempStartingSquareSourceOpponent = null;
-        private void MakeMoveNext(Move move, ImageSource[] inposition)
-        {
-            TempTargetSquareSourceOpponent = inposition[move.TargetSquare];
-            TempStartingSquareSourceOpponent = inposition[move.StartingSquare];
-            if (move.Extra > 0 && move.Extra < 5)
-            {
-                //swapped if
-                if (PlayerToMoveWhite == false)
-                {
-                    //promotion:
-                    if (move.Extra == 1)
-                    {
-                        inposition[move.TargetSquare] = WhitePieces[3];
-                    }
-                    else if (move.Extra == 2)
-                    {
-                        inposition[move.TargetSquare] = WhitePieces[0];
-                    }
-                    else if (move.Extra == 3)
-                    {
-                        inposition[move.TargetSquare] = WhitePieces[2];
-                    }
-                    else if (move.Extra == 4)
-                    {
-                        inposition[move.TargetSquare] = WhitePieces[1];
-                    }
-                }
-                else
-                {
-                    //promotion:
-                    if (move.Extra == 1)
-                    {
-                        inposition[move.TargetSquare] = BlackPieces[3];
-                    }
-                    else if (move.Extra == 2)
-                    {
-                        inposition[move.TargetSquare] = BlackPieces[0];
-                    }
-                    else if (move.Extra == 3)
-                    {
-                        inposition[move.TargetSquare] = BlackPieces[2];
-                    }
-                    else if (move.Extra == 4)
-                    {
-                        inposition[move.TargetSquare] = BlackPieces[1];
-                    }
-                }
-            }
-            else
-            {
-                inposition[move.TargetSquare] = inposition[move.StartingSquare];
-            }
-            //en passant:
-            if (move.Extra == 5)
-            {
-                inposition[move.StartingSquare + 1] = NoPiece;
-            }
-            else if (move.Extra == 6)
-            {
-                inposition[move.StartingSquare - 1] = NoPiece;
-            }
-            //castling: (swapped if)
-            else if (move.Extra == 7)
-            {
-                inposition[56] = NoPiece;
-                if (PlayerToMoveWhite == false)
-                {
-                    inposition[59] = WhitePieces[0];
-                }
-                else
-                {
-                    inposition[58] = BlackPieces[0];
-                }
-            }
-            else if (move.Extra == 8)
-            {
-                inposition[63] = NoPiece;
-                if (PlayerToMoveWhite == false)
-                {
-                    inposition[61] = WhitePieces[0];
-                }
-                else
-                {
-                    inposition[60] = BlackPieces[0];
-                }
-            }
-            else if (move.Extra == 9)
-            {
-                inposition[0] = NoPiece;
-                if (PlayerToMoveWhite == false)
-                {
-                    inposition[2] = WhitePieces[0];
-                }
-                else
-                {
-                    inposition[3] = BlackPieces[0];
-                }
-            }
-            else if (move.Extra == 10)
-            {
-                inposition[7] = NoPiece;
-                if (PlayerToMoveWhite == false)
-                {
-                    inposition[4] = WhitePieces[0];
-                }
-                else
-                {
-                    inposition[5] = BlackPieces[0];
-                }
-            }
-            inposition[move.StartingSquare] = NoPiece;
-            LastMoveStarting = move.StartingSquare;
-            LastMoveTarget = move.TargetSquare;
-            CurrentColorMovesOverOpponents = new List<Move>(PossibleMoves(inposition));
-        }
-
-        private void UnmakeMoveNext(Move move, ImageSource[] inposition)
-        {
-            inposition[move.StartingSquare] = TempStartingSquareSourceOpponent;
-            inposition[move.TargetSquare] = TempTargetSquareSourceOpponent;
-            //swapped if:
-            if (PlayerToMoveWhite == false)
-            {
-                //en passant:
-                if (move.Extra == 5)
-                {
-                    inposition[move.StartingSquare + 1] = BlackPieces[8];
-                }
-                else if (move.Extra == 6)
-                {
-                    inposition[move.StartingSquare - 1] = BlackPieces[8];
-                }
-                //castling
-                else if (move.Extra == 7)
-                {
-                    inposition[56] = WhitePieces[0];
-                    inposition[59] = NoPiece;
-                }
-                else if (move.Extra == 8)
-                {
-                    inposition[63] = WhitePieces[0];
-                    inposition[61] = NoPiece;
-                }
-                else if (move.Extra == 9)
-                {
-                    inposition[0] = WhitePieces[0];
-                    inposition[2] = NoPiece;
-                }
-                else if (move.Extra == 10)
-                {
-                    inposition[7] = WhitePieces[0];
-                    inposition[4] = NoPiece;
-                }
-            }
-            else
-            {
-                //en passant:
-                if (move.Extra == 5)
-                {
-                    inposition[move.StartingSquare + 1] = WhitePieces[8];
-                }
-                else if (move.Extra == 6)
-                {
-                    inposition[move.StartingSquare - 1] = WhitePieces[8];
-                }
-                //castling
-                else if (move.Extra == 7)
-                {
-                    inposition[56] = BlackPieces[0];
-                    inposition[58] = NoPiece;
-                }
-                else if (move.Extra == 8)
-                {
-                    inposition[63] = BlackPieces[0];
-                    inposition[60] = NoPiece;
-                }
-                else if (move.Extra == 9)
-                {
-                    inposition[0] = BlackPieces[0];
-                    inposition[3] = NoPiece;
-                }
-                else if (move.Extra == 10)
-                {
-                    inposition[7] = BlackPieces[0];
-                    inposition[5] = NoPiece;
-                }
-            }
-            LastMoveStarting = TempLastLastMoveStarting;
-            LastMoveTarget = TempLastLastMoveTarget;
-        }
-
         ImageButton AISelectedBefore = null;
         ImageButton AISelectedSquare = null;
         ImageSource AISelectedPiece = null;
@@ -1972,7 +1705,7 @@ namespace chessbot
                 }
                 return;
             }
-            GeneratedMove = GetBestMove(3);
+            GeneratedMove = GetBestMove(5);
 
             AISelectedBefore = AllSquares[GeneratedMove.StartingSquare];
             AISelectedPiece = AllSquares[GeneratedMove.StartingSquare].Source;
