@@ -401,14 +401,13 @@ namespace chessbot
                         break;
                     }
                 }
-
-                if (Position[selectedIndexSquare] == NoPiece)
+                if ((Position[selectedIndexSquare] != NoPiece) || (selectedMove.Extra == 5) || (selectedMove.Extra == 6))
                 {
-                    MoveSound.Play();
+                    CaptureSound.Play();
                 }
                 else
                 {
-                    CaptureSound.Play();
+                    MoveSound.Play();
                 }
                 //for castling:
                 if (SelectedBefore == SquareA1)
@@ -1718,14 +1717,13 @@ namespace chessbot
                     break;
                 }
             }
-            //todo: en passant move sound
-            if (Position[AIselectedIndexSquare] == NoPiece)
+            if ((Position[AIselectedIndexSquare] != NoPiece) || (GeneratedMove.Extra == 5) || (GeneratedMove.Extra == 6))
             {
-                MoveSound.Play();
+                CaptureSound.Play();
             }
             else
             {
-                CaptureSound.Play();
+                MoveSound.Play();
             }
             //for castling:
             if (AISelectedBefore == SquareA8)
