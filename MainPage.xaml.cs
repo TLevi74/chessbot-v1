@@ -30,7 +30,6 @@ namespace chessbot
         private Dictionary<ImageSource, int> pieceValuesMap;
         bool IsPlayerWhite = true;
         bool PlayerToMoveWhite = true;
-
         public MainPage()
         {
             InitializeComponent();
@@ -614,12 +613,9 @@ namespace chessbot
         }
         List<Move> TempMoves = new List<Move>();
         List<Move> CurrentColorMoves = new List<Move>();
-        List<Move> OpponentMoves = new List<Move>();
         List<Move> Moves = new List<Move>();
         List<Move> Temp1 = new List<Move>();
         List<Move> Temp2 = new List<Move>();
-
-        List<Move> CastlingCheck = new List<Move>();
 
         int PiecesOnBoard = 32;
         private List<Move> PossibleMoves(ImageSource[] inposition)
@@ -844,14 +840,7 @@ namespace chessbot
                                         break;
                                     }
 
-                                    if (IsPlayerWhite == true)
-                                    {
-                                        ValueTempMoves(i, i + ((k + 1) * DirectionOffsets[j]), 0, 0, inposition);
-                                    }
-                                    else
-                                    {
-                                        ValueTempMoves(i, i + ((k + 1) * DirectionOffsets[j]), 0, 0, inposition);
-                                    }
+                                    ValueTempMoves(i, i + ((k + 1) * DirectionOffsets[j]), 0, 0, inposition);
 
                                     if (BlackPieces.Contains(inposition[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
@@ -1198,14 +1187,7 @@ namespace chessbot
                                         break;
                                     }
 
-                                    if (IsPlayerWhite == false)
-                                    {
-                                        ValueTempMoves(i, i + ((k + 1) * DirectionOffsets[j]), 0, 0, inposition);
-                                    }
-                                    else
-                                    {
-                                        ValueTempMoves(i, i + ((k + 1) * DirectionOffsets[j]), 0, 0, inposition);
-                                    }
+                                    ValueTempMoves(i, i + ((k + 1) * DirectionOffsets[j]), 0, 0, inposition);
 
                                     if (WhitePieces.Contains(inposition[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
@@ -1388,11 +1370,8 @@ namespace chessbot
                         {
                             //O-O-O
                             if (castling[0] && castling[2] && SquareB1.Source == NoPiece && SquareC1.Source == NoPiece && SquareD1.Source == NoPiece)
-                            {
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                CastlingCheck = new List<Move>(PossibleRegularMoves(inposition));
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                if (!CastlingCheck.Any(move => move.TargetSquare == 60) && !CastlingCheck.Any(move => move.TargetSquare == 59))
+                            {                             
+                                if (!IsInCheck(inposition, 60) && !IsInCheck(inposition, 59))
                                 {
                                     if (inposition[49] != BlackPieces[4] && inposition[50] != BlackPieces[4])
                                     {
@@ -1403,10 +1382,7 @@ namespace chessbot
                             //O-O
                             if (castling[0] && castling[3] && SquareF1.Source == NoPiece && SquareG1.Source == NoPiece)
                             {
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                CastlingCheck = new List<Move>(PossibleRegularMoves(inposition));
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                if (!CastlingCheck.Any(move => move.TargetSquare == 60) && !CastlingCheck.Any(move => move.TargetSquare == 61))
+                                if (!IsInCheck(inposition, 60) && !IsInCheck(inposition, 61))
                                 {
                                     if (inposition[54] != BlackPieces[4] && inposition[55] != BlackPieces[4])
                                     {
@@ -1420,10 +1396,7 @@ namespace chessbot
                             //O-O-O
                             if (castling[0] && castling[5] && SquareE8.Source == NoPiece && SquareF8.Source == NoPiece && SquareG8.Source == NoPiece)
                             {
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                CastlingCheck = new List<Move>(PossibleRegularMoves(inposition));
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                if (!CastlingCheck.Any(move => move.TargetSquare == 3) && !CastlingCheck.Any(move => move.TargetSquare == 4))
+                                if (!IsInCheck(inposition, 3) && !IsInCheck(inposition, 4))
                                 {
                                     if (inposition[13] != BlackPieces[4] && inposition[14] != BlackPieces[4])
                                     {
@@ -1434,10 +1407,7 @@ namespace chessbot
                             //O-O
                             if (castling[0] && castling[4] && SquareB8.Source == NoPiece && SquareC8.Source == NoPiece)
                             {
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                CastlingCheck = new List<Move>(PossibleRegularMoves(inposition));
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                if (!CastlingCheck.Any(move => move.TargetSquare == 3) && !CastlingCheck.Any(move => move.TargetSquare == 2))
+                                if (!IsInCheck(inposition, 3) && !IsInCheck(inposition, 2))
                                 {
                                     if (inposition[8] != BlackPieces[4] && inposition[9] != BlackPieces[4])
                                     {
@@ -1461,10 +1431,7 @@ namespace chessbot
                             //O-O-O
                             if (castling[1] && castling[3] && SquareE1.Source == NoPiece && SquareF1.Source == NoPiece && SquareG1.Source == NoPiece)
                             {
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                CastlingCheck = new List<Move>(PossibleRegularMoves(inposition));
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                if (!CastlingCheck.Any(move => move.TargetSquare == 59) && !CastlingCheck.Any(move => move.TargetSquare == 60))
+                                if (!IsInCheck(inposition, 59) && !IsInCheck(inposition, 60))
                                 {
                                     if (inposition[53] != WhitePieces[4] && inposition[54] != WhitePieces[4])
                                     {
@@ -1475,10 +1442,7 @@ namespace chessbot
                             //O-O
                             if (castling[1] && castling[2] && SquareB1.Source == NoPiece && SquareC1.Source == NoPiece)
                             {
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                CastlingCheck = new List<Move>(PossibleRegularMoves(inposition));
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                if (!CastlingCheck.Any(move => move.TargetSquare == 59) && !CastlingCheck.Any(move => move.TargetSquare == 58))
+                                if (!IsInCheck(inposition, 59) && !IsInCheck(inposition, 68))
                                 {
                                     if (inposition[48] != WhitePieces[4] && inposition[49] != WhitePieces[4])
                                     {
@@ -1492,10 +1456,7 @@ namespace chessbot
                             //O-O-O
                             if (castling[1] && castling[4] && SquareB8.Source == NoPiece && SquareC8.Source == NoPiece && SquareD8.Source == NoPiece)
                             {
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                CastlingCheck = new List<Move>(PossibleRegularMoves(inposition));
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                if (!CastlingCheck.Any(move => move.TargetSquare == 4) && !CastlingCheck.Any(move => move.TargetSquare == 3))
+                                if (!IsInCheck(inposition, 4) && !IsInCheck(inposition, 3))
                                 {
                                     if (inposition[9] != WhitePieces[4] && inposition[10] != WhitePieces[4])
                                     {
@@ -1506,10 +1467,7 @@ namespace chessbot
                             //O-O
                             if (castling[1] && castling[5] && SquareF8.Source == NoPiece && SquareG8.Source == NoPiece)
                             {
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                CastlingCheck = new List<Move>(PossibleRegularMoves(inposition));
-                                PlayerToMoveWhite = !PlayerToMoveWhite;
-                                if (!CastlingCheck.Any(move => move.TargetSquare == 4) && !CastlingCheck.Any(move => move.TargetSquare == 5))
+                                if (!IsInCheck(inposition, 4) && !IsInCheck(inposition, 5))
                                 {
                                     if (inposition[14] != WhitePieces[4] && inposition[15] != WhitePieces[4])
                                     {
@@ -1536,13 +1494,10 @@ namespace chessbot
             foreach (Move move in CurrentColorMoves)
             {
                 MakeCurrentMove(move, inposition);
-                PlayerToMoveWhite = !PlayerToMoveWhite;
-                OpponentMoves = new List<Move>(PossibleMoves(inposition));
-                PlayerToMoveWhite = !PlayerToMoveWhite;
-                if (!OpponentMoves.Any(move => inposition[move.TargetSquare] == (PlayerToMoveWhite ? WhitePieces[4] : BlackPieces[4])))
+                if (!IsInCheck(inposition, Array.IndexOf(inposition, PlayerToMoveWhite ? WhitePieces[4] : BlackPieces[4])))
                 {
                     ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, move.Value, move.Extra));
-                }
+                }                
                 UnmakeCurrentMove(move, inposition, TempStartingSquareSource, TempTargetSquareSource);
             }
             ListToAddMoves = ListToAddMoves.OrderByDescending(move => move.Value).ToList();
@@ -1660,38 +1615,17 @@ namespace chessbot
             if (GenerateMoves(Moves, Position) == false)
             {
                 //checkmate or stalemate
-                PlayerToMoveWhite = !PlayerToMoveWhite;
-                OpponentMoves = new List<Move>(PossibleMoves(Position));
-                PlayerToMoveWhite = !PlayerToMoveWhite;
-                if (PlayerToMoveWhite == true)
+                if (IsInCheck(Position, Array.IndexOf(Position, PlayerToMoveWhite ? WhitePieces[4] : BlackPieces[4])))
                 {
-                    if (OpponentMoves.Any(move => Position[move.TargetSquare] == WhitePieces[4]))
-                    {
-                        //checkmate:
-                        MateSound.Play();
-                        btnReset.Text = "CHECKMATE!";
-                    }
-                    else
-                    {
-                        //stalemate:
-                        MateSound.Play();
-                        btnReset.Text = "STALEMATE!";
-                    }
+                    //checkmate:
+                    MateSound.Play();
+                    btnReset.Text = "CHECKMATE!";
                 }
                 else
                 {
-                    if (OpponentMoves.Any(move => Position[move.TargetSquare] == BlackPieces[4]))
-                    {
-                        //checkmate:
-                        MateSound.Play();
-                        btnReset.Text = "CHECKMATE!";
-                    }
-                    else
-                    {
-                        //stalemate:
-                        MateSound.Play();
-                        btnReset.Text = "STALEMATE!";
-                    }
+                    //stalemate:
+                    MateSound.Play();
+                    btnReset.Text = "STALEMATE!";
                 }
                 return;
             }
@@ -1902,38 +1836,17 @@ namespace chessbot
             if (GenerateMoves(Moves, Position) == false)
             {
                 //checkmate or stalemate
-                PlayerToMoveWhite = !PlayerToMoveWhite;
-                OpponentMoves = new List<Move>(PossibleMoves(Position));
-                PlayerToMoveWhite = !PlayerToMoveWhite;
-                if (PlayerToMoveWhite == true)
+                if (IsInCheck(Position, Array.IndexOf(Position, PlayerToMoveWhite ? WhitePieces[4] : BlackPieces[4])))
                 {
-                    if (OpponentMoves.Any(move => Position[move.TargetSquare] == WhitePieces[4]))
-                    {
-                        //checkmate:
-                        MateSound.Play();
-                        btnReset.Text = "CHECKMATE!";
-                    }
-                    else
-                    {
-                        //stalemate:
-                        MateSound.Play();
-                        btnReset.Text = "STALEMATE!";
-                    }
+                    //checkmate:
+                    MateSound.Play();
+                    btnReset.Text = "CHECKMATE!";
                 }
                 else
                 {
-                    if (OpponentMoves.Any(move => Position[move.TargetSquare] == BlackPieces[4]))
-                    {
-                        //checkmate:
-                        MateSound.Play();
-                        btnReset.Text = "CHECKMATE!";
-                    }
-                    else
-                    {
-                        //stalemate:
-                        MateSound.Play();
-                        btnReset.Text = "STALEMATE!";
-                    }
+                    //stalemate:
+                    MateSound.Play();
+                    btnReset.Text = "STALEMATE!";
                 }
                 return;
             }
@@ -2169,6 +2082,252 @@ namespace chessbot
                 default:
                     return 0;
             }
+        }
+        private bool IsInCheck(ImageSource[] inposition, int square)
+        {
+            if (PlayerToMoveWhite)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    int Offset = DirectionOffsets[j];
+                    for (int k = 0; k < SquaresToEdge[square, j]; k++)
+                    {
+                        if (WhitePieces.Contains(inposition[square + ((k + 1) * Offset)]))
+                        {
+                            break;
+                        }
+                        //queen
+                        if (BlackPieces[3] == inposition[square + ((k + 1) * Offset)])
+                        {
+                            return true;
+                        }
+                        //rook
+                        if (j < 4 && ((BlackPieces[0] == inposition[square + ((k + 1) * Offset)]) || (BlackPieces[7] == inposition[square + ((k + 1) * Offset)])))
+                        {
+                            return true;
+                        }
+                        //bishop
+                        if (j >= 4 && ((BlackPieces[2] == inposition[square + ((k + 1) * Offset)]) || (BlackPieces[5] == inposition[square + ((k + 1) * Offset)])))
+                        {
+                            return true;
+                        }
+                    }   
+                }
+                //knight
+                if (SquaresToEdge[square, 0] >= 2 && SquaresToEdge[square, 1] >= 1)
+                {
+                    if ((BlackPieces[1] == inposition[square - 15]) || (BlackPieces[6] == inposition[square - 15]))
+                    {
+                        return true;
+                    }
+                }
+                if (SquaresToEdge[square, 0] >= 1 && SquaresToEdge[square, 1] >= 2)
+                {
+                    if ((BlackPieces[1] == inposition[square - 6]) || (BlackPieces[6] == inposition[square - 6]))
+                    {
+                        return true;
+                    }
+                }
+                if (SquaresToEdge[square, 1] >= 2 && SquaresToEdge[square, 2] >= 1)
+                {
+                    if ((BlackPieces[1] == inposition[square + 10]) || (BlackPieces[6] == inposition[square + 10]))
+                    {
+                        return true;
+                    }
+                }
+                if (SquaresToEdge[square, 1] >= 1 && SquaresToEdge[square, 2] >= 2)
+                {
+                    if ((BlackPieces[1] == inposition[square + 17]) || (BlackPieces[6] == inposition[square + 17]))
+                    {
+                        return true;
+                    }
+                }
+                if (SquaresToEdge[square, 3] >= 1 && SquaresToEdge[square, 2] >= 2)
+                {
+                    if ((BlackPieces[1] == inposition[square + 15]) || (BlackPieces[6] == inposition[square + 15]))
+                    {
+                        return true;
+                    }
+                }
+                if (SquaresToEdge[square, 3] >= 2 && SquaresToEdge[square, 2] >= 1)
+                {
+                    if ((BlackPieces[1] == inposition[square + 6]) || (BlackPieces[6] == inposition[square + 6]))
+                    {
+                        return true;
+                    }
+                }
+                if (SquaresToEdge[square, 3] >= 2 && SquaresToEdge[square, 0] >= 1)
+                {
+                    if ((BlackPieces[1] == inposition[square - 10]) || (BlackPieces[6] == inposition[square - 10]))
+                    {
+                        return true;
+                    }
+                }
+                if (SquaresToEdge[square, 3] >= 1 && SquaresToEdge[square, 0] >= 2)
+                {
+                    if ((BlackPieces[1] == inposition[square - 17]) || (BlackPieces[6] == inposition[square - 17]))
+                    {
+                        return true;
+                    }
+                }
+                //pawn
+                if (IsPlayerWhite)
+                {
+                    if (SquaresToEdge[square, 0] > 0 && SquaresToEdge[square, 1] > 0)
+                    {
+                        if (BlackPieces[8] == inposition[square - 7])
+                        {
+                            return true;
+                        }
+                    }
+                    if (SquaresToEdge[square, 0] > 0 && SquaresToEdge[square, 3] > 0)
+                    {
+                        if (BlackPieces[8] == inposition[square - 9])
+                        {
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    if (SquaresToEdge[square, 2] > 0 && SquaresToEdge[square, 1] > 0)
+                    {
+                        if (BlackPieces[8] == inposition[square + 9])
+                        {
+                            return true;
+                        }
+                    }
+                    if (SquaresToEdge[square, 2] > 0 && SquaresToEdge[square, 3] > 0)
+                    {
+                        if (BlackPieces[8] == inposition[square + 7])
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    int Offset = DirectionOffsets[j];
+                    for (int k = 0; k < SquaresToEdge[square, j]; k++)
+                    {
+                        if (BlackPieces.Contains(inposition[square + ((k + 1) * Offset)]))
+                        {
+                            break;
+                        }
+                        //queen
+                        if (WhitePieces[3] == inposition[square + ((k + 1) * Offset)])
+                        {
+                            return true;
+                        }
+                        //rook
+                        if (j < 4 && ((WhitePieces[0] == inposition[square + ((k + 1) * Offset)]) || (WhitePieces[7] == inposition[square + ((k + 1) * Offset)])))
+                        {
+                            return true;
+                        }
+                        //bishop
+                        if (j >= 4 && ((WhitePieces[2] == inposition[square + ((k + 1) * Offset)]) || (WhitePieces[5] == inposition[square + ((k + 1) * Offset)])))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                //knight
+                if (SquaresToEdge[square, 0] >= 2 && SquaresToEdge[square, 1] >= 1)
+                {
+                    if ((WhitePieces[1] == inposition[square - 15]) || (WhitePieces[6] == inposition[square - 15]))
+                    {
+                        return true;
+                    }
+                }
+                if (SquaresToEdge[square, 0] >= 1 && SquaresToEdge[square, 1] >= 2)
+                {
+                    if ((WhitePieces[1] == inposition[square - 6]) || (WhitePieces[6] == inposition[square - 6]))
+                    {
+                        return true;
+                    }
+                }
+                if (SquaresToEdge[square, 1] >= 2 && SquaresToEdge[square, 2] >= 1)
+                {
+                    if ((WhitePieces[1] == inposition[square + 10]) || (WhitePieces[6] == inposition[square + 10]))
+                    {
+                        return true;
+                    }
+                }
+                if (SquaresToEdge[square, 1] >= 1 && SquaresToEdge[square, 2] >= 2)
+                {
+                    if ((WhitePieces[1] == inposition[square + 17]) || (WhitePieces[6] == inposition[square + 17]))
+                    {
+                        return true;
+                    }
+                }
+                if (SquaresToEdge[square, 3] >= 1 && SquaresToEdge[square, 2] >= 2)
+                {
+                    if ((WhitePieces[1] == inposition[square + 15]) || (WhitePieces[6] == inposition[square + 15]))
+                    {
+                        return true;
+                    }
+                }
+                if (SquaresToEdge[square, 3] >= 2 && SquaresToEdge[square, 2] >= 1)
+                {
+                    if ((WhitePieces[1] == inposition[square + 6]) || (WhitePieces[6] == inposition[square + 6]))
+                    {
+                        return true;
+                    }
+                }
+                if (SquaresToEdge[square, 3] >= 2 && SquaresToEdge[square, 0] >= 1)
+                {
+                    if ((WhitePieces[1] == inposition[square - 10]) || (WhitePieces[6] == inposition[square - 10]))
+                    {
+                        return true;
+                    }
+                }
+                if (SquaresToEdge[square, 3] >= 1 && SquaresToEdge[square, 0] >= 2)
+                {
+                    if ((WhitePieces[1] == inposition[square - 17]) || (WhitePieces[6] == inposition[square - 17]))
+                    {
+                        return true;
+                    }
+                }
+                //pawn
+                if (IsPlayerWhite)
+                {
+                    if (SquaresToEdge[square, 2] > 0 && SquaresToEdge[square, 1] > 0)
+                    {
+                        if (WhitePieces[8] == inposition[square + 9])
+                        {
+                            return true;
+                        }
+                    }
+                    if (SquaresToEdge[square, 2] > 0 && SquaresToEdge[square, 3] > 0)
+                    {
+                        if (WhitePieces[8] == inposition[square + 7])
+                        {
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    if (SquaresToEdge[square, 0] > 0 && SquaresToEdge[square, 1] > 0)
+                    {
+                        if (WhitePieces[8] == inposition[square - 7])
+                        {
+                            return true;
+                        }
+                    }
+                    if (SquaresToEdge[square, 0] > 0 && SquaresToEdge[square, 3] > 0)
+                    {
+                        if (WhitePieces[8] == inposition[square - 9])
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
     }
 }
