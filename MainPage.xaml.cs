@@ -622,7 +622,7 @@ namespace chessbot
         {
             TempMoves.Clear();
             TempMoves.AddRange(PossibleRegularMoves());
-            TempMoves.AddRange(PossibleCastlingMoves());
+            //TempMoves.AddRange(PossibleCastlingMoves());
             for (int i = 0; i < TempMoves.Count; i++)
             {
                 if (TempMoves[i].Extra != 0)
@@ -1506,6 +1506,7 @@ namespace chessbot
         }
         ImageSource TempTargetSquareSource = null;
         ImageSource TempStartingSquareSource = null;
+        Stack<Tuple<int, int>> previousMoves = new Stack<Tuple<int, int>>();
         private void MakeCurrentMove(Move move)
         {
             TempTargetSquareSource = Position[move.TargetSquare];
@@ -1557,6 +1558,7 @@ namespace chessbot
                     break;
             }
             Position[move.StartingSquare] = NoPiece;
+            previousMoves.Push(new Tuple<int, int>(LastMoveStarting, LastMoveTarget));
             LastMoveStarting = move.StartingSquare;
             LastMoveTarget = move.TargetSquare;
         }
@@ -1603,6 +1605,9 @@ namespace chessbot
                     Position[PlayerToMoveWhite ? 4 : 5] = NoPiece;
                     break;
             }
+            var lastMove = previousMoves.Pop();
+            LastMoveStarting = lastMove.Item1;
+            LastMoveTarget = lastMove.Item2;
         }
         ImageButton AISelectedBefore = null;
         ImageButton AISelectedSquare = null;
@@ -1629,7 +1634,7 @@ namespace chessbot
                 }
                 return;
             }
-            GeneratedMove = GetBestMove(5);
+            GeneratedMove = GetBestMove(3);
 
             AISelectedBefore = AllSquares[GeneratedMove.StartingSquare];
             AISelectedPiece = AllSquares[GeneratedMove.StartingSquare].Source;
@@ -2095,6 +2100,21 @@ namespace chessbot
                         {
                             break;
                         }
+                        //pawn
+                        if (BlackPieces[8] == Position[square + ((k + 1) * Offset)])
+                        {
+                            break;
+                        }
+                        //knight
+                        if (BlackPieces[1] == Position[square + ((k + 1) * Offset)] || BlackPieces[6] == Position[square + ((k + 1) * Offset)])
+                        {
+                            break;
+                        }
+                        //king
+                        if (BlackPieces[4] == Position[square + ((k + 1) * Offset)])
+                        {
+                            break;
+                        }
                         //queen
                         if (BlackPieces[3] == Position[square + ((k + 1) * Offset)])
                         {
@@ -2213,6 +2233,21 @@ namespace chessbot
                     for (int k = 0; k < SquaresToEdge[square, j]; k++)
                     {
                         if (BlackPieces.Contains(Position[square + ((k + 1) * Offset)]))
+                        {
+                            break;
+                        }
+                        //pawn
+                        if (WhitePieces[8] == Position[square + ((k + 1) * Offset)])
+                        {
+                            break;
+                        }
+                        //knight
+                        if (WhitePieces[1] == Position[square + ((k + 1) * Offset)] || WhitePieces[6] == Position[square + ((k + 1) * Offset)])
+                        {
+                            break;
+                        }
+                        //king
+                        if (WhitePieces[4] == Position[square + ((k + 1) * Offset)])
                         {
                             break;
                         }
