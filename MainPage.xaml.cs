@@ -594,7 +594,7 @@ namespace chessbot
         bool IsKingNextTo = false;
         //for castling:
         //white king - black king - a1 rook - h1 rook - a8 rook - h8 rook
-
+        //TODO: after minimax change back to true/false!!!
         bool[] castling = new bool[6];
         public struct Move
         {
@@ -1361,124 +1361,75 @@ namespace chessbot
             Temp2.Clear();
             if (PlayerToMoveWhite)
             {
-                for (int j = 0; j < 64; j++)
+                if (IsPlayerWhite)
                 {
-                    if (Position[j] == WhitePieces[4])
+                    if (Position[60] == WhitePieces[4])
                     {
-                        //castling
-                        if (IsPlayerWhite)
+                        //O-O-O
+                        if (castling[0] && castling[2] && Position[57] == NoPiece && Position[58] == NoPiece && Position[59] == NoPiece && !IsInCheck(60) && !IsInCheck(59) && Position[49] != BlackPieces[4] && Position[50] != BlackPieces[4])
                         {
-                            //O-O-O
-                            if (castling[0] && castling[2] && Position[57] == NoPiece && Position[58] == NoPiece && Position[59] == NoPiece)
-                            {
-                                if (!IsInCheck(60) && !IsInCheck(59))
-                                {
-                                    if (Position[49] != BlackPieces[4] && Position[50] != BlackPieces[4])
-                                    {
-                                        Temp2.Add(new Move(60, 58, 20, 7));
-                                    }
-                                }
-                            }
-                            //O-O
-                            if (castling[0] && castling[3] && Position[61] == NoPiece && Position[62] == NoPiece)
-                            {
-                                if (!IsInCheck(60) && !IsInCheck(61))
-                                {
-                                    if (Position[54] != BlackPieces[4] && Position[55] != BlackPieces[4])
-                                    {
-                                        Temp2.Add(new Move(60, 62, 20, 8));
-                                    }
-                                }
-                            }
+                            Temp2.Add(new Move(60, 58, 20, 7));
                         }
-                        else
+                        //O-O
+                        if (castling[0] && castling[3] && Position[61] == NoPiece && Position[62] == NoPiece && !IsInCheck(60) && !IsInCheck(61) && Position[54] != BlackPieces[4] && Position[55] != BlackPieces[4])
                         {
-                            //O-O-O
-                            if (castling[0] && castling[5] && Position[4] == NoPiece && Position[5] == NoPiece && Position[6] == NoPiece)
-                            {
-                                if (!IsInCheck(3) && !IsInCheck(4))
-                                {
-                                    if (Position[13] != BlackPieces[4] && Position[14] != BlackPieces[4])
-                                    {
-                                        Temp2.Add(new Move(3, 5, 20, 10));
-                                    }
-                                }
-                            }
-                            //O-O
-                            if (castling[0] && castling[4] && Position[1] == NoPiece && Position[2] == NoPiece)
-                            {
-                                if (!IsInCheck(2) && !IsInCheck(3))
-                                {
-                                    if (Position[8] != BlackPieces[4] && Position[9] != BlackPieces[4])
-                                    {
-                                        Temp2.Add(new Move(3, 1, 20, 9));
-                                    }
-                                }
-                            }
+                            Temp2.Add(new Move(60, 62, 20, 8));
+                        }
+                    }
+                }
+                else
+                {
+                    if (Position[3] == WhitePieces[4])
+                    {
+                        //O-O-O
+                        if (castling[0] && castling[5] && Position[4] == NoPiece && Position[5] == NoPiece && Position[6] == NoPiece && !IsInCheck(3) && !IsInCheck(4) && Position[13] != BlackPieces[4] && Position[14] != BlackPieces[4])
+                        {
+                            Temp2.Add(new Move(3, 5, 20, 10));
+                        }
+                        //O-O
+                        if (castling[0] && castling[4] && Position[1] == NoPiece && Position[2] == NoPiece && !IsInCheck(2) && !IsInCheck(3) && Position[8] != BlackPieces[4] && Position[9] != BlackPieces[4])
+                        {
+                            Temp2.Add(new Move(3, 1, 20, 9));
                         }
                     }
                 }
             }
             else
             {
-                for (int j = 0; j < 64; j++)
+                if (IsPlayerWhite)
                 {
-                    if (Position[j] == BlackPieces[4])
+                    if (Position[4] == BlackPieces[4])
                     {
-                        //castling
-                        if (!IsPlayerWhite)
+                        //O-O-O
+                        if (castling[1] && castling[4] && Position[1] == NoPiece && Position[2] == NoPiece && Position[3] == NoPiece && !IsInCheck(4) && !IsInCheck(3) && Position[9] != WhitePieces[4] && Position[10] != WhitePieces[4])
                         {
-                            //O-O-O
-                            if (castling[1] && castling[3] && Position[60] == NoPiece && Position[61] == NoPiece && Position[62] == NoPiece)
-                            {
-                                if (!IsInCheck(59) && !IsInCheck(60))
-                                {
-                                    if (Position[53] != WhitePieces[4] && Position[54] != WhitePieces[4])
-                                    {
-                                        Temp2.Add(new Move(59, 61, 20, 8));
-                                    }
-                                }
-                            }
-                            //O-O
-                            if (castling[1] && castling[2] && Position[57] == NoPiece && Position[58] == NoPiece)
-                            {
-                                if (!IsInCheck(58) && !IsInCheck(59))
-                                {
-                                    if (Position[48] != WhitePieces[4] && Position[49] != WhitePieces[4])
-                                    {
-                                        Temp2.Add(new Move(59, 57, 20, 7));
-                                    }
-                                }
-                            }
+                            Temp2.Add(new Move(4, 2, 20, 9));
                         }
-                        else
+                        //O-O
+                        if (castling[1] && castling[5] && Position[5] == NoPiece && Position[6] == NoPiece && !IsInCheck(4) && !IsInCheck(5) && Position[14] != WhitePieces[4] && Position[15] != WhitePieces[4])
                         {
-                            //O-O-O
-                            if (castling[1] && castling[4] && Position[1] == NoPiece && Position[2] == NoPiece && Position[3] == NoPiece)
-                            {
-                                if (!IsInCheck(4) && !IsInCheck(3))
-                                {
-                                    if (Position[9] != WhitePieces[4] && Position[10] != WhitePieces[4])
-                                    {
-                                        Temp2.Add(new Move(4, 2, 20, 9));
-                                    }
-                                }
-                            }
-                            //O-O
-                            if (castling[1] && castling[5] && Position[5] == NoPiece && Position[6] == NoPiece)
-                            {
-                                if (!IsInCheck(4) && !IsInCheck(5))
-                                {
-                                    if (Position[14] != WhitePieces[4] && Position[15] != WhitePieces[4])
-                                    {
-                                        Temp2.Add(new Move(4, 6, 20, 10));
-                                    }
-                                }
-                            }
+                            Temp2.Add(new Move(4, 6, 20, 10));
+                        }
+                    }
+                }
+                else
+                {
+                    if (Position[59] == BlackPieces[4])
+                    {
+                        //O-O-O
+                        if (castling[1] && castling[3] && Position[60] == NoPiece && Position[61] == NoPiece && Position[62] == NoPiece && !IsInCheck(59) && !IsInCheck(60) && Position[53] != WhitePieces[4] && Position[54] != WhitePieces[4])
+                        {
+                            Temp2.Add(new Move(59, 61, 20, 8));
+                        }
+                        //O-O
+                        if (castling[1] && castling[2] && Position[57] == NoPiece && Position[58] == NoPiece && !IsInCheck(58) && !IsInCheck(59) && Position[48] != WhitePieces[4] && Position[49] != WhitePieces[4])
+                        {
+                            Temp2.Add(new Move(59, 57, 20, 7));
                         }
                     }
                 }
             }
+            
             return Temp2;
         }
         private void ValueTempMoves(int _StartingSquare, int _TargetSquare, int _Value, int _Extra)
@@ -1509,6 +1460,8 @@ namespace chessbot
         Stack<Tuple<int, int>> previousMoves = new Stack<Tuple<int, int>>();
         private void MakeCurrentMove(Move move)
         {
+            bool[] currentCastlingRights = (bool[])castling.Clone();
+            castlingHistory.Push(currentCastlingRights);
             TempTargetSquareSource = Position[move.TargetSquare];
             TempStartingSquareSource = Position[move.StartingSquare];
             switch (move.Extra)
@@ -1558,6 +1511,45 @@ namespace chessbot
                     break;
             }
             Position[move.StartingSquare] = NoPiece;
+            switch (move.StartingSquare)
+            {
+                case 56:
+                    castling[2] = false;
+                    break;
+                case 63:
+                    castling[3] = false;
+                    break;
+                case 0:
+                    castling[4] = false;
+                    break;
+                case 7:
+                    castling[5] = false;
+                    break;
+                case 60:
+                    if (IsPlayerWhite)
+                    {
+                        castling[0] = false;
+                    }
+                    break;
+                case 4:
+                    if (IsPlayerWhite)
+                    {
+                        castling[1] = false;
+                    }
+                    break;
+                case 3:
+                    if (!IsPlayerWhite)
+                    {
+                        castling[0] = false;
+                    }
+                    break;
+                case 59:
+                    if (!IsPlayerWhite)
+                    {
+                        castling[1] = false;
+                    }
+                    break;
+            }
             previousMoves.Push(new Tuple<int, int>(LastMoveStarting, LastMoveTarget));
             LastMoveStarting = move.StartingSquare;
             LastMoveTarget = move.TargetSquare;
@@ -1608,6 +1600,7 @@ namespace chessbot
             var lastMove = previousMoves.Pop();
             LastMoveStarting = lastMove.Item1;
             LastMoveTarget = lastMove.Item2;
+            castling = castlingHistory.Pop();
         }
         ImageButton AISelectedBefore = null;
         ImageButton AISelectedSquare = null;
@@ -2018,6 +2011,7 @@ namespace chessbot
         }
         Stack<ImageSource> StartStack = new Stack<ImageSource>();
         Stack<ImageSource> TargetStack = new Stack<ImageSource>();
+        Stack<bool[]> castlingHistory = new Stack<bool[]>();
         private Move GetBestMove(int depth)
         {
             GenerateMoves(possibleMoves);
