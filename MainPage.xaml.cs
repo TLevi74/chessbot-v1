@@ -622,7 +622,7 @@ namespace chessbot
         {
             TempMoves.Clear();
             TempMoves.AddRange(PossibleRegularMoves());
-            //TempMoves.AddRange(PossibleCastlingMoves());
+            TempMoves.AddRange(PossibleCastlingMoves());
             for (int i = 0; i < TempMoves.Count; i++)
             {
                 if (TempMoves[i].Extra != 0)
@@ -1359,18 +1359,18 @@ namespace chessbot
         private List<Move> PossibleCastlingMoves()
         {
             Temp2.Clear();
-            if (PlayerToMoveWhite == true)
+            if (PlayerToMoveWhite)
             {
                 for (int j = 0; j < 64; j++)
                 {
                     if (Position[j] == WhitePieces[4])
                     {
                         //castling
-                        if (IsPlayerWhite == true)
+                        if (IsPlayerWhite)
                         {
                             //O-O-O
-                            if (castling[0] && castling[2] && SquareB1.Source == NoPiece && SquareC1.Source == NoPiece && SquareD1.Source == NoPiece)
-                            {                             
+                            if (castling[0] && castling[2] && Position[57] == NoPiece && Position[58] == NoPiece && Position[59] == NoPiece)
+                            {
                                 if (!IsInCheck(60) && !IsInCheck(59))
                                 {
                                     if (Position[49] != BlackPieces[4] && Position[50] != BlackPieces[4])
@@ -1380,7 +1380,7 @@ namespace chessbot
                                 }
                             }
                             //O-O
-                            if (castling[0] && castling[3] && SquareF1.Source == NoPiece && SquareG1.Source == NoPiece)
+                            if (castling[0] && castling[3] && Position[61] == NoPiece && Position[62] == NoPiece)
                             {
                                 if (!IsInCheck(60) && !IsInCheck(61))
                                 {
@@ -1394,7 +1394,7 @@ namespace chessbot
                         else
                         {
                             //O-O-O
-                            if (castling[0] && castling[5] && SquareE8.Source == NoPiece && SquareF8.Source == NoPiece && SquareG8.Source == NoPiece)
+                            if (castling[0] && castling[5] && Position[4] == NoPiece && Position[5] == NoPiece && Position[6] == NoPiece)
                             {
                                 if (!IsInCheck(3) && !IsInCheck(4))
                                 {
@@ -1405,9 +1405,9 @@ namespace chessbot
                                 }
                             }
                             //O-O
-                            if (castling[0] && castling[4] && SquareB8.Source == NoPiece && SquareC8.Source == NoPiece)
+                            if (castling[0] && castling[4] && Position[1] == NoPiece && Position[2] == NoPiece)
                             {
-                                if (!IsInCheck(3) && !IsInCheck(2))
+                                if (!IsInCheck(2) && !IsInCheck(3))
                                 {
                                     if (Position[8] != BlackPieces[4] && Position[9] != BlackPieces[4])
                                     {
@@ -1426,10 +1426,10 @@ namespace chessbot
                     if (Position[j] == BlackPieces[4])
                     {
                         //castling
-                        if (IsPlayerWhite == false)
+                        if (!IsPlayerWhite)
                         {
                             //O-O-O
-                            if (castling[1] && castling[3] && SquareE1.Source == NoPiece && SquareF1.Source == NoPiece && SquareG1.Source == NoPiece)
+                            if (castling[1] && castling[3] && Position[60] == NoPiece && Position[61] == NoPiece && Position[62] == NoPiece)
                             {
                                 if (!IsInCheck(59) && !IsInCheck(60))
                                 {
@@ -1440,9 +1440,9 @@ namespace chessbot
                                 }
                             }
                             //O-O
-                            if (castling[1] && castling[2] && SquareB1.Source == NoPiece && SquareC1.Source == NoPiece)
+                            if (castling[1] && castling[2] && Position[57] == NoPiece && Position[58] == NoPiece)
                             {
-                                if (!IsInCheck(59) && !IsInCheck(58))
+                                if (!IsInCheck(58) && !IsInCheck(59))
                                 {
                                     if (Position[48] != WhitePieces[4] && Position[49] != WhitePieces[4])
                                     {
@@ -1454,7 +1454,7 @@ namespace chessbot
                         else
                         {
                             //O-O-O
-                            if (castling[1] && castling[4] && SquareB8.Source == NoPiece && SquareC8.Source == NoPiece && SquareD8.Source == NoPiece)
+                            if (castling[1] && castling[4] && Position[1] == NoPiece && Position[2] == NoPiece && Position[3] == NoPiece)
                             {
                                 if (!IsInCheck(4) && !IsInCheck(3))
                                 {
@@ -1465,7 +1465,7 @@ namespace chessbot
                                 }
                             }
                             //O-O
-                            if (castling[1] && castling[5] && SquareF8.Source == NoPiece && SquareG8.Source == NoPiece)
+                            if (castling[1] && castling[5] && Position[5] == NoPiece && Position[6] == NoPiece)
                             {
                                 if (!IsInCheck(4) && !IsInCheck(5))
                                 {
