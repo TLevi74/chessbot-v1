@@ -1550,6 +1550,21 @@ namespace chessbot
                     }
                     break;
             }
+            switch (move.TargetSquare)
+            {
+                case 56:
+                    castling[2] = false;
+                    break;
+                case 63:
+                    castling[3] = false;
+                    break;
+                case 0:
+                    castling[4] = false;
+                    break;
+                case 7:
+                    castling[5] = false;
+                    break;
+            }
             previousMoves.Push(new Tuple<int, int>(LastMoveStarting, LastMoveTarget));
             LastMoveStarting = move.StartingSquare;
             LastMoveTarget = move.TargetSquare;
