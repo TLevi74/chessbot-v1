@@ -1993,9 +1993,12 @@ namespace chessbot
                     MakeCurrentMove(move);
                     StartStack.Push(TempStartingSquareSource);
                     TargetStack.Push(TempTargetSquareSource);
+                    PlayerToMoveWhiteStack.Push(PlayerToMoveWhite);
+
                     int eval = Minimax(depth - 1, false, alpha, beta);
                     maxEval = Math.Max(maxEval, eval);
                     alpha = Math.Max(alpha, eval);
+                    PlayerToMoveWhite = PlayerToMoveWhiteStack.Pop();
                     UnmakeCurrentMove(move, StartStack.Pop(), TargetStack.Pop());
                     if (beta <= alpha)
                     {
@@ -2012,9 +2015,12 @@ namespace chessbot
                     MakeCurrentMove(move);
                     StartStack.Push(TempStartingSquareSource);
                     TargetStack.Push(TempTargetSquareSource);
+                    PlayerToMoveWhiteStack.Push(PlayerToMoveWhite);
+
                     int eval = Minimax(depth - 1, true, alpha, beta);
                     minEval = Math.Min(minEval, eval);
                     beta = Math.Min(beta, eval);
+                    PlayerToMoveWhite = PlayerToMoveWhiteStack.Pop();
                     UnmakeCurrentMove(move, StartStack.Pop(), TargetStack.Pop());
                     if (beta <= alpha)
                     {
@@ -2026,6 +2032,7 @@ namespace chessbot
         }
         Stack<ImageSource> StartStack = new Stack<ImageSource>();
         Stack<ImageSource> TargetStack = new Stack<ImageSource>();
+        Stack<bool> PlayerToMoveWhiteStack = new Stack<bool>();
         Stack<bool[]> castlingHistory = new Stack<bool[]>();
         private Move GetBestMove(int depth)
         {
@@ -2038,12 +2045,15 @@ namespace chessbot
                 MakeCurrentMove(move);
                 StartStack.Push(TempStartingSquareSource);
                 TargetStack.Push(TempTargetSquareSource);
+                PlayerToMoveWhiteStack.Push(PlayerToMoveWhite);
+
                 int eval = Minimax(depth - 1, true, int.MinValue, int.MaxValue);
                 if (eval < bestEval)
                 {
                     bestEval = eval;
                     bestMove = move;
                 }
+                PlayerToMoveWhite = PlayerToMoveWhiteStack.Pop();
                 UnmakeCurrentMove(move, StartStack.Pop(), TargetStack.Pop());
             }
 
