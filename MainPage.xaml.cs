@@ -30,6 +30,23 @@ namespace chessbot
         private Dictionary<ImageSource, int> pieceValuesMap;
         bool IsPlayerWhite = true;
         bool PlayerToMoveWhite = true;
+        void Slider_ValueChanged(object sender, ValueChangedEventArgs e)
+        {
+            double newValue = Math.Round(e.NewValue);
+            DepthSlider.Value = newValue;
+            if (newValue == 3)
+            {
+                DepthLabel.Text = "Very Fast";
+            }
+            else if (newValue == 4)
+            {
+                DepthLabel.Text = "Fast";
+            }
+            else
+            {
+                DepthLabel.Text = "Very Slow";
+            }
+        }
         public MainPage()
         {
             InitializeComponent();
@@ -1642,7 +1659,7 @@ namespace chessbot
                 }
                 return;
             }
-            GeneratedMove = GetBestMove(3);
+            GeneratedMove = GetBestMove(Convert.ToInt16(DepthSlider.Value));
 
             AISelectedBefore = AllSquares[GeneratedMove.StartingSquare];
             AISelectedPiece = AllSquares[GeneratedMove.StartingSquare].Source;
