@@ -50,7 +50,7 @@ namespace chessbot
         public MainPage()
         {
             InitializeComponent();
-
+            DepthSlider.Value = 3;
             ImageButton[] TempAllSquares = {SquareA8, SquareB8, SquareC8, SquareD8, SquareE8, SquareF8, SquareG8, SquareH8,
                                             SquareA7, SquareB7, SquareC7, SquareD7, SquareE7, SquareF7, SquareG7, SquareH7,
                                             SquareA6, SquareB6, SquareC6, SquareD6, SquareE6, SquareF6, SquareG6, SquareH6,
@@ -611,7 +611,7 @@ namespace chessbot
         bool IsKingNextTo = false;
         //for castling:
         //white king - black king - a1 rook - h1 rook - a8 rook - h8 rook
-        //TODO: after minimax change back to true/false!!!
+        //TODO: stalemate if there're only 2 kings!!!
         bool[] castling = new bool[6];
         public struct Move
         {
@@ -1470,7 +1470,17 @@ namespace chessbot
             }
             ListToAddMoves = ListToAddMoves.OrderByDescending(move => move.Value).ToList();
             //end of match:
-            return ListToAddMoves.Count > 0;
+            if (ListToAddMoves.Count == 0)
+            {
+                return false;
+            }else if (Position.Count(piece => piece != NoPiece) == 2)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
         ImageSource TempTargetSquareSource = null;
         ImageSource TempStartingSquareSource = null;
@@ -1659,8 +1669,23 @@ namespace chessbot
                 }
                 return;
             }
-            GeneratedMove = GetBestMove(Convert.ToInt16(DepthSlider.Value));
-
+            //calculating depth:
+            PiecesOnBoard = Position.Count(source => source != NoPiece);
+            if (PiecesOnBoard > 10)
+            {
+                Trace.WriteLine(Convert.ToInt16(DepthSlider.Value));
+                GeneratedMove = GetBestMove(Convert.ToInt16(DepthSlider.Value));
+            }
+            else if (PiecesOnBoard > 6)
+            {
+                Trace.WriteLine(Convert.ToInt16(DepthSlider.Value) *2);
+                GeneratedMove = GetBestMove(Convert.ToInt16(DepthSlider.Value) *2);
+            }
+            else
+            {
+                Trace.WriteLine(10);
+                GeneratedMove = GetBestMove(10);
+            }
             AISelectedBefore = AllSquares[GeneratedMove.StartingSquare];
             AISelectedPiece = AllSquares[GeneratedMove.StartingSquare].Source;
             AISelectedSquare = AllSquares[GeneratedMove.TargetSquare];
