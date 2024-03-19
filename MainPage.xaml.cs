@@ -1440,6 +1440,11 @@ namespace chessbot
                 }                
                 UnmakeCurrentMove(move, TempStartingSquareSource, TempTargetSquareSource);
             }
+            ListToAddMoves = ListToAddMoves.OrderByDescending(move =>
+                Position[move.TargetSquare] != NoPiece ? 1000 : // captures
+                (move.Extra >= 1 && move.Extra <= 4 ? 500 : // promotions
+                (move.Extra >= 7 && move.Extra <= 10 ? 100 : 0))) // castling
+                .ToList();
             //end of match:
             if (ListToAddMoves.Count == 0)
             {
