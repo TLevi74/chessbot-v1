@@ -27,7 +27,6 @@ namespace chessbot
         readonly ImageSource[] WhitePieces = { "white_rook.png", "white_knight.png", "white_bishop.png", "white_queen.png", "white_king.png", "white_bishop.png", "white_knight.png", "white_rook.png", "white_pawn.png" };
         readonly ImageSource[] BlackPieces = { "black_rook.png", "black_knight.png", "black_bishop.png", "black_queen.png", "black_king.png", "black_bishop.png", "black_knight.png", "black_rook.png", "black_pawn.png" };
         readonly ImageSource NoPiece = "transparent.png";
-        private Dictionary<ImageSource, int> pieceValuesMap;
         bool IsPlayerWhite = true;
         bool PlayerToMoveWhite = true;
         void Slider_ValueChanged(object sender, ValueChangedEventArgs e)
@@ -61,27 +60,6 @@ namespace chessbot
                                             SquareA1, SquareB1, SquareC1, SquareD1, SquareE1, SquareF1, SquareG1, SquareH1};
             ImageButton[] TempWhiteSquares = { SquareA8, SquareC8, SquareE8, SquareG8, SquareB7, SquareD7, SquareF7, SquareH7, SquareA6, SquareC6, SquareE6, SquareG6, SquareB5, SquareD5, SquareF5, SquareH5, SquareA4, SquareC4, SquareE4, SquareG4, SquareB3, SquareD3, SquareF3, SquareH3, SquareA2, SquareC2, SquareE2, SquareG2, SquareB1, SquareD1, SquareF1, SquareH1 };
             ImageButton[] TempBlackSquares = { SquareB8, SquareD8, SquareF8, SquareH8, SquareA7, SquareC7, SquareE7, SquareG7, SquareB6, SquareD6, SquareF6, SquareH6, SquareA5, SquareC5, SquareE5, SquareG5, SquareB4, SquareD4, SquareF4, SquareH4, SquareA3, SquareC3, SquareE3, SquareG3, SquareB2, SquareD2, SquareF2, SquareH2, SquareA1, SquareC1, SquareE1, SquareG1 };
-            pieceValuesMap = new Dictionary<ImageSource, int>
-            {
-                { BlackPieces[8], PieceValues[8] },
-                { WhitePieces[8], PieceValues[8] },
-                { BlackPieces[1], PieceValues[1] },
-                { BlackPieces[6], PieceValues[1] },
-                { WhitePieces[1], PieceValues[1] },
-                { WhitePieces[6], PieceValues[1] },
-                { BlackPieces[2], PieceValues[2] },
-                { BlackPieces[5], PieceValues[2] },
-                { WhitePieces[2], PieceValues[2] },
-                { WhitePieces[5], PieceValues[2] },
-                { BlackPieces[0], PieceValues[0] },
-                { BlackPieces[7], PieceValues[0] },
-                { WhitePieces[0], PieceValues[0] },
-                { WhitePieces[7], PieceValues[0] },
-                { BlackPieces[3], PieceValues[3] },
-                { BlackPieces[4], 0 },
-                { WhitePieces[3], PieceValues[3] },
-                { WhitePieces[4], 0 }
-            };
             for (int i = 0; i < 64; i++)
             {
                 AllSquares[i] = TempAllSquares[i];
@@ -620,11 +598,10 @@ namespace chessbot
             public int Value;
             //Extra: used for special moves like castling, promotion and en passant
             public int Extra;
-            public Move(int startingSquare, int targetSquare, int value, int extra)
+            public Move(int startingSquare, int targetSquare, int extra)
             {
                 StartingSquare = startingSquare;
                 TargetSquare = targetSquare;
-                Value = value;
                 Extra = extra;
             }
         }
@@ -693,26 +670,26 @@ namespace chessbot
                                 {
                                     if ((Position[i - 8] == NoPiece) && (Position[i - 16] == NoPiece))
                                     {
-                                        ValueTempMoves(i, i - 16, 0, 0);
+                                        Temp1.Add(new Move(i, i - 16, 0));
                                     }
                                 }
                                 if (Position[i - 8] == NoPiece && SquaresToEdge[i, 0] > 1)
                                 {
-                                    ValueTempMoves(i, i - 8, 0, 0);
+                                    Temp1.Add(new Move(i, i - 8, 0));
                                 }
                                 //pawn takes:
                                 if (SquaresToEdge[i, 3] > 0 && SquaresToEdge[i, 0] > 1)
                                 {
                                     if (BlackPieces.Contains(Position[i - 9]))
                                     {
-                                        ValueTempMoves(i, i - 9, 0, 0);
+                                        Temp1.Add(new Move(i, i - 9, 0));
                                     }
                                 }
                                 if (SquaresToEdge[i, 1] > 0 && SquaresToEdge[i, 0] > 1)
                                 {
                                     if (BlackPieces.Contains(Position[i - 7]))
                                     {
-                                        ValueTempMoves(i, i - 7, 0, 0);
+                                        Temp1.Add(new Move(i, i - 7, 0));
                                     }
                                 }
                                 //promotion:
@@ -720,29 +697,29 @@ namespace chessbot
                                 {
                                     if (Position[i - 8] == NoPiece)
                                     {
-                                        ValueTempMoves(i, i - 8, 0, 1);
-                                        ValueTempMoves(i, i - 8, 0, 2);
-                                        ValueTempMoves(i, i - 8, 0, 3);
-                                        ValueTempMoves(i, i - 8, 0, 4);
+                                        Temp1.Add(new Move(i, i - 8, 1));
+                                        Temp1.Add(new Move(i, i - 8, 2));
+                                        Temp1.Add(new Move(i, i - 8, 3));
+                                        Temp1.Add(new Move(i, i - 8, 4));
                                     }
                                     if (SquaresToEdge[i, 1] > 0)
                                     {
                                         if (BlackPieces.Contains(Position[i - 7]))
                                         {
-                                            ValueTempMoves(i, i - 7, 0, 1);
-                                            ValueTempMoves(i, i - 7, 0, 2);
-                                            ValueTempMoves(i, i - 7, 0, 3);
-                                            ValueTempMoves(i, i - 7, 0, 4);
+                                            Temp1.Add(new Move(i, i - 7, 1));
+                                            Temp1.Add(new Move(i, i - 7, 2));
+                                            Temp1.Add(new Move(i, i - 7, 3));
+                                            Temp1.Add(new Move(i, i - 7, 4));
                                         }
                                     }
                                     if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (BlackPieces.Contains(Position[i - 9]))
                                         {
-                                            ValueTempMoves(i, i - 9, 0, 1);
-                                            ValueTempMoves(i, i - 9, 0, 2);
-                                            ValueTempMoves(i, i - 9, 0, 3);
-                                            ValueTempMoves(i, i - 9, 0, 4);
+                                            Temp1.Add(new Move(i, i - 9, 1));
+                                            Temp1.Add(new Move(i, i - 9, 2));
+                                            Temp1.Add(new Move(i, i - 9, 3));
+                                            Temp1.Add(new Move(i, i - 9, 4));
                                         }
                                     }
                                 }
@@ -753,14 +730,14 @@ namespace chessbot
                                     {
                                         if (Position[i + 1] == BlackPieces[8] && LastMoveStarting == i - 15 && LastMoveTarget == i + 1)
                                         {
-                                            ValueTempMoves(i, i - 7, 0, 5);
+                                            Temp1.Add(new Move(i, i - 7, 5));
                                         }
                                     }
                                     if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (Position[i - 1] == BlackPieces[8] && LastMoveStarting == i - 17 && LastMoveTarget == i - 1)
                                         {
-                                            ValueTempMoves(i, i - 9, 0, 6);
+                                            Temp1.Add(new Move(i, i - 9, 6));
                                         }
                                     }
                                 }
@@ -772,26 +749,26 @@ namespace chessbot
                                 {
                                     if ((Position[i + 8] == NoPiece) && (Position[i + 16] == NoPiece))
                                     {
-                                        ValueTempMoves(i, i + 16, 0, 0);
+                                        Temp1.Add(new Move(i, i + 16, 0));
                                     }
                                 }
                                 if (Position[i + 8] == NoPiece && SquaresToEdge[i, 2] > 1)
                                 {
-                                    ValueTempMoves(i, i + 8, 0, 0);
+                                    Temp1.Add(new Move(i, i + 8, 0));
                                 }
                                 //pawn takes:
                                 if (SquaresToEdge[i, 3] > 0 && SquaresToEdge[i, 2] > 1)
                                 {
                                     if (BlackPieces.Contains(Position[i + 7]))
                                     {
-                                        ValueTempMoves(i, i + 7, 0, 0);
+                                        Temp1.Add(new Move(i, i + 7, 0));
                                     }
                                 }
                                 if (SquaresToEdge[i, 1] > 0 && SquaresToEdge[i, 2] > 1)
                                 {
                                     if (BlackPieces.Contains(Position[i + 9]))
                                     {
-                                        ValueTempMoves(i, i + 9, 0, 0);
+                                        Temp1.Add(new Move(i, i + 9, 0));
                                     }
                                 }
                                 //promotion:
@@ -799,29 +776,29 @@ namespace chessbot
                                 {
                                     if (Position[i + 8] == NoPiece)
                                     {
-                                        ValueTempMoves(i, i + 8, 0, 1);
-                                        ValueTempMoves(i, i + 8, 0, 2);
-                                        ValueTempMoves(i, i + 8, 0, 3);
-                                        ValueTempMoves(i, i + 8, 0, 4);
+                                        Temp1.Add(new Move(i, i + 8, 1));
+                                        Temp1.Add(new Move(i, i + 8, 2));
+                                        Temp1.Add(new Move(i, i + 8, 3));
+                                        Temp1.Add(new Move(i, i + 8, 4));
                                     }
                                     if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (BlackPieces.Contains(Position[i + 7]))
                                         {
-                                            ValueTempMoves(i, i + 7, 0, 1);
-                                            ValueTempMoves(i, i + 7, 0, 2);
-                                            ValueTempMoves(i, i + 7, 0, 3);
-                                            ValueTempMoves(i, i + 7, 0, 4);
+                                            Temp1.Add(new Move(i, i + 7, 1));
+                                            Temp1.Add(new Move(i, i + 7, 2));
+                                            Temp1.Add(new Move(i, i + 7, 3));
+                                            Temp1.Add(new Move(i, i + 7, 4));
                                         }
                                     }
                                     if (SquaresToEdge[i, 1] > 0)
                                     {
                                         if (BlackPieces.Contains(Position[i + 9]))
                                         {
-                                            ValueTempMoves(i, i + 9, 0, 1);
-                                            ValueTempMoves(i, i + 9, 0, 2);
-                                            ValueTempMoves(i, i + 9, 0, 3);
-                                            ValueTempMoves(i, i + 9, 0, 4);
+                                            Temp1.Add(new Move(i, i + 9, 1));
+                                            Temp1.Add(new Move(i, i + 9, 2));
+                                            Temp1.Add(new Move(i, i + 9, 3));
+                                            Temp1.Add(new Move(i, i + 9, 4));
                                         }
                                     }
                                 }
@@ -832,14 +809,14 @@ namespace chessbot
                                     {
                                         if (Position[i + 1] == BlackPieces[8] && LastMoveStarting == i + 17 && LastMoveTarget == i + 1)
                                         {
-                                            ValueTempMoves(i, i + 9, 0, 5);
+                                            Temp1.Add(new Move(i, i + 9, 5));
                                         }
                                     }
                                     if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (Position[i - 1] == BlackPieces[8] && LastMoveStarting == i + 15 && LastMoveTarget == i - 1)
                                         {
-                                            ValueTempMoves(i, i + 7, 0, 6);
+                                            Temp1.Add(new Move(i, i + 7, 6));
                                         }
                                     }
                                 }
@@ -857,7 +834,7 @@ namespace chessbot
                                         break;
                                     }
 
-                                    ValueTempMoves(i, i + ((k + 1) * DirectionOffsets[j]), 0, 0);
+                                    Temp1.Add(new Move(i, i + ((k + 1) * DirectionOffsets[j]), 0));
 
                                     if (BlackPieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
@@ -878,7 +855,7 @@ namespace chessbot
                                         break;
                                     }
 
-                                    ValueTempMoves(i, i + ((k + 1) * DirectionOffsets[j]), 0, 0);
+                                    Temp1.Add(new Move(i, i + ((k + 1) * DirectionOffsets[j]), 0));
 
                                     if (BlackPieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
@@ -899,7 +876,7 @@ namespace chessbot
                                         break;
                                     }
 
-                                    ValueTempMoves(i, i + ((k + 1) * DirectionOffsets[j]), 0, 0);
+                                    Temp1.Add(new Move(i, i + ((k + 1) * DirectionOffsets[j]), 0));
 
                                     if (BlackPieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
@@ -916,56 +893,56 @@ namespace chessbot
                             {
                                 if (!(WhitePieces.Contains(Position[i - 15])))
                                 {
-                                    ValueTempMoves(i, i - 15, 0, 0);
+                                    Temp1.Add(new Move(i, i - 15, 0));
                                 }
                             }
                             if (SquaresToEdge[i, 0] >= 1 && SquaresToEdge[i, 1] >= 2)
                             {
                                 if (!(WhitePieces.Contains(Position[i - 6])))
                                 {
-                                    ValueTempMoves(i, i - 6, 0, 0);
+                                    Temp1.Add(new Move(i, i - 6, 0));
                                 }
                             }
                             if (SquaresToEdge[i, 1] >= 2 && SquaresToEdge[i, 2] >= 1)
                             {
                                 if (!(WhitePieces.Contains(Position[i + 10])))
                                 {
-                                    ValueTempMoves(i, i + 10, 0, 0);
+                                    Temp1.Add(new Move(i, i + 10, 0));
                                 }
                             }
                             if (SquaresToEdge[i, 1] >= 1 && SquaresToEdge[i, 2] >= 2)
                             {
                                 if (!(WhitePieces.Contains(Position[i + 17])))
                                 {
-                                    ValueTempMoves(i, i + 17, 0, 0);
+                                    Temp1.Add(new Move(i, i + 17, 0));
                                 }
                             }
                             if (SquaresToEdge[i, 3] >= 1 && SquaresToEdge[i, 2] >= 2)
                             {
                                 if (!(WhitePieces.Contains(Position[i + 15])))
                                 {
-                                    ValueTempMoves(i, i + 15, 0, 0);
+                                    Temp1.Add(new Move(i, i + 15, 0));
                                 }
                             }
                             if (SquaresToEdge[i, 3] >= 2 && SquaresToEdge[i, 2] >= 1)
                             {
                                 if (!(WhitePieces.Contains(Position[i + 6])))
                                 {
-                                    ValueTempMoves(i, i + 6, 0, 0);
+                                    Temp1.Add(new Move(i, i + 6, 0));
                                 }
                             }
                             if (SquaresToEdge[i, 3] >= 2 && SquaresToEdge[i, 0] >= 1)
                             {
                                 if (!(WhitePieces.Contains(Position[i - 10])))
                                 {
-                                    ValueTempMoves(i, i - 10, 0, 0);
+                                    Temp1.Add(new Move(i, i - 10, 0));
                                 }
                             }
                             if (SquaresToEdge[i, 3] >= 1 && SquaresToEdge[i, 0] >= 2)
                             {
                                 if (!(WhitePieces.Contains(Position[i - 17])))
                                 {
-                                    ValueTempMoves(i, i - 17, 0, 0);
+                                    Temp1.Add(new Move(i, i - 17, 0));
                                 }
                             }
                         }
@@ -997,22 +974,22 @@ namespace chessbot
                                             {
                                                 if (PiecesOnBoard > 12)
                                                 {
-                                                    ValueTempMoves(i, i + DirectionOffsets[j], 0, 0);
+                                                    Temp1.Add(new Move(i, i + DirectionOffsets[j], 0));
                                                 }
                                                 else
                                                 {
-                                                    ValueTempMoves(i, i + DirectionOffsets[j], 0, 0);
+                                                    Temp1.Add(new Move(i, i + DirectionOffsets[j], 0));
                                                 }
                                             }
                                             else
                                             {
                                                 if (PiecesOnBoard > 12)
                                                 {
-                                                    ValueTempMoves(i, i + DirectionOffsets[j], 0, 0);
+                                                    Temp1.Add(new Move(i, i + DirectionOffsets[j], 0));
                                                 }
                                                 else
                                                 {
-                                                    ValueTempMoves(i, i + DirectionOffsets[j], 0, 0);
+                                                    Temp1.Add(new Move(i, i + DirectionOffsets[j], 0));
                                                 }
                                             }
                                         }
@@ -1040,26 +1017,26 @@ namespace chessbot
                                 {
                                     if ((Position[i - 8] == NoPiece) && (Position[i - 16] == NoPiece))
                                     {
-                                        ValueTempMoves(i, i - 16, 0, 0);
+                                        Temp1.Add(new Move(i, i - 16, 0));
                                     }
                                 }
                                 if (Position[i - 8] == NoPiece && SquaresToEdge[i, 0] > 1)
                                 {
-                                    ValueTempMoves(i, i - 8, 0, 0);
+                                    Temp1.Add(new Move(i, i - 8, 0));
                                 }
                                 //pawn takes:
                                 if (SquaresToEdge[i, 3] > 0 && SquaresToEdge[i, 0] > 1)
                                 {
                                     if (WhitePieces.Contains(Position[i - 9]))
                                     {
-                                        ValueTempMoves(i, i - 9, 0, 0);
+                                        Temp1.Add(new Move(i, i - 9, 0));
                                     }
                                 }
                                 if (SquaresToEdge[i, 1] > 0 && SquaresToEdge[i, 0] > 1)
                                 {
                                     if (WhitePieces.Contains(Position[i - 7]))
                                     {
-                                        ValueTempMoves(i, i - 7, 0, 0);
+                                        Temp1.Add(new Move(i, i - 7, 0));
                                     }
                                 }
                                 //promotion:
@@ -1067,29 +1044,29 @@ namespace chessbot
                                 {
                                     if (Position[i - 8] == NoPiece)
                                     {
-                                        ValueTempMoves(i, i - 8, 0, 1);
-                                        ValueTempMoves(i, i - 8, 0, 2);
-                                        ValueTempMoves(i, i - 8, 0, 3);
-                                        ValueTempMoves(i, i - 8, 0, 4);
+                                        Temp1.Add(new Move(i, i - 8, 1));
+                                        Temp1.Add(new Move(i, i - 8, 2));
+                                        Temp1.Add(new Move(i, i - 8, 3));
+                                        Temp1.Add(new Move(i, i - 8, 4));
                                     }
                                     if (SquaresToEdge[i, 1] > 0)
                                     {
                                         if (WhitePieces.Contains(Position[i - 7]))
                                         {
-                                            ValueTempMoves(i, i - 7, 0, 1);
-                                            ValueTempMoves(i, i - 7, 0, 2);
-                                            ValueTempMoves(i, i - 7, 0, 3);
-                                            ValueTempMoves(i, i - 7, 0, 4);
+                                            Temp1.Add(new Move(i, i - 7, 1));
+                                            Temp1.Add(new Move(i, i - 7, 2));
+                                            Temp1.Add(new Move(i, i - 7, 3));
+                                            Temp1.Add(new Move(i, i - 7, 4));
                                         }
                                     }
                                     if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (WhitePieces.Contains(Position[i - 9]))
                                         {
-                                            ValueTempMoves(i, i - 9, 0, 1);
-                                            ValueTempMoves(i, i - 9, 0, 2);
-                                            ValueTempMoves(i, i - 9, 0, 3);
-                                            ValueTempMoves(i, i - 9, 0, 4);
+                                            Temp1.Add(new Move(i, i - 9, 1));
+                                            Temp1.Add(new Move(i, i - 9, 2));
+                                            Temp1.Add(new Move(i, i - 9, 3));
+                                            Temp1.Add(new Move(i, i - 9, 4));
                                         }
                                     }
                                 }
@@ -1100,14 +1077,14 @@ namespace chessbot
                                     {
                                         if (Position[i + 1] == WhitePieces[8] && LastMoveStarting == i - 15 && LastMoveTarget == i + 1)
                                         {
-                                            ValueTempMoves(i, i - 7, 0, 5);
+                                            Temp1.Add(new Move(i, i - 7, 5));
                                         }
                                     }
                                     if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (Position[i - 1] == WhitePieces[8] && LastMoveStarting == i - 17 && LastMoveTarget == i - 1)
                                         {
-                                            ValueTempMoves(i, i - 9, 0, 6);
+                                            Temp1.Add(new Move(i, i - 9, 6));
                                         }
                                     }
                                 }
@@ -1119,26 +1096,26 @@ namespace chessbot
                                 {
                                     if ((Position[i + 8] == NoPiece) && (Position[i + 16] == NoPiece))
                                     {
-                                        ValueTempMoves(i, i + 16, 0, 0);
+                                        Temp1.Add(new Move(i, i + 16, 0));
                                     }
                                 }
                                 if (Position[i + 8] == NoPiece && SquaresToEdge[i, 2] > 1)
                                 {
-                                    ValueTempMoves(i, i + 8, 0, 0);
+                                    Temp1.Add(new Move(i, i + 8, 0));
                                 }
                                 //pawn takes:
                                 if (SquaresToEdge[i, 3] > 0 && SquaresToEdge[i, 2] > 1)
                                 {
                                     if (WhitePieces.Contains(Position[i + 7]))
                                     {
-                                        ValueTempMoves(i, i + 7, 0, 0);
+                                        Temp1.Add(new Move(i, i + 7, 0));
                                     }
                                 }
                                 if (SquaresToEdge[i, 1] > 0 && SquaresToEdge[i, 2] > 1)
                                 {
                                     if (WhitePieces.Contains(Position[i + 9]))
                                     {
-                                        ValueTempMoves(i, i + 9, 0, 0);
+                                        Temp1.Add(new Move(i, i + 9, 0));
                                     }
                                 }
                                 //promotion:
@@ -1146,29 +1123,29 @@ namespace chessbot
                                 {
                                     if (Position[i + 8] == NoPiece)
                                     {
-                                        ValueTempMoves(i, i + 8, 0, 1);
-                                        ValueTempMoves(i, i + 8, 0, 2);
-                                        ValueTempMoves(i, i + 8, 0, 3);
-                                        ValueTempMoves(i, i + 8, 0, 4);
+                                        Temp1.Add(new Move(i, i + 8, 1));
+                                        Temp1.Add(new Move(i, i + 8, 2));
+                                        Temp1.Add(new Move(i, i + 8, 3));
+                                        Temp1.Add(new Move(i, i + 8, 4));
                                     }
                                     if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (WhitePieces.Contains(Position[i + 7]))
                                         {
-                                            ValueTempMoves(i, i + 7, 0, 1);
-                                            ValueTempMoves(i, i + 7, 0, 2);
-                                            ValueTempMoves(i, i + 7, 0, 3);
-                                            ValueTempMoves(i, i + 7, 0, 4);
+                                            Temp1.Add(new Move(i, i + 7, 1));
+                                            Temp1.Add(new Move(i, i + 7, 2));
+                                            Temp1.Add(new Move(i, i + 7, 3));
+                                            Temp1.Add(new Move(i, i + 7, 4));
                                         }
                                     }
                                     if (SquaresToEdge[i, 1] > 0)
                                     {
                                         if (WhitePieces.Contains(Position[i + 9]))
                                         {
-                                            ValueTempMoves(i, i + 9, 0, 1);
-                                            ValueTempMoves(i, i + 9, 0, 2);
-                                            ValueTempMoves(i, i + 9, 0, 3);
-                                            ValueTempMoves(i, i + 9, 0, 4);
+                                            Temp1.Add(new Move(i, i + 9, 1));
+                                            Temp1.Add(new Move(i, i + 9, 2));
+                                            Temp1.Add(new Move(i, i + 9, 3));
+                                            Temp1.Add(new Move(i, i + 9, 4));
                                         }
                                     }
                                 }
@@ -1179,14 +1156,14 @@ namespace chessbot
                                     {
                                         if (Position[i + 1] == WhitePieces[8] && LastMoveStarting == i + 17 && LastMoveTarget == i + 1)
                                         {
-                                            ValueTempMoves(i, i + 9, 0, 5);
+                                            Temp1.Add(new Move(i, i + 9, 5));
                                         }
                                     }
                                     if (SquaresToEdge[i, 3] > 0)
                                     {
                                         if (Position[i - 1] == WhitePieces[8] && LastMoveStarting == i + 15 && LastMoveTarget == i - 1)
                                         {
-                                            ValueTempMoves(i, i + 7, 0, 6);
+                                            Temp1.Add(new Move(i, i + 7, 6));
                                         }
                                     }
                                 }
@@ -1204,7 +1181,7 @@ namespace chessbot
                                         break;
                                     }
 
-                                    ValueTempMoves(i, i + ((k + 1) * DirectionOffsets[j]), 0, 0);
+                                    Temp1.Add(new Move(i, i + ((k + 1) * DirectionOffsets[j]), 0));
 
                                     if (WhitePieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
@@ -1225,7 +1202,7 @@ namespace chessbot
                                         break;
                                     }
 
-                                    ValueTempMoves(i, i + ((k + 1) * DirectionOffsets[j]), 0, 0);
+                                    Temp1.Add(new Move(i, i + ((k + 1) * DirectionOffsets[j]), 0));
 
                                     if (WhitePieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
@@ -1246,7 +1223,7 @@ namespace chessbot
                                         break;
                                     }
 
-                                    ValueTempMoves(i, i + ((k + 1) * DirectionOffsets[j]), 0, 0);
+                                    Temp1.Add(new Move(i, i + ((k + 1) * DirectionOffsets[j]), 0));
 
                                     if (WhitePieces.Contains(Position[i + ((k + 1) * DirectionOffsets[j])]))
                                     {
@@ -1263,56 +1240,56 @@ namespace chessbot
                             {
                                 if (!(BlackPieces.Contains(Position[i - 15])))
                                 {
-                                    ValueTempMoves(i, i - 15, 0, 0);
+                                    Temp1.Add(new Move(i, i - 15, 0));
                                 }
                             }
                             if (SquaresToEdge[i, 0] >= 1 && SquaresToEdge[i, 1] >= 2)
                             {
                                 if (!(BlackPieces.Contains(Position[i - 6])))
                                 {
-                                    ValueTempMoves(i, i - 6, 0, 0);
+                                    Temp1.Add(new Move(i, i - 6, 0));
                                 }
                             }
                             if (SquaresToEdge[i, 1] >= 2 && SquaresToEdge[i, 2] >= 1)
                             {
                                 if (!(BlackPieces.Contains(Position[i + 10])))
                                 {
-                                    ValueTempMoves(i, i + 10, 0, 0);
+                                    Temp1.Add(new Move(i, i + 10, 0));
                                 }
                             }
                             if (SquaresToEdge[i, 1] >= 1 && SquaresToEdge[i, 2] >= 2)
                             {
                                 if (!(BlackPieces.Contains(Position[i + 17])))
                                 {
-                                    ValueTempMoves(i, i + 17, 0, 0);
+                                    Temp1.Add(new Move(i, i + 17, 0));
                                 }
                             }
                             if (SquaresToEdge[i, 3] >= 1 && SquaresToEdge[i, 2] >= 2)
                             {
                                 if (!(BlackPieces.Contains(Position[i + 15])))
                                 {
-                                    ValueTempMoves(i, i + 15, 0, 0);
+                                    Temp1.Add(new Move(i, i + 15, 0));
                                 }
                             }
                             if (SquaresToEdge[i, 3] >= 2 && SquaresToEdge[i, 2] >= 1)
                             {
                                 if (!(BlackPieces.Contains(Position[i + 6])))
                                 {
-                                    ValueTempMoves(i, i + 6, 0, 0);
+                                    Temp1.Add(new Move(i, i + 6, 0));
                                 }
                             }
                             if (SquaresToEdge[i, 3] >= 2 && SquaresToEdge[i, 0] >= 1)
                             {
                                 if (!(BlackPieces.Contains(Position[i - 10])))
                                 {
-                                    ValueTempMoves(i, i - 10, 0, 0);
+                                    Temp1.Add(new Move(i, i - 10, 0));
                                 }
                             }
                             if (SquaresToEdge[i, 3] >= 1 && SquaresToEdge[i, 0] >= 2)
                             {
                                 if (!(BlackPieces.Contains(Position[i - 17])))
                                 {
-                                    ValueTempMoves(i, i - 17, 0, 0);
+                                    Temp1.Add(new Move(i, i - 17, 0));
                                 }
                             }
                         }
@@ -1344,22 +1321,22 @@ namespace chessbot
                                             {
                                                 if (PiecesOnBoard > 12)
                                                 {
-                                                    ValueTempMoves(i, i + DirectionOffsets[j], 0, 0);
+                                                    Temp1.Add(new Move(i, i + DirectionOffsets[j], 0));
                                                 }
                                                 else
                                                 {
-                                                    ValueTempMoves(i, i + DirectionOffsets[j], 0, 0);
+                                                    Temp1.Add(new Move(i, i + DirectionOffsets[j], 0));
                                                 }
                                             }
                                             else
                                             {
                                                 if (PiecesOnBoard > 12)
                                                 {
-                                                    ValueTempMoves(i, i + DirectionOffsets[j], 0, 0);
+                                                    Temp1.Add(new Move(i, i + DirectionOffsets[j], 0));
                                                 }
                                                 else
                                                 {
-                                                    ValueTempMoves(i, i + DirectionOffsets[j], 0, 0);
+                                                    Temp1.Add(new Move(i, i + DirectionOffsets[j], 0));
                                                 }
                                             }
                                         }
@@ -1385,12 +1362,12 @@ namespace chessbot
                         //O-O-O
                         if (castling[0] && castling[2] && Position[57] == NoPiece && Position[58] == NoPiece && Position[59] == NoPiece && !IsInCheck(60) && !IsInCheck(59) && Position[49] != BlackPieces[4] && Position[50] != BlackPieces[4])
                         {
-                            Temp2.Add(new Move(60, 58, 20, 7));
+                            Temp2.Add(new Move(60, 58, 7));
                         }
                         //O-O
                         if (castling[0] && castling[3] && Position[61] == NoPiece && Position[62] == NoPiece && !IsInCheck(60) && !IsInCheck(61) && Position[54] != BlackPieces[4] && Position[55] != BlackPieces[4])
                         {
-                            Temp2.Add(new Move(60, 62, 20, 8));
+                            Temp2.Add(new Move(60, 62, 8));
                         }
                     }
                 }
@@ -1401,12 +1378,12 @@ namespace chessbot
                         //O-O-O
                         if (castling[0] && castling[5] && Position[4] == NoPiece && Position[5] == NoPiece && Position[6] == NoPiece && !IsInCheck(3) && !IsInCheck(4) && Position[13] != BlackPieces[4] && Position[14] != BlackPieces[4])
                         {
-                            Temp2.Add(new Move(3, 5, 20, 10));
+                            Temp2.Add(new Move(3, 5, 10));
                         }
                         //O-O
                         if (castling[0] && castling[4] && Position[1] == NoPiece && Position[2] == NoPiece && !IsInCheck(2) && !IsInCheck(3) && Position[8] != BlackPieces[4] && Position[9] != BlackPieces[4])
                         {
-                            Temp2.Add(new Move(3, 1, 20, 9));
+                            Temp2.Add(new Move(3, 1, 9));
                         }
                     }
                 }
@@ -1420,12 +1397,12 @@ namespace chessbot
                         //O-O-O
                         if (castling[1] && castling[4] && Position[1] == NoPiece && Position[2] == NoPiece && Position[3] == NoPiece && !IsInCheck(4) && !IsInCheck(3) && Position[9] != WhitePieces[4] && Position[10] != WhitePieces[4])
                         {
-                            Temp2.Add(new Move(4, 2, 20, 9));
+                            Temp2.Add(new Move(4, 2, 9));
                         }
                         //O-O
                         if (castling[1] && castling[5] && Position[5] == NoPiece && Position[6] == NoPiece && !IsInCheck(4) && !IsInCheck(5) && Position[14] != WhitePieces[4] && Position[15] != WhitePieces[4])
                         {
-                            Temp2.Add(new Move(4, 6, 20, 10));
+                            Temp2.Add(new Move(4, 6, 10));
                         }
                     }
                 }
@@ -1436,23 +1413,18 @@ namespace chessbot
                         //O-O-O
                         if (castling[1] && castling[3] && Position[60] == NoPiece && Position[61] == NoPiece && Position[62] == NoPiece && !IsInCheck(59) && !IsInCheck(60) && Position[53] != WhitePieces[4] && Position[54] != WhitePieces[4])
                         {
-                            Temp2.Add(new Move(59, 61, 20, 8));
+                            Temp2.Add(new Move(59, 61, 8));
                         }
                         //O-O
                         if (castling[1] && castling[2] && Position[57] == NoPiece && Position[58] == NoPiece && !IsInCheck(58) && !IsInCheck(59) && Position[48] != WhitePieces[4] && Position[49] != WhitePieces[4])
                         {
-                            Temp2.Add(new Move(59, 57, 20, 7));
+                            Temp2.Add(new Move(59, 57, 7));
                         }
                     }
                 }
             }
             
             return Temp2;
-        }
-        private void ValueTempMoves(int _StartingSquare, int _TargetSquare, int _Value, int _Extra)
-        {
-            pieceValuesMap.TryGetValue(Position[_TargetSquare], out int pieceValue);
-            Temp1.Add(new Move(_StartingSquare, _TargetSquare, _Value + pieceValue, _Extra));
         }
         private bool GenerateMoves(List<Move> ListToAddMoves)
         {
@@ -1464,16 +1436,16 @@ namespace chessbot
                 MakeCurrentMove(move);
                 if (!IsInCheck(Array.IndexOf(Position, PlayerToMoveWhite ? WhitePieces[4] : BlackPieces[4])))
                 {
-                    ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, move.Value, move.Extra));
+                    ListToAddMoves.Add(new Move(move.StartingSquare, move.TargetSquare, move.Extra));
                 }                
                 UnmakeCurrentMove(move, TempStartingSquareSource, TempTargetSquareSource);
             }
-            ListToAddMoves = ListToAddMoves.OrderByDescending(move => move.Value).ToList();
             //end of match:
             if (ListToAddMoves.Count == 0)
             {
                 return false;
-            }else if (Position.Count(piece => piece != NoPiece) == 2)
+            }
+            else if (Position.Count(piece => piece != NoPiece) == 2)
             {
                 return false;
             }
