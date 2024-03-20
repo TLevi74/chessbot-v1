@@ -29,27 +29,24 @@ namespace chessbot
         readonly ImageSource NoPiece = "transparent.png";
         bool IsPlayerWhite = true;
         bool PlayerToMoveWhite = true;
+        double SliderValue = 1;
         void Slider_ValueChanged(object sender, ValueChangedEventArgs e)
         {
-            double newValue = Math.Round(e.NewValue);
-            DepthSlider.Value = newValue;
-            if (newValue == 3)
+            SliderValue = Math.Round(e.NewValue);
+            SecondSlider.Value = SliderValue;
+            if (SliderValue == 1)
             {
-                DepthLabel.Text = "Very Fast";
-            }
-            else if (newValue == 4)
-            {
-                DepthLabel.Text = "Fast";
+                SecondLabel.Text = "Search time: 1 second";
             }
             else
             {
-                DepthLabel.Text = "Very Slow";
+                SecondLabel.Text = $"Search time: {SliderValue} seconds";
             }
         }
         public MainPage()
         {
             InitializeComponent();
-            DepthSlider.Value = 3;
+            SecondSlider.Value = 1;
             ImageButton[] TempAllSquares = {SquareA8, SquareB8, SquareC8, SquareD8, SquareE8, SquareF8, SquareG8, SquareH8,
                                             SquareA7, SquareB7, SquareC7, SquareD7, SquareE7, SquareF7, SquareG7, SquareH7,
                                             SquareA6, SquareB6, SquareC6, SquareD6, SquareE6, SquareF6, SquareG6, SquareH6,
@@ -92,6 +89,7 @@ namespace chessbot
             PlayerToMoveWhite = true;
             LastMoveStarting = 0;
             LastMoveTarget = 0;
+            DepthLabel.Text = "";
             for (int i = 0; i < 64; i++)
             {
                 if (WhiteSquares.Contains(AllSquares[i]))
@@ -1647,22 +1645,7 @@ namespace chessbot
                 return;
             }
             //calculating depth:
-            PiecesOnBoard = Position.Count(source => source != NoPiece);
-            if (PiecesOnBoard > 10)
-            {
-                Trace.WriteLine(Convert.ToInt16(DepthSlider.Value));
-                GeneratedMove = GetBestMove(Convert.ToInt16(DepthSlider.Value));
-            }
-            else if (PiecesOnBoard > 6)
-            {
-                Trace.WriteLine(Convert.ToInt16(DepthSlider.Value) *2);
-                GeneratedMove = GetBestMove(Convert.ToInt16(DepthSlider.Value) *2);
-            }
-            else
-            {
-                Trace.WriteLine(10);
-                GeneratedMove = GetBestMove(10);
-            }
+            GeneratedMove = GetBestMove();
             AISelectedBefore = AllSquares[GeneratedMove.StartingSquare];
             AISelectedPiece = AllSquares[GeneratedMove.StartingSquare].Source;
             AISelectedSquare = AllSquares[GeneratedMove.TargetSquare];
@@ -1886,10 +1869,14 @@ namespace chessbot
         //---------------------
         //minimax eval:
         List<Move> possibleMoves = new List<Move>();
-
+        private Stopwatch timer = new Stopwatch();
         private int Minimax(int depth, bool maximizingPlayer, int alpha, int beta)
         {
             PlayerToMoveWhite = (maximizingPlayer && IsPlayerWhite) || (!maximizingPlayer && !IsPlayerWhite);
+            if (timer.Elapsed.TotalSeconds > SliderValue)
+            {
+                return maximizingPlayer ? int.MinValue : int.MaxValue;
+            }
             GenerateMoves(possibleMoves);
             //OR CHECKMATE
             if (depth == 0 || possibleMoves.Count == 0)
@@ -2046,27 +2033,34 @@ namespace chessbot
         Stack<ImageSource> TargetStack = new Stack<ImageSource>();
         Stack<bool> PlayerToMoveWhiteStack = new Stack<bool>();
         Stack<bool[]> castlingHistory = new Stack<bool[]>();
-        private Move GetBestMove(int depth)
+        private Move GetBestMove()
         {
-            GenerateMoves(possibleMoves);
-            int bestEval = int.MaxValue;
+            timer = Stopwatch.StartNew();
             Move bestMove = default;
-            foreach (Move move in possibleMoves.ToList())
-            {
-                Position.CopyTo(Position, 0);
-                MakeCurrentMove(move);
-                StartStack.Push(TempStartingSquareSource);
-                TargetStack.Push(TempTargetSquareSource);
-                PlayerToMoveWhiteStack.Push(PlayerToMoveWhite);
+            int depth = 1;
 
-                int eval = Minimax(depth - 1, true, int.MinValue, int.MaxValue);
-                if (eval < bestEval)
+            while (timer.Elapsed.TotalSeconds < SliderValue)
+            {
+                DepthLabel.Text = $"Current Depth: {depth}";
+                GenerateMoves(possibleMoves);
+                int bestEval = int.MaxValue;
+                foreach (Move move in possibleMoves.ToList())
                 {
-                    bestEval = eval;
-                    bestMove = move;
+                    MakeCurrentMove(move);
+                    StartStack.Push(TempStartingSquareSource);
+                    TargetStack.Push(TempTargetSquareSource);
+                    PlayerToMoveWhiteStack.Push(PlayerToMoveWhite);
+
+                    int eval = Minimax(depth - 1, true, int.MinValue, int.MaxValue);
+                    if (eval < bestEval)
+                    {
+                        bestEval = eval;
+                        bestMove = move;
+                    }
+                    PlayerToMoveWhite = PlayerToMoveWhiteStack.Pop();
+                    UnmakeCurrentMove(move, StartStack.Pop(), TargetStack.Pop());
                 }
-                PlayerToMoveWhite = PlayerToMoveWhiteStack.Pop();
-                UnmakeCurrentMove(move, StartStack.Pop(), TargetStack.Pop());
+                depth++;
             }
 
             return bestMove;

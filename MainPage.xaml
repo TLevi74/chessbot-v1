@@ -141,8 +141,9 @@
             <StackLayout Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="12" VerticalOptions="Center" HorizontalOptions="Center">
                 <Button x:Name="btnReset" Margin="10" BackgroundColor="#242424" TextColor="White" Text="Reset" Clicked="ButtonResetClicked" FontAttributes="Bold" WidthRequest="150"></Button>
                 <Button x:Name="btnFlipBoard" Margin="10" BackgroundColor="#242424" TextColor="White" Text="Flip Board" Clicked="FlipBoard" FontAttributes="Bold" WidthRequest="150"></Button>
-                <Slider x:Name="DepthSlider" Minimum="3" Maximum="5" ValueChanged="Slider_ValueChanged" MinimumTrackColor="#404040" MaximumTrackColor="#242424" ThumbColor="#292929" WidthRequest="200" Margin="10"/>
-                <Label x:Name="DepthLabel" Text="Very Fast" HorizontalOptions="Center" TextColor="White" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                <Slider x:Name="SecondSlider" Minimum="1" Maximum="30" ValueChanged="Slider_ValueChanged" MinimumTrackColor="#404040" MaximumTrackColor="#242424" ThumbColor="#292929" WidthRequest="200" Margin="10"/>
+                <Label x:Name="SecondLabel" Text="Search time: 1 second" HorizontalOptions="Center" TextColor="White" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                <Label x:Name="DepthLabel" Text="" HorizontalOptions="Center" TextColor="White" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
             </StackLayout>
             <toolkit:MediaElement x:Name="MoveSound" IsVisible="false" Source="embed://move-self.mp3" />
             <toolkit:MediaElement x:Name="CaptureSound" IsVisible="false" Source="embed://capture.mp3" />
