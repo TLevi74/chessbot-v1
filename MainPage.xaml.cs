@@ -1886,7 +1886,6 @@ namespace chessbot
         //---------------------
         //minimax eval:
         List<Move> possibleMoves = new List<Move>();
-        List<Move> possibleOpponentMoves = new List<Move>();
 
         private int Minimax(int depth, bool maximizingPlayer, int alpha, int beta)
         {
@@ -1919,12 +1918,9 @@ namespace chessbot
                     }
                     if (possibleMoves.Count == 0)
                     {
-                        PlayerToMoveWhite = !PlayerToMoveWhite;
-                        possibleOpponentMoves = new List<Move>(PossibleMoves());
-                        PlayerToMoveWhite = !PlayerToMoveWhite;
                         if (PlayerToMoveWhite)
                         {
-                            if (possibleOpponentMoves.Any(move => Position[move.TargetSquare] == WhitePieces[4]))
+                            if (IsInCheck(Array.IndexOf(Position, WhitePieces[4])))
                             {
                                 //making this move will result in checkmate:
                                 BoardValue = -20000;
@@ -1937,7 +1933,7 @@ namespace chessbot
                         }
                         else
                         {
-                            if (possibleOpponentMoves.Any(move => Position[move.TargetSquare] == BlackPieces[4]))
+                            if (IsInCheck(Array.IndexOf(Position, BlackPieces[4])))
                             {
                                 //making this move will result in checkmate:
                                 BoardValue = 20000;
@@ -1971,12 +1967,9 @@ namespace chessbot
                     }
                     if (possibleMoves.Count == 0)
                     {
-                        PlayerToMoveWhite = !PlayerToMoveWhite;
-                        possibleOpponentMoves = new List<Move>(PossibleMoves());
-                        PlayerToMoveWhite = !PlayerToMoveWhite;
                         if (PlayerToMoveWhite)
                         {
-                            if (possibleOpponentMoves.Any(move => Position[move.TargetSquare] == WhitePieces[4]))
+                            if (IsInCheck(Array.IndexOf(Position, WhitePieces[4])))
                             {
                                 //making this move will result in checkmate:
                                 BoardValue = 20000;
@@ -1989,7 +1982,7 @@ namespace chessbot
                         }
                         else
                         {
-                            if (possibleOpponentMoves.Any(move => Position[move.TargetSquare] == BlackPieces[4]))
+                            if (IsInCheck(Array.IndexOf(Position, BlackPieces[4])))
                             {
                                 //making this move will result in checkmate:
                                 BoardValue = -20000;
