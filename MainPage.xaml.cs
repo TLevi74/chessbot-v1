@@ -2039,7 +2039,7 @@ namespace chessbot
             Move bestMove = default;
             int depth = 1;
 
-            while (timer.Elapsed.TotalSeconds < SliderValue)
+            while (true)
             {
                 DepthLabel.Text = $"Current Depth: {depth}";
                 GenerateMoves(possibleMoves);
@@ -2059,11 +2059,16 @@ namespace chessbot
                     }
                     PlayerToMoveWhite = PlayerToMoveWhiteStack.Pop();
                     UnmakeCurrentMove(move, StartStack.Pop(), TargetStack.Pop());
+
+                    // Check if time is up
+                    if (timer.Elapsed.TotalSeconds > SliderValue)
+                    {
+                        timer.Stop();
+                        return bestMove;
+                    }
                 }
                 depth++;
             }
-
-            return bestMove;
         }
 
         private int GetExtraValuesWhite(int pieceIndex, int position, bool isWhite)
