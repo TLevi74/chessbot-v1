@@ -330,7 +330,7 @@ namespace chessbot
         }
         public int selectedIndexBefore = -1;
         public int selectedIndexSquare = -1;
-        private void PlayerMovesTargetSquare(bool TempPlayerWhiteMoves)
+        private async void PlayerMovesTargetSquare(bool TempPlayerWhiteMoves)
         {
             SelectedBefore = SelectedSquare;
             SelectedSquare = currentButton;
@@ -530,6 +530,10 @@ namespace chessbot
                 {
                     PlayerToMoveWhite = true;
                 }
+
+                // Delay to allow UI to update
+                await Task.Delay(100); // Adjust delay time as needed
+
                 AIToMove();
             }
             else
